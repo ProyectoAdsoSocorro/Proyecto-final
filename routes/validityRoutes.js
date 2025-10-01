@@ -15,3 +15,5 @@ router.put("/:id/activate", activateValidity);
 router.delete("/:year", deleteValidity);
 
 export default router;
+
+
