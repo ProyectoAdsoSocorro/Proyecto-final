@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 import Period from "../models/periodModel.js";
 
-// ✅ Helper to validate ObjectId
+// Helper to validate ObjectId
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
+// GET all periods
 export const getAllPeriods = async (req, res) => {
   try {
     const periods = await Period.find().sort({ year: -1, period: 1 });
@@ -13,10 +14,10 @@ export const getAllPeriods = async (req, res) => {
   }
 };
 
+// GET period by ID
 export const getPeriodById = async (req, res) => {
   try {
     const { id } = req.params;
-
     if (!isValidObjectId(id)) {
       return res.status(400).json({ success: false, message: "El ID proporcionado no es válido" });
     }
@@ -31,6 +32,7 @@ export const getPeriodById = async (req, res) => {
   }
 };
 
+// GET periods by year
 export const getPeriodsByYear = async (req, res) => {
   try {
     const periods = await Period.find({ year: req.params.year });
@@ -40,9 +42,9 @@ export const getPeriodsByYear = async (req, res) => {
   }
 };
 
+// POST create period
 export const createPeriod = async (req, res) => {
   try {
-    // ✅ Check if period already exists for that year
     const exists = await Period.findOne({ year: req.body.year, period: req.body.period });
     if (exists) {
       return res.status(400).json({
@@ -70,10 +72,10 @@ export const createPeriod = async (req, res) => {
   }
 };
 
+// PUT update period
 export const updatePeriod = async (req, res) => {
   try {
     const { id } = req.params;
-
     if (!isValidObjectId(id)) {
       return res.status(400).json({ success: false, message: "El ID proporcionado no es válido" });
     }
@@ -82,7 +84,7 @@ export const updatePeriod = async (req, res) => {
       const exists = await Period.findOne({
         year: req.body.year,
         period: req.body.period,
-        _id: { $ne: id } // ignore current doc
+        _id: { $ne: id }
       });
 
       if (exists) {
@@ -109,20 +111,66 @@ export const updatePeriod = async (req, res) => {
   }
 };
 
-export const deletePeriod = async (req, res) => {
+// PUT activate period
+export const activatePeriod = async (req, res) => {
   try {
     const { id } = req.params;
-
     if (!isValidObjectId(id)) {
       return res.status(400).json({ success: false, message: "El ID proporcionado no es válido" });
     }
 
-    const deleted = await Period.findByIdAndDelete(id);
-    if (!deleted) {
+    const activated = await Period.findByIdAndUpdate(
+      id,
+      { isActive: true },
+      { new: true }
+    );
+
+    if (!activated) {
       return res.status(404).json({ success: false, message: "Período no encontrado" });
     }
-    res.json({ success: true, message: "Período eliminado" });
+
+    res.json({
+      success: true,
+      message: "Período activado con éxito",
+      data: activated
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
+};
+
+// PUT deactivate period
+export const deactivatePeriod = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ success: false, message: "El ID proporcionado no es válido" });
+    }
+
+    const deactivated = await Period.findByIdAndUpdate(
+      id,
+      { isActive: false },
+      { new: true }
+    );
+
+    if (!deactivated) {
+      return res.status(404).json({ success: false, message: "Período no encontrado" });
+    }
+
+    res.json({
+      success: true,
+      message: "Período desactivado con éxito",
+      data: deactivated
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// DELETE (disabled as per rules)
+export const deletePeriod = async (req, res) => {
+  return res.status(405).json({
+    success: false,
+    message: "La eliminación de períodos está deshabilitada"
+  });
 };
