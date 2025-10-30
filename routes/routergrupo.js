@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { check, param, body } from "express-validator";
-import * as groupController from '../controllers/controllersgrupo.js';
+import groupController from '../controllers/controllersgrupo.js';
 import groupHelper from '../helpers/helpergrupo.js';
-import { validarCampos } from '../middlewares/validar-campo.js'; // Assuming this middleware exists
+import { validarCampos } from '../middlewares/validar-campo.js'; 
 
 const router = Router();
 
@@ -18,7 +18,7 @@ router.post('/',
         check('groupIdentifier', 'Group Identifier is required.').exists().notEmpty(),
         check('session', 'Session is required.').exists().custom(groupHelper.validateSession),
         validarCampos
-    ],
+    ], 
     groupController.createGroup
 );
 
@@ -75,8 +75,8 @@ router.put('/:id',
     groupController.updateGroup
 );
 
-// 7. PATCH /api/groups/:id/activate - Activate a group
-router.patch('/:id/activate',
+// 7. PUT /api/groups/:id/activate - Activate a group (Cambiado de PATCH a PUT)
+router.put('/:id/activate',
     [
         param('id', 'Invalid ID format.').isMongoId(),
         validarCampos
@@ -84,8 +84,8 @@ router.patch('/:id/activate',
     groupController.activateGroup
 );
 
-// 8. PATCH /api/groups/:id/deactivate - Deactivate a group
-router.patch('/:id/deactivate',
+// 8. PUT /api/groups/:id/deactivate - Deactivate a group (Cambiado de PATCH a PUT)
+router.put('/:id/deactivate',
     [
         param('id', 'Invalid ID format.').isMongoId(),
         validarCampos

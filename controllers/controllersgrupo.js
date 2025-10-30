@@ -1,12 +1,12 @@
-import Group from '../models/group.model.js';
+import Group from '../models/modelGroup.js';
 //import Student from '../models/student.model.js';
 //import Guardian from '../models/guardian.model.js';
 
-//import SchoolBranch from '../models/schoolBranch.model.js';
-//import SchoolUser from '../models/schoolUser.model.js';
+// import SchoolBranch from '../models/schoolBranch.model.js';
+// import SchoolUser from '../models/schoolUser.model.js';
 
 const GroupController = {
-
+    //POST /api/grupos – Crear-
     createGroup: async (req, res) => {
         console.log('Attempting to create a new group...');
         try {
@@ -23,7 +23,8 @@ const GroupController = {
             if (error.code === 11000) {
                 return res.status(409).json({
                     success: false,
-                    message: 'A group with the same combination of Branch, Year, and Grade already exists.'
+                    // Mensaje actualizado para ser más específico basado en tu schema
+                    message: 'A group with the same combination of Branch, Year, Grade, and Identifier already exists.'
                 });
             }
             res.status(500).json({
@@ -32,13 +33,24 @@ const GroupController = {
             });
         }
     },
-
-
+    //POST /api/sedes/:sedeId/grupos – Crear grupo dentro de la sede
     createGroupInBranch: async (req, res) => {
         const { branchId } = req.params;
         console.log(`Attempting to create a new group in branch ID: ${branchId}`);
         try {
-            const groupData = { ...req.body, schoolBranch: branchId };
+            // Aseguramos que el schoolBranch venga del parámetro de la URL
+            //const groupData = { ...req.body, schoolBranch: branchId };
+            const groupData={
+                schoolBranch: branchId,
+                year: req.body.year,
+                cycle: req.body.cycle,
+                level: req.body.level,
+                grade: req.body.grade,
+                groupIdentifier: req.body.groupIdentifier,
+                session: req.body.session,
+                groupDirector: req.body.groupDirector,
+                periodData: req.body.periodData
+            }
             const newGroup = new Group(groupData);
             const savedGroup = await newGroup.save();
 
@@ -52,7 +64,7 @@ const GroupController = {
             if (error.code === 11000) {
                 return res.status(409).json({
                     success: false,
-                    message: 'A group with the same combination of Branch, Year, and Grade already exists.'
+                    message: 'A group with the same combination of Branch, Year, Grade, and Identifier already exists.'
                 });
             }
             res.status(500).json({
@@ -61,14 +73,14 @@ const GroupController = {
             });
         }
     },
-
+    //GET /api/grupos/año/:año  - Listar todos por año
     getGroupsByYear: async (req, res) => {
         const { year } = req.params;
         console.log(`Fetching groups for year: ${year}`);
         try {
             const groups = await Group.find({ year: Number(year) })
-                .populate('schoolBranch', 'name city')
-                .populate('groupDirector', 'firstName lastName');
+                .populate('schoolBranch', 'name city') // 'name city' son ejemplos
+                .populate('groupDirector', 'firstName lastName'); // 'firstName lastName' son ejemplos
 
             res.status(200).json({
                 success: true,
@@ -83,15 +95,14 @@ const GroupController = {
             });
         }
     },
-
-
+    //	GET /api/sedes/:sedeId/grupos - Grupos por sede
     getGroupsByBranch: async (req, res) => {
         const { branchId } = req.params;
         console.log(`Fetching groups for branch ID: ${branchId}`);
         try {
             const groups = await Group.find({ schoolBranch: branchId })
                 .populate('groupDirector', 'firstName lastName email')
-                .sort({ year: -1, level: 1 });
+                .sort({ year: -1, level: 1 }); // ordenamiento
 
             res.status(200).json({
                 success: true,
@@ -112,8 +123,7 @@ const GroupController = {
             });
         }
     },
-
-
+    //	GET /api/grupos/:id - Obtener por ID
     getGroupById: async (req, res) => {
         const { id } = req.params;
         console.log(`Fetching group with ID: ${id}`);
@@ -147,8 +157,7 @@ const GroupController = {
             });
         }
     },
-
-
+    //•	PUT /api/grupos/:id – Actualizar
     updateGroup: async (req, res) => {
         const { id } = req.params;
         console.log(`Updating group with ID: ${id}`);
@@ -156,7 +165,7 @@ const GroupController = {
             const updatedGroup = await Group.findByIdAndUpdate(
                 id,
                 req.body,
-                { new: true, runValidators: true }
+                { new: true, runValidators: true } // Opciones correctas
             );
 
             if (!updatedGroup) {
@@ -190,8 +199,7 @@ const GroupController = {
             });
         }
     },
-
-
+    //•	PUT /api/grupos/:id/activar
     activateGroup: async (req, res) => {
         const { id } = req.params;
         console.log(`Activating group with ID: ${id}`);
@@ -209,15 +217,14 @@ const GroupController = {
             res.status(500).json({ success: false, message: 'Error activating group.' });
         }
     },
-
-
+    //•	PUT /api/grupos/:id/desactivar
     deactivateGroup: async (req, res) => {
         const { id } = req.params;
         console.log(`Deactivating group with ID: ${id}`);
         try {
             const group = await Group.findByIdAndUpdate(id, { isActive: false }, { new: true });
             if (!group) {
-                return res.status(404).json({ success: false, message: `Group with ID ${id} not found.` });
+                return res.status(4404).json({ success: false, message: `Group with ID ${id} not found.` });
             }
             res.status(200).json({ success: true, message: 'Group deactivated successfully.', data: group });
         } catch (error) {
@@ -228,15 +235,15 @@ const GroupController = {
             res.status(500).json({ success: false, message: 'Error deactivating group.' });
         }
     },
-
-
+    //•	DELETE /api/grupos/:id – Eliminar
     deleteGroup: async (req, res) => {
         const { id } = req.params;
         console.log(`Deleting group with ID: ${id}`);
         try {
-            const studentCount = await Student.countDocuments({ group: id });
+            // Esta validación es una excelente práctica de negocio
+            const studentCount = await Student.countDocuments({ group: id }); // Asumiendo que el campo se llama 'group'
             if (studentCount > 0) {
-                return res.status(409).json({
+                return res.status(409).json({ // 409 Conflict es un buen estado para esto
                     success: false,
                     message: `Cannot delete group. It has ${studentCount} assigned students.`
                 });
@@ -255,13 +262,14 @@ const GroupController = {
             res.status(500).json({ success: false, message: 'Error deleting group.' });
         }
     },
-
-
+    //•	GET /api/grupos/:id/estudiantes - Estudiantes por grupo
     getStudentsByGroup: async (req, res) => {
         const { id } = req.params;
         console.log(`Fetching students for group ID: ${id}`);
         try {
-            const students = await Student.find({ group: id }).select('firstName lastName email');
+            const students = await Student.find({ group: id }) // Asumiendo que el campo se llama 'group'
+                .select('firstName lastName email'); // Bien hecho al seleccionar campos
+
             res.status(200).json({
                 success: true,
                 message: `Found ${students.length} students for group ${id}.`,
@@ -275,17 +283,26 @@ const GroupController = {
             res.status(500).json({ success: false, message: 'Error fetching students.' });
         }
     },
-
-
+    //•	GET /api/grupos/:id/acudientes - Listar los acudientes por grupo
     getGuardiansByGroup: async (req, res) => {
         const { id } = req.params;
         console.log(`Fetching guardians for group ID: ${id}`);
         try {
+            // 1. Encontrar IDs de estudiantes en el grupo
             const studentsInGroup = await Student.find({ group: id }).select('_id');
             const studentIds = studentsInGroup.map(s => s._id);
 
+            if (studentIds.length === 0) {
+                return res.status(200).json({
+                    success: true,
+                    message: `No students found in group ${id}, therefore no guardians.`,
+                    data: []
+                });
+            }
+
+            // 2. Encontrar acudientes que tengan a esos estudiantes
             const guardians = await Guardian.find({ studentsInCare: { $in: studentIds } })
-                .populate('studentsInCare', 'firstName lastName');
+                .populate('studentsInCare', 'firstName lastName'); // La lógica es correcta
 
             res.status(200).json({
                 success: true,
