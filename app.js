@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
 // Importación de rutas
 import materiaRoutes from './routes/subjects.js';
@@ -8,6 +9,7 @@ import periodsRoutes from './routes/periods.js';
 import direccionNucleoRoutes from './routes/coreDirectionRoutes.js';
 import colegiosRoutes from './routes/schools.js';
 import headquartersRoutes from './routes/headquarters.js';
+import parameterRoutes from './routes/parameterRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +17,7 @@ const MONGO_URL = process.env.MONGO_URL;
 
 // 🧩 Middleware global para parsear JSON
 app.use(express.json());
+app.use(cors());
 
 // 🔗 Conexión a MongoDB
 mongoose.connect(MONGO_URL, {
@@ -25,11 +28,12 @@ mongoose.connect(MONGO_URL, {
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
 
 // 🌐 Rutas principales
-app.use('/api/materias', materiaRoutes);
-app.use('/api/periodos', periodsRoutes);
+app.use('/api/subjects', materiaRoutes);
+app.use('/api/periods', periodsRoutes);
 app.use('/api', direccionNucleoRoutes);
-app.use('/api', colegiosRoutes);
+app.use("/api",colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
+app.use('/api/parameters', parameterRoutes);
 
 // 🧱 Middleware de manejo de errores
 app.use((err, req, res, next) => {
@@ -46,4 +50,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
 });
-
