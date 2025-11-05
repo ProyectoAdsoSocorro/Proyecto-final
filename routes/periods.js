@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 import { check } from 'express-validator';
 import validateFields from '../middlewares/checksPeriodos.js';
@@ -6,12 +7,12 @@ import * as httpPeriods from '../controllers/periodController.js';
 const router = Router();
 
 // Apply middleware for role-based access control
-const ensureSecretariaRole = (req, res, next) => {
-    if (req.user && req.user.role === 'secretaria') {
-        return next();
-    }
-    return res.status(403).json({ message: 'Access denied. Only secretaria role is allowed.' });
-};
+// const ensureSecretariaRole = (req, res, next) => {
+//     if (req.user && req.user.role === 'secretaria') {
+//         return next();
+//     }
+//     return res.status(403).json({ message: 'Access denied. Only secretaria role is allowed.' });
+// };
 
 // Routes
 router.get('/', httpPeriods.getAll);
@@ -27,7 +28,7 @@ router.get('/year/:year', [
 ], httpPeriods.getByYear);
 
 router.post('/', [
-  ensureSecretariaRole,
+  // ensureSecretariaRole,
   check('school').isMongoId().withMessage("El ID del colegio no es válido"),
   check('startDate').isDate().withMessage("La fecha de inicio no es válida"),
   check('year').isNumeric().withMessage("El año debe ser un número"),
@@ -40,7 +41,7 @@ router.post('/', [
 ], httpPeriods.createPeriod);
 
 router.put('/:id', [
-  ensureSecretariaRole,
+  // ensureSecretariaRole,
   check("id").isMongoId().withMessage("ID de período no válido"),
   check("school").optional().isMongoId().withMessage("ID de escuela no válido"),
   check("year").optional().isInt({ min: 1900, max: 2100 }).withMessage("El año debe ser un número válido entre 1900 y 2100"),
@@ -55,17 +56,17 @@ router.put('/:id', [
 ], httpPeriods.updatePeriod);
 
 router.put('/:id/activate', [
-  ensureSecretariaRole,
+  // ensureSecretariaRole,
   check('id').isMongoId().withMessage("El ID de periodo no es correcto ¡Por favor verifique!")
 ], httpPeriods.activatePeriod);
 
 router.put('/:id/deactivate', [
-  ensureSecretariaRole,
+  // ensureSecretariaRole,
   check('id').isMongoId().withMessage("El ID de periodo no es correcto ¡Por favor verifique!")
 ], httpPeriods.deactivatePeriod);
 
 router.delete('/:id', [
-  ensureSecretariaRole,
+  // ensureSecretariaRole,
   check("id").isMongoId().withMessage("ID de período no válido"),
   validateFields
 ], httpPeriods.deletePeriod);
