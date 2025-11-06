@@ -37,7 +37,7 @@ const schemaAttendant = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+       
     },
     phone: {
         type: String,
@@ -50,8 +50,7 @@ const schemaAttendant = new mongoose.Schema({
         trim: true
     },
     dateOfBirth: {
-        type: Date,
-        required: true
+        type: Date
     },
     gender: {
         type: String,
@@ -63,7 +62,7 @@ const schemaAttendant = new mongoose.Schema({
         type: [String],
         required: true,
         default: ['acudiente'],
-        enum: ['acudiente', 'estudiante']
+        enum: ['acudiente', 'estudiante', 'secretaria']
     },
     isActive: {
         type: Boolean,
