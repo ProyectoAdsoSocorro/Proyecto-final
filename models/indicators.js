@@ -4,12 +4,12 @@ const indicatorsSchema = new mongoose.Schema({
 
     academicLoad: {
         type: mongoose.Schema.Types.ObjectId,
-        /* ref: 'AcademicLoad', */
+        // ref: 'modelacademicloads',
         required: true 
     },
     period: {
-        type: mongoose.Schema.Types.ObjectId,
-       /*  /* ref: 'Period', */
+        type: mongoose.Schema.Types.ObjectId, 
+        // ref: 'periods',
         required: true
     },
     type: [{
@@ -29,7 +29,7 @@ const indicatorsSchema = new mongoose.Schema({
     },
     userWhoDidIt: {
         type: mongoose.Schema.Types.ObjectId,
-        /* ref: 'User', */
+        // ref: 'modelusers',
         required: true
     },
     active: { 
