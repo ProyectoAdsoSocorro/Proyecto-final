@@ -1,9 +1,7 @@
-
-    
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
-    
+import cors from 'cors';
 // Importación de rutas
 import materiaRoutes from './routes/subjects.js';
 import periodsRoutes from './routes/periods.js';
@@ -11,6 +9,7 @@ import direccionNucleoRoutes from './routes/coreDirectionRoutes.js';
 import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import tuition from "./routes/tuition.js";
+import parameterRoutes from './routes/parameterRoutes.js';
 import headquartersRoutes from './routes/headquarters.js';
     
 const app = express();
@@ -19,6 +18,7 @@ const MONGO_URL = process.env.MONGO_URL;
     
 // 🧩 Middleware global para parsear JSON
 app.use(express.json());
+
 app.use(cors());
 
 // 🔗 Conexión a MongoDB
@@ -34,8 +34,9 @@ app.use('/api/subjects', materiaRoutes);
 app.use('/api/periods', periodsRoutes);
 app.use('/api', direccionNucleoRoutes);
 app.use(Indicators);
-app.use('/api', colegiosRoutes);
+app.use('/api/schools', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
+app.use('/api/parameters', parameterRoutes);
 app.use("/api/tuitions", tuition);
 
 // 🧱 Middleware de manejo de errores
