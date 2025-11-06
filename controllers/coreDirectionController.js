@@ -1,5 +1,5 @@
 import CoreDirection from '../models/coreDirection.js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import { generateToken } from '../middlewares/authJwt.js';
 
 export const getAll = async (req, res) => {
