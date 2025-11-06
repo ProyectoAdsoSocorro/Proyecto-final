@@ -7,6 +7,7 @@ import cors from 'cors';
 import materiaRoutes from './routes/subjects.js';
 import periodsRoutes from './routes/periods.js';
 import direccionNucleoRoutes from './routes/coreDirectionRoutes.js';
+import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import tuition from "./routes/tuition.js";
 import headquartersRoutes from './routes/headquarters.js';
@@ -27,12 +28,13 @@ mongoose.connect(MONGO_URL, {
 })
 .then(() => console.log('✅ MongoDB conectado correctamente'))
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
-    
+
 // 🌐 Rutas principales
 app.use('/api/subjects', materiaRoutes);
 app.use('/api/periods', periodsRoutes);
 app.use('/api', direccionNucleoRoutes);
-app.use("/api",colegiosRoutes);
+app.use(Indicators);
+app.use('/api', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use('/api/parameters', parameterRoutes);
 app.use("/api/tuitions", tuition);
