@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 //import SchoolUser from '../models/schoolUser.model.js';   
 
 // These values now match the Mongoose schema enums
-const VALID_LEVELS = ['PRESCHOOL', 'PRIMARY', 'SECONDARY', 'HIGH_SCHOOL'];
-const VALID_CYCLES = ['normal', 'semester'];
-const VALID_SESSIONS = ['MORNING', 'AFTERNOON', 'NIGHT'];
+const VALID_LEVELS = ['PREESCOLAR', 'PRIMARIA', 'SECUNDARIA', 'ESCUELA_SECUNDARIA'];
+const VALID_CYCLES = ['normal', 'semestral'];
+const VALID_SESSIONS = ['MAÑANA', 'TARDE', 'NOCHE'];
 
 const isValidObjectId = (id) => {
     if (!id) return false;
@@ -13,11 +13,11 @@ const isValidObjectId = (id) => {
 };
 
 const validateSchoolBranch = async (branchId) => {
-    if (!branchId) return; 
+    if (!branchId) return;
 
     if (!mongoose.Types.ObjectId.isValid(branchId)) {
         throw new Error(`The School Branch ID (${branchId}) is not a valid ObjectId format.`);
-    }   
+    }
     const branchExists = await SchoolBranch.findById(branchId);
     if (!branchExists) {
         throw new Error(`The School Branch with ID ${branchId} does not exist.`);
@@ -25,14 +25,14 @@ const validateSchoolBranch = async (branchId) => {
 };
 
 const validateGroupDirector = async (directorId) => {
-    if (!directorId) return; 
-    
+    if (!directorId) return;
+
     if (!mongoose.Types.ObjectId.isValid(directorId)) {
         throw new Error(`The Director ID (${directorId}) is not a valid ObjectId format.`);
     }
-    const director = await SchoolUser.findOne({ 
-        _id: directorId, 
-        role: 'TEACHER' // Assuming role is 'TEACHER'
+    const director = await SchoolUser.findOne({
+        _id: directorId,
+        role: 'TEACHER' // Assuming role is 'TEACHER' //cambiar 
     });
     if (!director) {
         throw new Error(`The Director with ID ${directorId} does not exist or does not have the 'TEACHER' role.`);

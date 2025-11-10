@@ -46,8 +46,6 @@ const groupSchema = new Schema({
             type: Number,
             required: true,
         },
-        // You could add fields here like:
-        // average: { type: Number },
     }],
     isActive: { 
         type: Boolean,
