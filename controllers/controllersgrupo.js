@@ -23,7 +23,7 @@ const GroupController = {
             if (error.code === 11000) {
                 return res.status(409).json({
                     success: false,
-                    // Mensaje actualizado para ser más específico basado en tu schema
+                    // Mensaje especifico
                     message: 'A group with the same combination of Branch, Year, Grade, and Identifier already exists.'
                 });
             }

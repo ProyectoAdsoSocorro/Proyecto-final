@@ -14,12 +14,12 @@ const groupSchema = new Schema({
     },
     cycle: {
         type: String,
-        enum: ['normal', 'semester'], 
+        enum: ['normal', 'semestral'], 
         required: true,
     },
     level: {
         type: String,
-        enum: ['PRESCHOOL', 'PRIMARY', 'SECONDARY', 'HIGH_SCHOOL'], 
+        enum: ['PREESCOLAR', 'PRIMARIA', 'SECUNDARIA', 'ESCUELA_SECUNDARIA'], 
         required: true,
     },
     grade: {
@@ -32,7 +32,7 @@ const groupSchema = new Schema({
     },
     session: { 
         type: String,
-        enum: ['MORNING', 'AFTERNOON', 'NIGHT'],
+        enum: ['MAÑANA', 'TARDE', 'NOCHE'],
         required: true,
     },
     // Reference to the SchoolUser/Teachers collection
