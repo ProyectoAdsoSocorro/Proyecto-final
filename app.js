@@ -11,6 +11,7 @@ import colegiosRoutes from './routes/schools.js';
 import tuition from "./routes/tuition.js";
 import parameterRoutes from './routes/parameterRoutes.js';
 import headquartersRoutes from './routes/headquarters.js';
+import UsersRoutes from './routes/users.js';
     
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,6 +39,7 @@ app.use('/api/schools', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use('/api/parameters', parameterRoutes);
 app.use("/api/tuitions", tuition);
+app.use("/api/users", UsersRoutes);
 
 // 🧱 Middleware de manejo de errores
 app.use((err, req, res, next) => {
