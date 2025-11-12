@@ -32,6 +32,7 @@ import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import tuition from "./routes/tuition.js";
 import headquartersRoutes from './routes/headquarters.js';
+import reportesEstudiantes from './routes/reports2_routes.js'
     
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -56,6 +57,7 @@ app.use(Indicators);
 app.use('/api', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/tuitions", tuition);
+app.use("/api/reports", reportesEstudiantes )
 
 // 🧱 Middleware de manejo de errores
 app.use((err, req, res, next) => {
