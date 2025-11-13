@@ -37,7 +37,6 @@ const schemaAttendant = new mongoose.Schema({
     },
     password: {
         type: String,
-       
     },
     phone: {
         type: String,
@@ -50,7 +49,7 @@ const schemaAttendant = new mongoose.Schema({
         trim: true
     },
     dateOfBirth: {
-        type: Date
+        type: Date,
     },
     gender: {
         type: String,
@@ -62,14 +61,14 @@ const schemaAttendant = new mongoose.Schema({
         type: [String],
         required: true,
         default: ['acudiente'],
-        enum: ['acudiente', 'estudiante', 'secretaria']
+        enum: ['acudiente'] 
     },
     isActive: {
         type: Boolean,
         default: true
     }
 }, {
-    collection: 'modelusers',
+    collection: 'users',
     timestamps: true // Agrega createdAt y updatedAt automáticamente
 });
 

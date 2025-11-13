@@ -1,25 +1,3 @@
-/* import "dotenv/config";
-import express from "express";
-import mongoose from "mongoose";
-/* import colegios from "./routes/Colegio.js";
-
-const app = express();
-
- 
-app.use(express.json());
-
-
-/* app.use(colegios);
-
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => {
-    console.log(`Servidor corriendo en el puerto ${port}`);
-    mongoose.connect(process.env.MONGO_URL)
-    .then(() => console.log("Conectado a la base de datos"))
-    .catch((error) => console.error("Error al conectar a la base de datos:", error));
-    }); */
-    
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
@@ -30,7 +8,7 @@ import periodsRoutes from './routes/periods.js';
 import direccionNucleoRoutes from './routes/coreDirectionRoutes.js';
 import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
-import tuition from "./routes/tuition.js";
+import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
 import reportesEstudiantes from './routes/reports2_routes.js'
 import auth from './routes/auth.js'
@@ -59,7 +37,7 @@ app.use('/api', direccionNucleoRoutes);
 app.use(Indicators);
 app.use('/api', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
-app.use("/api/tuitions", tuition);
+app.use("/api/registration", registration);
 app.use("/api/reports", reportesEstudiantes )
 app.use("/api/auth",auth)
 app.use("/api/qualifications", qualifications);

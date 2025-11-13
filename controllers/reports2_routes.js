@@ -1,4 +1,4 @@
-import Tuition from '../models/tuition.js';
+import Tuition from '../models/registration.js';
 
 
  const httpReportStudents = {
