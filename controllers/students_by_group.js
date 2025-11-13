@@ -1,4 +1,4 @@
-import Tuition from '../models/registration.js';
+import Registration from '../models/registration.js';
 
 
  const httpReportStudents = {
@@ -8,7 +8,7 @@ import Tuition from '../models/registration.js';
 
             const { schoolyear, schoolId, GroupId } = req.params;
 
-            const tuitions  = await Tuition.find({
+            const registrations  = await Registration.find({
 
                 year: schoolyear,
                 school: schoolId,
@@ -18,13 +18,13 @@ import Tuition from '../models/registration.js';
                 path: 'student',
                 select: 'firstName lastName documentOfNumber'
             })
-             if (tuitions.length === 0) {
+             if (registrations.length === 0) {
                 return res.status(404).json({ message: "No se encontraron estudiantes para los criterios especificados." });
             }
 
             //EXTRAEMOS LA INFORMACION DE LOS ESTUDIANTES DE MATRICULAS 
 
-            const students = tuitions.map(tuition => tuition.student)
+            const students = registrations.map(registration => registration.student)
 
             
             
