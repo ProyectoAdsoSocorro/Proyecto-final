@@ -9,40 +9,92 @@ const router = express.Router();
 router.get('/core-directions', /* verifyToken */ coreDirectionCtrl.getAll);
 
 router.post('/core-directions', [
-    check('name', 'El nombre es obligatorio').not().isEmpty(),
-    check('code', 'El código es obligatorio').not().isEmpty(),
-    check('address', 'La dirección es obligatoria').not().isEmpty(),
-    check('phone', 'El teléfono es obligatorio').not().isEmpty(),
-    check('email', 'El correo es obligatorio').isEmail(),
-    check('password', 'La contraseña es obligatoria y debe tener al menos 6 caracteres').isLength({ min: 6 }),
-    check('responsible', 'El responsable es obligatorio').not().isEmpty(),
+    check('name')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Nombre'),
+    check('code')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Código'),
+    check('address')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Dirección'),
+    check('phone')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Número de teléfono'),
+    check('email')
+      .isEmail()
+      .withMessage('Validación: Correo electrónico debe ser válido'),
+    check('password')
+      .isLength({ min: 6 })
+      .withMessage('Rango: Contraseña debe tener mínimo 6 caracteres'),
+    check('responsible')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Responsable'),
     validateFields
 ], /* verifyToken, */ coreDirectionCtrl.create);
 
-router.post('/core-directions/login',[
-    check('email', 'El correo es obligatorio').isEmail(),
-    check('password', 'La contraseña es obligatoria y debe tener al menos 6 caracteres').isLength({ min: 6 }),
+router.post('/core-directions/login', [
+    check('email')
+      .isEmail()
+      .withMessage('Validación: Correo electrónico debe ser válido'),
+    check('password')
+      .isLength({ min: 6 })
+      .withMessage('Rango: Contraseña debe tener mínimo 6 caracteres'),
     validateFields
 ], coreDirectionCtrl.login);
 
 router.put('/core-directions/:id', [
-    check('id', 'No es un ID válido').isMongoId().not().isEmpty(),
-    check('name', 'El nombre es obligatorio').not().isEmpty(),
-    check('code', 'El código es obligatorio').not().isEmpty(),
-    check('address', 'La dirección es obligatoria').not().isEmpty(),
-    check('phone', 'El teléfono es obligatorio').not().isEmpty(),
-    check('email', 'El correo es obligatorio').isEmail(),
-    check('password', 'La contraseña es obligatoria y debe tener al menos 6 caracteres').isLength({ min: 6 }),
-    check('responsible', 'El responsable es obligatorio').not().isEmpty(),
+    check('id')
+      .isMongoId()
+      .not().isEmpty()
+      .withMessage('Validación: ID debe ser válido'),
+    check('name')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Nombre'),
+    check('code')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Código'),
+    check('address')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Dirección'),
+    check('phone')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Número de teléfono'),
+    check('email')
+      .isEmail()
+      .withMessage('Validación: Correo electrónico debe ser válido'),
+    check('password')
+      .isLength({ min: 6 })
+      .withMessage('Rango: Contraseña debe tener mínimo 6 caracteres'),
+    check('responsible')
+      .not().isEmpty()
+      .withMessage('Campo requerido: Responsable'),
     validateFields
 ], /* verifyToken,  */coreDirectionCtrl.update);
 
 router.put('/core-directions/:id/change-password', [
-    check('id', 'No es un ID válido').isMongoId().not().isEmpty(),
+    check('id')
+      .isMongoId()
+      .not().isEmpty()
+      .withMessage('Validación: ID debe ser válido'),
 ], /* verifyToken,  */coreDirectionCtrl.changePassword);
 
-router.delete('/core-directions/:id',/*  verifyToken, */ coreDirectionCtrl.remove);
-router.put('/core-directions/:id/activate', /* verifyToken, */ coreDirectionCtrl.activate);
-router.put('/core-directions/:id/deactivate', /* verifyToken, */ coreDirectionCtrl.deactivate);
+router.delete('/core-directions/:id', [
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID debe ser válido'),
+], coreDirectionCtrl.remove);
+
+router.put('/core-directions/:id/activate', [
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID debe ser válido'),
+], coreDirectionCtrl.activate);
+
+router.put('/core-directions/:id/deactivate', [
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID debe ser válido'),
+], coreDirectionCtrl.deactivate);
 
 export default router;

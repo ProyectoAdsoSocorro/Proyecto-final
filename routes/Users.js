@@ -10,135 +10,135 @@ const router = express.Router();
 const validationsLogin = [
     check("numberDocument")
         .notEmpty()
-        .withMessage('El número de documento es obligatorio')
+        .withMessage('Campo requerido: Número de documento')
         .isNumeric()
-        .withMessage('El número de documento debe ser numérico')
+        .withMessage('Validación: Número de documento debe ser numérico')
         .isLength({
             min: 10,
             max: 10
-        }).withMessage('El número de documento debe tener minimo y maximo 10 caracteres')
+        }).withMessage('Rango: Número de documento debe tener exactamente 10 dígitos')
         .escape(),
     check("password")
         .notEmpty()
-        .withMessage('La contraseña es obligatoria')
+        .withMessage('Campo requerido: Contraseña')
         .escape()
 ];
 
 const validationsRegister = [
     check("names")
         .notEmpty()
-        .withMessage('Los nombres son obligatorios')
+        .withMessage('Campo requerido: Nombres')
         .escape(),
     check("lastNames")
         .notEmpty()
-        .withMessage('Los apellidos son obligatorios')
+        .withMessage('Campo requerido: Apellidos')
         .escape(),
     check("typeDocument")
         .notEmpty()
-        .withMessage('El tipo de documento es obligatorio')
+        .withMessage('Campo requerido: Tipo de documento')
         .escape(),
     check("numberDocument")
         .notEmpty()
-        .withMessage('El número de documento es obligatorio')
+        .withMessage('Campo requerido: Número de documento')
         .isNumeric()
-        .withMessage('El número de documento debe ser numérico')
+        .withMessage('Validación: Número de documento debe ser numérico')
         .isLength({
             min: 10,
             max: 10
-        }).withMessage('El número de documento debe tener minimo y maximo 10 caracteres')
+        }).withMessage('Rango: Número de documento debe tener exactamente 10 dígitos')
         .escape(),
     check("email")
         .notEmpty()
-        .withMessage('El correo electrónico es obligatorio')
+        .withMessage('Campo requerido: Correo electrónico')
         .isEmail()
-        .withMessage('El correo electrónico debe tener un formato válido')
+        .withMessage('Validación: Correo electrónico debe tener formato válido')
         .escape(),
     check("password")
         .notEmpty()
-        .withMessage('La contraseña es obligatoria')
+        .withMessage('Campo requerido: Contraseña')
         .escape(),
     check("cellphone")
         .notEmpty()
-        .withMessage('El número de celular es obligatorio')
+        .withMessage('Campo requerido: Número de celular')
         .isNumeric()
-        .withMessage('El número de celular debe ser numérico')
+        .withMessage('Validación: Número de celular debe ser numérico')
         .isLength({
             min: 10,
             max: 10
         })
-        .withMessage('El número de celular debe tener exactamente 10 dígitos')
+        .withMessage('Rango: Número de celular debe tener exactamente 10 dígitos')
         .escape(),
     check("direction")
         .notEmpty()
-        .withMessage('La dirección es obligatoria')
+        .withMessage('Campo requerido: Dirección')
         .escape(),
     check('dateBorn')
         .notEmpty()
-        .withMessage('La fecha de nacimiento es obligatoria')
+        .withMessage('Campo requerido: Fecha de nacimiento')
         .isDate({ format: 'DD/MM/YYYY', strictMode: true })
-        .withMessage('La fecha debe tener formato DD/MM/YYYY'),
+        .withMessage('Formato: Fecha debe ser DD/MM/YYYY'),
     check("gender")
         .notEmpty()
-        .withMessage('El género es obligatorio')
+        .withMessage('Campo requerido: Género')
         .escape(),
     check("roles")
         .notEmpty()
-        .withMessage('El rol es obligatorio')
+        .withMessage('Campo requerido: Rol')
         .escape(),
     check("stratum")
         .notEmpty()
-        .withMessage('El estrato es obligatorio')
+        .withMessage('Campo requerido: Estrato')
         .escape(),
     check("sisben")
         .notEmpty()
-        .withMessage('La información de SISBEN es obligatoria')
+        .withMessage('Campo requerido: Información SISBEN')
         .escape(),
     check("eps")
         .notEmpty()
-        .withMessage('La EPS es obligatoria')
+        .withMessage('Campo requerido: EPS')
         .escape(),
     check("typeBlood")
         .notEmpty()
-        .withMessage('El tipo de sangre es obligatorio')
+        .withMessage('Campo requerido: Tipo de sangre')
         .escape(),
     check("victimPopulation")
         .notEmpty()
-        .withMessage('La información de población víctima es obligatoria')
+        .withMessage('Campo requerido: Población víctima')
         .isBoolean()
-        .withMessage('La población víctima debe ser un valor booleano')
+        .withMessage('Validación: Población víctima debe ser verdadero o falso')
         .escape(),
     check("disability")
         .notEmpty()
-        .withMessage('La información de discapacidad es obligatoria')
+        .withMessage('Campo requerido: Información de discapacidad')
         .escape(),
     check("ethnic")
         .notEmpty()
-        .withMessage('La etnia es obligatoria')
+        .withMessage('Campo requerido: Etnia')
         .escape(),
     check("profilePhoto")
         .notEmpty()
-        .withMessage('La foto de perfil es obligatoria')
+        .withMessage('Campo requerido: Foto de perfil')
         .escape(),
     check("signDigital")
         .notEmpty()
-        .withMessage('La firma digital es obligatoria')
+        .withMessage('Campo requerido: Firma digital')
         .escape(),
     check("college")
         .notEmpty()
-        .withMessage('El colegio es obligatorio')
+        .withMessage('Campo requerido: Colegio')
         .isMongoId()
-        .withMessage('El colegio debe ser un ID de MongoDB válido')
+        .withMessage('Validación: ID de colegio debe ser válido')
         .escape(),
 ];
 
 const validationsChangePassword = [
     check("currentPassword")
         .notEmpty()
-        .withMessage('La contraseña actual es obligatoria')
+        .withMessage('Campo requerido: Contraseña actual')
         .escape(),
     check("newPassword")
         .notEmpty()
-        .withMessage('La nueva contraseña es obligatoria')
+        .withMessage('Campo requerido: Nueva contraseña')
         .escape()
 ];
 
@@ -172,7 +172,7 @@ const validationsChangePassword = [
  *       401:
  *         description: Token inválido o ausente
  */
-router.get("/role/:role", /* validar, */ param("role").notEmpty(), seeValidations, functionsUsers.getUsersByRol);
+router.get("/role/:role", /* validar, */ param("role").notEmpty().withMessage ('campo requerido: Rol'), seeValidations, functionsUsers.getUsersByRol);
 
 /**
  * @swagger
@@ -195,7 +195,7 @@ router.get("/role/:role", /* validar, */ param("role").notEmpty(), seeValidation
  *       404:
  *         description: Usuario no encontrado
  */
-router.get("/:id", /* validar */ param("id").notEmpty().isMongoId(), seeValidations, functionsUsers.getUsersById);
+router.get("/:id", /* validar */ param("id").notEmpty().withMessage('Campo requerido: ID') .isMongoId(), seeValidations, functionsUsers.getUsersById);
 
 /**
  * @swagger

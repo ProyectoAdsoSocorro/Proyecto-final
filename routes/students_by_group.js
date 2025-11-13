@@ -7,9 +7,9 @@ import httpReportStudents from "../controllers/students_by_group.js";
 const router = Router();
 
 router.get("/list-students/:schoolyear/:schoolId/:GroupId", [
-    check("GroupId").isMongoId().withMessage("ID de grupo no válido").trim(),
-    check("schoolyear").notEmpty().withMessage("El año escolar es obligatorio").trim(),
-    check("schoolId").isMongoId().withMessage("ID de colegio no válido").trim(),
+    check("GroupId").isMongoId().withMessage("Validación: ID de grupo debe ser válido").trim(),
+    check("schoolyear").notEmpty().withMessage("Campo requerido: Año escolar").trim(),
+    check("schoolId").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
     validateFields
     
 ], httpReportStudents.getstudent);

@@ -7,42 +7,42 @@ const routes = Router()
 
 routes.get("/api/schools/", httpSchools.getSchools);
 routes.get("/api/schools/:id", [
-    check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
+    check("id").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
     validateFields
 ], httpSchools.getSchoolById);
 routes.post("/schools", [
-    check("name").notEmpty().withMessage("El nombre es obligatorio").trim(),
-    check("code").notEmpty().withMessage("El código es obligatorio").trim(),
-    check("address").notEmpty().withMessage("La dirección es obligatoria").trim(),
-    check("phone").notEmpty().withMessage("El telefono es obligatorio").trim(),
-    check("email").isEmail().withMessage("El email no es válido").trim(),
+    check("name").notEmpty().withMessage("Campo requerido: Nombre del colegio").trim(),
+    check("code").notEmpty().withMessage("Campo requerido: Código del colegio").trim(),
+    check("address").notEmpty().withMessage("Campo requerido: Dirección del colegio").trim(),
+    check("phone").notEmpty().withMessage("Campo requerido: Número de teléfono").trim(),
+    check("email").isEmail().withMessage("Validación: Correo electrónico debe ser válido").trim(),
     validateFields
 ], httpSchools.createSchool);
 
 routes.post("/api/notify-admin-created",[
-    check("schoolName").notEmpty().withMessage("El nombre del colegio es obligatorio").trim(),
-    check("adminEmail").isEmail().withMessage("El email del admin no es válido").trim(),
+    check("schoolName").notEmpty().withMessage("Campo requerido: Nombre del colegio").trim(),
+    check("adminEmail").isEmail().withMessage("Validación: Correo electrónico debe ser válido").trim(),
     validateFields
 ], httpSchools.notifyAdminCreated);
 routes.put("/api/schools/:id", [
-    check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
-    check("name").notEmpty().withMessage("El nombre es obligatorio").trim(),
-    check("code").notEmpty().withMessage("El código es obligatorio").trim(),
-    check("address").notEmpty().withMessage("La dirección es obligatoria").trim(),
-    check("phone").notEmpty().withMessage("El telefono es obligatorio").trim(),
-    check("email").isEmail().withMessage("El email no es válido").trim(),
+    check("id").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
+    check("name").notEmpty().withMessage("Campo requerido: Nombre del colegio").trim(),
+    check("code").notEmpty().withMessage("Campo requerido: Código del colegio").trim(),
+    check("address").notEmpty().withMessage("Campo requerido: Dirección del colegio").trim(),
+    check("phone").notEmpty().withMessage("Campo requerido: Número de teléfono").trim(),
+    check("email").isEmail().withMessage("Validación: Correo electrónico debe ser válido").trim(),
     validateFields
 ], httpSchools.updateSchool);
 routes.put("/api/schools/:id/activate", [
-    check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
+    check("id").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
     validateFields
 ], httpSchools.activateSchool);      // Route to activate
 routes.put("/api/schools/:id/deactivate", [
-    check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
+    check("id").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
     validateFields
 ], httpSchools.deactivateSchool);
 routes.delete("/api/schools/:id", [
-    check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
+    check("id").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
     validateFields
 ], httpSchools.deleteSchool);
 export default routes

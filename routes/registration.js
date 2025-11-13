@@ -6,108 +6,213 @@ import validateFields  from "../middlewares/check.js";
 const routes = Router();
 
 routes.get("/year/:year", [
-    check('year', 'El año debe ser un número válido entre 1900 y 2100').isInt({ min: 1900, max: 2100 }).toInt(),
+    check('year')
+      .isInt({ min: 1900, max: 2100 })
+      .withMessage('Rango: Año debe estar entre 1900 y 2100'),
     validateFields
 ], httpRegistration.listAllByYear);
 
 routes.get("/:id", [
-    check('id', 'El ID proporcionado no es válido. Debe ser un identificador único.').isMongoId().trim(),
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID de matrícula debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.listById);
 
 routes.get("/groups/:groupId/registrations", [
-    check('groupId', 'El ID del grupo no es válido.').isMongoId().trim(), // Agregué isMongoId() aquí también
+    check('groupId')
+      .isMongoId()
+      .withMessage('Validación: ID de grupo debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.listRegistrationByGroup);
 
 routes.get("/student/:studentId/registrations", [
-    check('studentId', 'El ID del estudiante no es válido.').isMongoId().trim(),
+    check('studentId')
+      .isMongoId()
+      .withMessage('Validación: ID de estudiante debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.listRegistrationByStudent);
 
 routes.post("/", [
-    check('student', 'El ID del estudiante es obligatorio y debe ser válido.').isMongoId().trim(),
-    check('attendant').isArray().withMessage('El campo acudiente debe ser una lista con el ID del acudiente y su parentesco.'),
-    check('attendant.*._id').isMongoId().withMessage('El ID del acudiente no es válido. Asegúrate de que sea un identificador único.'),
-    check('attendant.*.relationship').isString().withMessage('El parentesco debe ser un texto válido (por ejemplo: padre, madre, abuelo).'),
-    check('group', 'El ID del grupo es obligatorio y debe ser válido.').isMongoId().trim(), // Aseguramos que también sea un ObjectId
-    check('year', 'El año es obligatorio y debe ser un número entre 1900 y 2100.').isInt({ min: 1900, max: 2100 }).toInt(),
-    check('registrationDate', 'La fecha de matrícula es obligatoria y debe tener formato YYYY-MM-DD.').trim().isISO8601().isDate(),
-    check('registrationNumber', 'El número de matrícula es obligatorio.').trim(),
-    check('description', 'La descripción de la matrícula es obligatoria.').trim(),
-    check('school', 'El ID del colegio es obligatorio y debe ser válido.').isMongoId().trim(),
+    check('student')
+      .isMongoId()
+      .withMessage('Validación: ID de estudiante debe ser válido')
+      .trim(),
+    check('attendant')
+      .isArray()
+      .withMessage('Formato: Campo acudiente debe ser un array'),
+    check('attendant.*._id')
+      .isMongoId()
+      .withMessage('Validación: ID de acudiente debe ser válido'),
+    check('attendant.*.relationship')
+      .isString()
+      .withMessage('Validación: Parentesco debe ser texto válido'),
+    check('group')
+      .isMongoId()
+      .withMessage('Validación: ID de grupo debe ser válido')
+      .trim(),
+    check('year')
+      .isInt({ min: 1900, max: 2100 })
+      .withMessage('Rango: Año debe estar entre 1900 y 2100'),
+    check('registrationDate')
+      .trim()
+      .isISO8601()
+      .withMessage('Formato: Fecha de matrícula debe ser YYYY-MM-DD')
+      .isDate(),
+    check('registrationNumber')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Número de matrícula'),
+    check('description')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Descripción de matrícula'),
+    check('school')
+      .isMongoId()
+      .withMessage('Validación: ID de colegio debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.createRegistration);
 
 routes.put("/:id", [
-    check('id', 'El ID proporcionado no es válido.').isMongoId().trim(),
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID de matrícula debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.updateRegistration);
 
 routes.put("/:id/activate", [
-    check('id', 'El ID proporcionado no es válido.').isMongoId().trim(),
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID de matrícula debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.activateRegistration);
 
 routes.put("/:id/desactivate", [
-    check('id', 'El ID proporcionado no es válido.').isMongoId().trim(),
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID de matrícula debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.withdrawnRegistration);
 
 routes.put("/:id/desertion", [
-    check('id', 'El ID proporcionado no es válido.').isMongoId().trim(),
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID de matrícula debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.desertionRegistration);
 
 routes.put("/:id/graduated", [
-    check('id', 'El ID proporcionado no es válido.').isMongoId().trim(),
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID de matrícula debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.graduatedRegistration);
 
 routes.put("/:id/withdraw", [
-    check('id', 'El ID proporcionado no es válido.').isMongoId().trim(),
+    check('id')
+      .isMongoId()
+      .withMessage('Validación: ID de matrícula debe ser válido')
+      .trim(),
     validateFields
 ], httpRegistration.withdrawStudent);
 
-// Rutas de acudientes
+// Acudientes
 routes.get("/attendant/:attendantId/registration", [
-    check('attendantId', 'El ID del acudiente no es válido.').isMongoId().trim(),
+    check('attendantId')
+      .isMongoId()
+      .withMessage('Validación: ID de acudiente debe ser válido')
+      .trim(),
     validateFields
-], httpRegistration.listAttendantById)
+], httpRegistration.listAttendantById);
 
 routes.post("/attendant/registration", [
-    check('schoolId', 'El ID del colegio es obligatorio y debe ser válido.').isMongoId().trim(),
-    check('firstName', 'El nombre es obligatorio.').trim(),
-    check('lastName', 'El apellido es obligatorio.').trim(),
-    check('documentType', 'El tipo de documento es obligatorio.').trim(),
-    check('documentNumber', 'El número de documento es obligatorio.').trim(),
-    check('email', 'El correo electrónico es obligatorio y debe ser válido.').isEmail().trim(),
-    check('password', 'La contraseña es obligatoria.').trim(),
-    check('phone', 'El teléfono es obligatorio.').trim(),
-    check('address', 'La dirección es obligatoria.').trim(),
-    check('dateOfBirth', 'La fecha de nacimiento es obligatoria y debe tener formato YYYY-MM-DD.').trim().isISO8601().isDate(),
-    check('gender', 'El género es obligatorio.').trim(),
+    check('schoolId')
+      .isMongoId()
+      .withMessage('Validación: ID de colegio debe ser válido')
+      .trim(),
+    check('firstName')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Nombre'),
+    check('lastName')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Apellido'),
+    check('documentType')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Tipo de documento'),
+    check('documentNumber')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Número de documento'),
+    check('email')
+      .isEmail()
+      .withMessage('Validación: Correo electrónico debe ser válido')
+      .trim(),
+    check('password')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Contraseña'),
+    check('phone')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Número de teléfono'),
+    check('address')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Dirección'),
+    check('dateOfBirth')
+      .trim()
+      .isISO8601()
+      .withMessage('Formato: Fecha de nacimiento debe ser YYYY-MM-DD')
+      .isDate(),
+    check('gender')
+      .trim()
+      .not().isEmpty()
+      .withMessage('Campo requerido: Género'),
     validateFields
-],httpRegistration.createdAttendant)
+], httpRegistration.createdAttendant);
 
 routes.put("/attendant/:attendantId/registration", [
-    check('attendantId', 'El ID del acudiente no es válido.').isMongoId().trim(),
+    check('attendantId')
+      .isMongoId()
+      .withMessage('Validación: ID de acudiente debe ser válido')
+      .trim(),
     validateFields
-], httpRegistration.updatedAttendant)
+], httpRegistration.updatedAttendant);
 
 routes.put("/attendant/:attendantId/activate/registration", [
-    check('attendantId', 'El ID del acudiente no es válido.').isMongoId().trim(),
+    check('attendantId')
+      .isMongoId()
+      .withMessage('Validación: ID de acudiente debe ser válido')
+      .trim(),
     validateFields
-], httpRegistration.activateAttendant)
+], httpRegistration.activateAttendant);
 
 routes.put("/attendant/:attendantId/desactivate/registration", [
-    check('attendantId', 'El ID del acudiente no es válido.').isMongoId().trim(),
+    check('attendantId')
+      .isMongoId()
+      .withMessage('Validación: ID de acudiente debe ser válido')
+      .trim(),
     validateFields
-], httpRegistration.desactivateAttendant)
+], httpRegistration.desactivateAttendant);
 
 routes.delete("/attendant/:attendantId/registration", [
-    check('attendantId', 'El ID del acudiente no es válido.').isMongoId().trim(),
+    check('attendantId')
+      .isMongoId()
+      .withMessage('Validación: ID de acudiente debe ser válido')
+      .trim(),
     validateFields
-], httpRegistration.deleteAttendant)
+], httpRegistration.deleteAttendant);
 
-export default routes
+export default routes;
