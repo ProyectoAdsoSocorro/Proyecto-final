@@ -16,7 +16,7 @@ const SchoolSchema = new mongoose.Schema({
         unique: true,
         lowercase: true
     },
-     active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true }
 }, {
 });
 
