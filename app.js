@@ -11,7 +11,7 @@ import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
-import reportesEstudiantes from './routes/students_by_group.js';
+import students_by_group from './routes/students_by_group.js';
 import qualifications from './models/qualifications.js';
 import validity from './models/validity.js';
     
@@ -39,7 +39,7 @@ app.use(Indicators);
 app.use('/api', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/registration", registration);
-app.use("/api/reports", reportesEstudiantes )
+app.use("/api/reports", students_by_group )
 app.use("/api/qualifications", qualifications);
 app.use("/api/validity", validity)
 

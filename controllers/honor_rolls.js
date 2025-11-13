@@ -8,3 +8,5 @@ const honorRollsController = async (req, res) => {
     }
 
 }
+
+export default honorRollsController;
