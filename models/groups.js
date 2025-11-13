@@ -2,10 +2,9 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const groupSchema = new Schema({
-    // Reference to the SchoolBranch collection
-    schoolBranch: {
+    headquarters: { //! sede
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'SchoolBranch', // Name of the SchoolBranch model
+        ref: 'Headquarters',
         required: true,
     },
     year: {
@@ -38,7 +37,7 @@ const groupSchema = new Schema({
     // Reference to the SchoolUser/Teachers collection
     groupDirector: {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'SchoolUser', // Name of the SchoolUser model
+        ref: 'ModelUser', // Nombre correcto del modelo de usuarios // ! modelusers
         required: true,
     },
     periodData: [{
@@ -56,9 +55,9 @@ const groupSchema = new Schema({
 });
 
 groupSchema.index({
-    schoolBranch: 1, 
-    year: 1, 
-    grade: 1, 
+    headquarters: 1,
+    year: 1,
+    grade: 1,
     groupIdentifier: 1
 }, { unique: true });
 

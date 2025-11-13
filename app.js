@@ -4,15 +4,14 @@ import dotenv from 'dotenv';
 import groupRoutes from './routes/routergrupo.js'; 
 // !
 // *
-// 
-// TODO:
+// TODO: Cambiar al nombre del modelo de sedes
 // ?
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGO_URL = process.env.MONGO_URL;
+const MONGO_URL = process.env.MONGO_URL; 
 
 const connectDB = async () => {
     if (!MONGO_URL) {
