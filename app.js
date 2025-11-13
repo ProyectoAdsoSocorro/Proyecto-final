@@ -10,7 +10,8 @@ import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
-import reportesEstudiantes from './routes/reports2_routes.js'
+import reportesEstudiantes from './routes/reports2_routes.js';
+import users from './routes/Users.js';
     
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,7 @@ mongoose.connect(MONGO_URL, {
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
 
 // 🌐 Rutas principales
+app.use('/api/users', users);
 app.use('/api/materias', materiaRoutes);
 app.use('/api/periodos', periodsRoutes);
 app.use('/api', direccionNucleoRoutes);

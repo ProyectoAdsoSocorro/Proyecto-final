@@ -2,7 +2,7 @@ import Router from "express";
 import httpRegistration from "../controllers/registration.js"
 import { check } from "express-validator";
 import { validateFields } from "../middlewares/checksTuition.js";
-
+ 
 const routes = Router();
 
 routes.get("/year/:year", [
