@@ -11,11 +11,9 @@ import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
-import reportesEstudiantes from './routes/reports2_routes.js'
-import auth from './routes/auth.js'
+import reportesEstudiantes from './routes/students_by_group.js';
 import qualifications from './models/qualifications.js';
 import validity from './models/validity.js';
-import groups from './routes/groups.js'
     
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,11 +39,9 @@ app.use(Indicators);
 app.use('/api', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/registration", registration);
-app.use("/api/reports", reportesEstudiantes );
-app.use("/api/auth",auth);
+app.use("/api/reports", reportesEstudiantes )
 app.use("/api/qualifications", qualifications);
-app.use("/api/validity", validity);
-app.use("/api/grupos", groups);
+app.use("/api/validity", validity)
 
 // 🧱 Middleware de manejo de errores
 app.use((err, req, res, next) => {
