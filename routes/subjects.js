@@ -11,7 +11,8 @@ import {
   deleteSubject
 } from '../controllers/subjectController.js';
 import { check } from 'express-validator';
-import { validateFields } from '../middlewares/checksSubject.js';
+import  validateFields  from '../middlewares/check.js';
+
 
 const router = Router();
 

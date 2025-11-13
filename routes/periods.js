@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import validateFields from '../middlewares/checksPeriodos.js';
+import validateFields from '../middlewares/check.js';
 import * as httpPeriods from '../controllers/periodController.js';
 
 const router = Router();
