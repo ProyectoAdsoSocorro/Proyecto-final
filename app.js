@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
     
 // Importación de rutas
+import users from './routes/users.js';
 import materiaRoutes from './routes/subjects.js';
 import periodsRoutes from './routes/periods.js';
 import direccionNucleoRoutes from './routes/coreDirectionRoutes.js';
@@ -30,6 +31,7 @@ mongoose.connect(MONGO_URL, {
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
 
 // 🌐 Rutas principales
+app.use('/api/users', users);
 app.use('/api/materias', materiaRoutes);
 app.use('/api/periodos', periodsRoutes);
 app.use('/api', direccionNucleoRoutes);
