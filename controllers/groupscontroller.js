@@ -1,7 +1,6 @@
 import Group from '../models/groups.js';
 import groupHelper from '../helpers/helpergroup.js';
-import ModelUser from '../models/modelAttendant.js';
-
+import ModelUser from '../models/Users.js'; //! modelo usuario
 // 1. GET /api/grupos/año/:año - Listar todos por año
 const getGroupsByYear = async (req, res) => {
     try {
@@ -17,7 +16,7 @@ const getGroupsByYear = async (req, res) => {
         console.error('Error retrieving groups:', error);
         res.status(500).json({
             success: false,
-            message: 'Error retrieving groups.',
+            message: 'Error al obtener los grupos.',
             error: error.message,
         });
     }
@@ -35,7 +34,7 @@ const getGroupById = async (req, res) => {
         if (!group) {
             return res.status(404).json({
                 success: false,
-                message: 'Group not found.',
+                message: 'Grupo no encontrado.',
             });
         }
 
@@ -45,11 +44,11 @@ const getGroupById = async (req, res) => {
         });
     } catch (error) {
         console.error('Error retrieving group:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error retrieving group.',
-            error: error.message,
-        });
+            res.status(500).json({
+                success: false,
+                message: 'Error al obtener el grupo.',
+                error: error.message,
+            });
     }
 };
 
@@ -64,7 +63,7 @@ const getGuardiansByGroup = async (req, res) => {
         if (!group) {
             return res.status(404).json({
                 success: false,
-                message: 'Group not found.',
+                message: 'Grupo no encontrado.',
             });
         }
 
@@ -72,7 +71,7 @@ const getGuardiansByGroup = async (req, res) => {
         if (!sede) {
             return res.status(404).json({
                 success: false,
-                message: 'Headquarters (sede) for this group not found.',
+                message: 'La sede de este grupo no fue encontrada.',
             });
         }
 
@@ -86,17 +85,17 @@ const getGuardiansByGroup = async (req, res) => {
             isActive: true,
         }).select('-password'); // excluir password por seguridad
 
-        return res.status(200).json({
-            success: true,
-            data: guardians,
-        });
+            return res.status(200).json({
+                success: true,
+                data: guardians,
+            });
     } catch (error) {
         console.error('Error retrieving guardians:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error retrieving guardians.',
-            error: error.message,
-        });
+            res.status(500).json({
+                success: false,
+                message: 'Error al obtener los acudientes.',
+                error: error.message,
+            });
     }
 };
 
@@ -109,17 +108,17 @@ const getGroupsByHeadquarters = async (req, res) => {
             .populate('headquarters')
             .populate('groupDirector');
 
-        res.status(200).json({
-            success: true,
-            data: groups,
-        });
+            res.status(200).json({
+                success: true,
+                data: groups,
+            });
     } catch (error) {
         console.error('Error retrieving groups:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error retrieving groups.',
-            error: error.message,
-        });
+            res.status(500).json({
+                success: false,
+                message: 'Error al obtener los grupos.',
+                error: error.message,
+            });
     }
 };
 
@@ -134,7 +133,7 @@ const getStudentsByGroup = async (req, res) => {
         if (!group) {
             return res.status(404).json({
                 success: false,
-                message: 'Group not found.',
+                message: 'Grupo no encontrado.',
             });
         }
 
@@ -142,7 +141,7 @@ const getStudentsByGroup = async (req, res) => {
         if (!sede) {
             return res.status(404).json({
                 success: false,
-                message: 'Headquarters (sede) for this group not found.',
+                message: 'La sede de este grupo no fue encontrada.',
             });
         }
 
@@ -156,17 +155,17 @@ const getStudentsByGroup = async (req, res) => {
             isActive: true,
         }).select('-password'); // excluir password por seguridad
 
-        return res.status(200).json({
-            success: true,
-            data: students,
-        });
+            return res.status(200).json({
+                success: true,
+                data: students,
+            });
     } catch (error) {
         console.error('Error retrieving students:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error retrieving students.',
-            error: error.message,
-        });
+            res.status(500).json({
+                success: false,
+                message: 'Error al obtener los estudiantes.',
+                error: error.message,
+            });
     }
 };
 
@@ -190,18 +189,18 @@ const createGroup = async (req, res) => {
 
         await newGroup.save();
 
-        res.status(201).json({
-            success: true,
-            message: 'Group created successfully.',
-            data: newGroup,
-        });
+            res.status(201).json({
+                success: true,
+                message: 'Grupo creado correctamente.',
+                data: newGroup,
+            });
     } catch (error) {
         console.error('Error creating group:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error creating group.',
-            error: error.message,
-        });
+            res.status(500).json({
+                success: false,
+                message: 'Error al crear el grupo.',
+                error: error.message,
+            });
     }
 };
 
@@ -226,49 +225,80 @@ const createGroupInHeadquarters = async (req, res) => {
 
         await newGroup.save();
 
-        res.status(201).json({
-            success: true,
-            message: 'Group created successfully.',
-            data: newGroup,
-        });
+            res.status(201).json({
+                success: true,
+                message: 'Grupo creado correctamente.',
+                data: newGroup,
+            });
     } catch (error) {
         console.error('Error creating group:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error creating group.',
-            error: error.message,
-        });
+            res.status(500).json({
+                success: false,
+                message: 'Error al crear el grupo.',
+                error: error.message,
+            });
     }
 };
 
-// 8. PUT /api/grupos/:id - Actualizar
+// 8. PUT /api/grupos/:id - Actualizar (persistente)
 const updateGroup = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updateData = req.body;
+    const { id } = req.params;
 
-        const updatedGroup = await Group.findByIdAndUpdate(id, updateData, { new: true })
-            .populate('headquarters')
-            .populate('groupDirector');
+    // Usamos desestructuración para separar los campos únicos
+    // (que no queremos actualizar) del resto de los datos.
+    const {
+        _id, // Por seguridad
+        headquarters,
+        year,
+        grade,
+        groupIdentifier,
+        ...dataToUpdate // Contiene el resto: cycle, level, groupDirector, etc.
+    } = req.body;
+
+    console.log(`Intentando actualizar grupo con ID: ${id}`);
+    console.log('Datos a actualizar:', dataToUpdate); // Deberías ver solo los campos permitidos
+
+    try {
+        const updatedGroup = await Group.findByIdAndUpdate(
+            id,
+            dataToUpdate, // <-- Pasamos SOLO los datos filtrados
+            { new: true, runValidators: true }
+        );
 
         if (!updatedGroup) {
             return res.status(404).json({
                 success: false,
-                message: 'Group not found.',
+                message: `Grupo con ID ${id} no encontrado.`
             });
         }
 
         res.status(200).json({
             success: true,
-            message: 'Group updated successfully.',
-            data: updatedGroup,
+            message: "Grupo actualizado correctamente.",
+            data: updatedGroup
         });
+
     } catch (error) {
-        console.error('Error updating group:', error);
+        // Con esta lógica, el error 11000 ya no debería ocurrir
+        // por esta ruta, pero es bueno mantenerlo por si acaso.
+        if (error.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                message: 'No se pudo actualizar: Conflicto de datos únicos.'
+            });
+        }
+
+        if (error.name === 'CastError') {
+            return res.status(400).json({
+                success: false,
+                message: 'El ID proporcionado no es válido.'
+            });
+        }
+
+        console.error('Error en updateGroup:', error);
         res.status(500).json({
             success: false,
-            message: 'Error updating group.',
-            error: error.message,
+            message: 'Error interno del servidor al actualizar el grupo.'
         });
     }
 };
@@ -285,20 +315,20 @@ const activateGroup = async (req, res) => {
         if (!updatedGroup) {
             return res.status(404).json({
                 success: false,
-                message: 'Group not found.',
+                message: 'Grupo no encontrado.',
             });
         }
 
         res.status(200).json({
             success: true,
-            message: 'Group activated successfully.',
+            message: 'Grupo activado correctamente.',
             data: updatedGroup,
         });
     } catch (error) {
         console.error('Error activating group:', error);
         res.status(500).json({
             success: false,
-            message: 'Error activating group.',
+            message: 'Error al activar el grupo.',
             error: error.message,
         });
     }
@@ -316,20 +346,20 @@ const deactivateGroup = async (req, res) => {
         if (!updatedGroup) {
             return res.status(404).json({
                 success: false,
-                message: 'Group not found.',
+                message: 'Grupo no encontrado.',
             });
         }
 
         res.status(200).json({
             success: true,
-            message: 'Group deactivated successfully.',
+            message: 'Grupo desactivado correctamente.',
             data: updatedGroup,
         });
     } catch (error) {
         console.error('Error deactivating group:', error);
         res.status(500).json({
             success: false,
-            message: 'Error deactivating group.',
+            message: 'Error al desactivar el grupo.',
             error: error.message,
         });
     }
@@ -345,20 +375,20 @@ const deleteGroup = async (req, res) => {
         if (!deletedGroup) {
             return res.status(404).json({
                 success: false,
-                message: 'Group not found.',
+                message: 'Grupo no encontrado.',
             });
         }
 
         res.status(200).json({
             success: true,
-            message: 'Group deleted successfully.',
+            message: 'Grupo eliminado correctamente.',
             data: deletedGroup,
         });
     } catch (error) {
         console.error('Error deleting group:', error);
         res.status(500).json({
             success: false,
-            message: 'Error deleting group.',
+            message: 'Error al eliminar el grupo.',
             error: error.message,
         });
     }

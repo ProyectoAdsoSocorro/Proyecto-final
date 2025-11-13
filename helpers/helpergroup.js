@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import schoolmodel from '../models/headquarters.js';
+import headquarters from '../models/headquarters.js';
 import modelAttendant from '../models/modelAttendant.js';
-
+import Users from '../models/users.js';
 // These values now match the Mongoose schema enums
 const VALID_LEVELS = ['PREESCOLAR', 'PRIMARIA', 'SECUNDARIA', 'ESCUELA_SECUNDARIA'];
 const VALID_CYCLES = ['normal', 'semestral'];
@@ -19,7 +19,7 @@ const validateHeadquarters = async (headquartersId) => {
         throw new Error(`The Headquarters ID (${headquartersId}) is not a valid ObjectId format.`);
     }
     
-    const headquartersExists = await schoolmodel.findById(headquartersId);
+    const headquartersExists = await headquarters.findById(headquartersId);
     
     if (!headquartersExists) {
         throw new Error(`The Headquarters with ID ${headquartersId} does not exist.`);
@@ -33,7 +33,7 @@ const validateGroupDirector = async (directorId) => {
         throw new Error(`The Director ID (${directorId}) is not a valid ObjectId format.`);
     }
     
-    const director = await modelAttendant.findById(directorId);
+    const director = await Users.findById(directorId);// ! modelusers
     
     if (!director) {
         throw new Error(`The Director with ID ${directorId} does not exist.`);

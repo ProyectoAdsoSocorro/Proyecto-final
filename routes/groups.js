@@ -70,22 +70,19 @@ router.post('/',
 );
 
 // 8. PUT /api/grupos/:id - Actualizar
-router.put('/:id',
+router.put('/:id', 
     [
-        param('id', 'Invalid ID format.').isMongoId(),
-    body('headquarters').optional().custom(groupHelper.validateHeadquarters),
+        param('id', 'El ID proporcionado no es un ID de Mongo válido.').isMongoId(),
         body('groupDirector').optional().custom(groupHelper.validateGroupDirector),
-        body('year').optional().isInt().withMessage('Year must be an integer.').toInt().custom(groupHelper.validateYear),
         body('cycle').optional().custom(groupHelper.validateCycle),
         body('level').optional().custom(groupHelper.validateLevel),
-        body('grade').optional().custom(groupHelper.validateGrade),
-        body('groupIdentifier').optional().notEmpty(),
         body('session').optional().custom(groupHelper.validateSession),
+        body('isActive').optional().isBoolean(),
+        body('periodData').optional().isArray(),
         validarCampos
-    ],
+    ], 
     groupController.updateGroup
 );
-
 // 9. PUT /api/grupos/:id/activar - Activar
 router.put('/:id/activar',
     [
