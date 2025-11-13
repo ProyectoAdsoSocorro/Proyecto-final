@@ -2,7 +2,7 @@ import { Router } from "express";
 import { check, param, body } from "express-validator";
 import groupController from '../controllers/groupsController.js';
 import groupHelper from '../helpers/helpersGroup.js';
-import { validarCampos } from '../middlewares/check.js'; 
+import { validateFields as validarCampos} from '../middlewares/check.js'; 
 
 const router = Router();
 

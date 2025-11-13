@@ -1,5 +1,5 @@
 import Group from '../models/groups.js';
-import groupHelper from '../helpers/helpergroup.js';
+import groupHelper from '../helpers/helpersGroup.js';
 import ModelUser from  "../models/users.js"; //! modelo usuario
 // 1. GET /api/grupos/año/:año - Listar todos por año
 const getGroupsByYear = async (req, res) => {
@@ -266,7 +266,7 @@ const updateGroup = async (req, res) => {
         if (!updatedGroup) {
             return res.status(404).json({
                 success: false,
-                message: Grupo con ID ${id} no encontrado.
+                message: `Grupo con ID ${id} no encontrado`
             });
         }
 
