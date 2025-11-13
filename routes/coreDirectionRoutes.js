@@ -1,7 +1,7 @@
 import express from 'express';
 import * as coreDirectionCtrl from '../controllers/coreDirectionController.js';
 /* import { verifyToken } from '../middlewares/authJwt.js'; */
-import { validateFields } from '../middlewares/checksCoreDirection.js';
+import  validateFields  from '../middlewares/check.js';
 import { check } from 'express-validator';
 
 const router = express.Router();

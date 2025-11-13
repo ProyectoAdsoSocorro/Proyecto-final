@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { check } from "express-validator";
-import validateFields from "../middlewares/checksReports.js";
+import validateFields from "../middlewares/check.js";
 import httpReportStudents from "../controllers/students_by_group.js";
 
 

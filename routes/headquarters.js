@@ -1,7 +1,7 @@
 import Router from "express";
 import httpHeadquarters from "../controllers/headquarters.js"
 import { check } from "express-validator"
-import { validateFields } from "../middlewares/checksHeadquarters.js";
+import  validateFields from "../middlewares/check.js";
 
 const routes = Router();
 

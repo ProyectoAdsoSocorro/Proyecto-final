@@ -1,7 +1,7 @@
 import { Router } from "express";
 import httpIndicators from "../controllers/indicators.js";
 import { check } from "express-validator";
-import validateFields from "../middlewares/Checksindicators.js";
+import validateFields from "../middlewares/check.js";
 import validateAcademicRelations from "../middlewares/validateAcademicRelations.js";
 import validateIndicatorData from "../middlewares/validateIndicatorData.js";
 
