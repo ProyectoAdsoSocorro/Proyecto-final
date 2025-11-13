@@ -34,9 +34,9 @@ mongoose.connect(MONGO_URL, {
 app.use('/api/users', users);
 app.use('/api/materias', materiaRoutes);
 app.use('/api/periodos', periodsRoutes);
-app.use('/api', direccionNucleoRoutes);
-app.use(Indicators);
-app.use('/api', colegiosRoutes);
+app.use('/api/core-direction', direccionNucleoRoutes);
+app.use('/api/indicators', Indicators);
+app.use('/api/school', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/registration", registration);
 app.use("/api/reports", students_by_group )

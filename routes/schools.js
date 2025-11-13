@@ -5,12 +5,12 @@ import validateFields from "../middlewares/Checksschools.js";
 
 const routes = Router()
 
-routes.get("/api/schools/", httpSchools.getSchools);
-routes.get("/api/schools/:id", [
+routes.get("/", httpSchools.getSchools);
+routes.get("/:id", [
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
     validateFields
 ], httpSchools.getSchoolById);
-routes.post("/schools", [
+routes.post("/", [
     check("name").notEmpty().withMessage("El nombre es obligatorio").trim(),
     check("code").notEmpty().withMessage("El código es obligatorio").trim(),
     check("address").notEmpty().withMessage("La dirección es obligatoria").trim(),
@@ -19,12 +19,12 @@ routes.post("/schools", [
     validateFields
 ], httpSchools.createSchool);
 
-routes.post("/api/notify-admin-created",[
+routes.post("/notify-admin-created",[
     check("schoolName").notEmpty().withMessage("El nombre del colegio es obligatorio").trim(),
     check("adminEmail").isEmail().withMessage("El email del admin no es válido").trim(),
     validateFields
 ], httpSchools.notifyAdminCreated);
-routes.put("/api/schools/:id", [
+routes.put("/:id", [
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
     check("name").notEmpty().withMessage("El nombre es obligatorio").trim(),
     check("code").notEmpty().withMessage("El código es obligatorio").trim(),
@@ -33,15 +33,15 @@ routes.put("/api/schools/:id", [
     check("email").isEmail().withMessage("El email no es válido").trim(),
     validateFields
 ], httpSchools.updateSchool);
-routes.put("/api/schools/:id/activate", [
+routes.put(":id/activate", [
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
     validateFields
 ], httpSchools.activateSchool);      // Route to activate
-routes.put("/api/schools/:id/deactivate", [
+routes.put("/:id/desactivate", [
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
     validateFields
 ], httpSchools.deactivateSchool);
-routes.delete("/api/schools/:id", [
+routes.delete("/:id", [
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
     validateFields
 ], httpSchools.deleteSchool);
