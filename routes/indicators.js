@@ -1,7 +1,7 @@
 import { Router } from "express";
 import httpIndicators from "../controllers/indicators.js";
 import { check } from "express-validator";
-import validateFields from "../middlewares/Checksindicators.js";
+import validateFields from "../middlewares/check.js";
 import validateAcademicRelations from "../middlewares/validateAcademicRelations.js";
 import validateIndicatorData from "../middlewares/validateIndicatorData.js";
 
@@ -15,8 +15,7 @@ routes.get("/", httpIndicators.getIndicators,);
 routes.get("/:id",[
  check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
     validateFields
-
-] ,httpIndicators.getIndicatorById);
+], httpIndicators.getIndicatorById);
 
 // GET - INDICADORES POR CARGA ACADÉMICA
 routes.get("/academicloads/:academicLoadId/indicators", [
@@ -27,8 +26,7 @@ routes.get("/academicloads/:academicLoadId/indicators", [
 routes.get("/years/:years", [
      check("years").isString().withMessage("Año no válido").trim(),
     validateFields
-
-],httpIndicators.getIndicatorsByYear);
+], httpIndicators.getIndicatorsByYear);
 
 
 /* routes.get("/api/groups/:groupsId/indicators", [
@@ -50,8 +48,7 @@ routes.get("/periods/:periodsId/indicators",[
 
     check("periodsId").isMongoId().withMessage("ID de Período no válido").trim(),
     validateFields
-
-] ,httpIndicators.getIndicatorsByPeriod);
+], httpIndicators.getIndicatorsByPeriod);
 
 
 routes.get("modelusers/:usersId/indicators",[
@@ -60,7 +57,7 @@ routes.get("modelusers/:usersId/indicators",[
 
 
 ] ,httpIndicators.getIndicatorsByUser);
-routes.post("/indicators",  [
+routes.post("/",  [
    check("academicLoad").isMongoId().withMessage("ID de Carga Académica no válido"),
     check("period").isMongoId().withMessage("ID de Período no válido"),
     check("type").isArray().withMessage("Type debe ser un array"),
@@ -68,12 +65,11 @@ routes.post("/indicators",  [
     check("performanceIndicators").isIn(['Alto', 'Medio', 'Bajo', 'Excelente', 'Regular', 'Deficiente']).withMessage("performanceIndicators no válido"),
     check("userWhoDidIt").isMongoId().withMessage("ID de Usuario no válido"),
      validateFields,
-    /* validateAcademicRelations, */
     validateIndicatorData,
 
 
 ],httpIndicators.createIndicator);
-routes.put("/indicators/:id", [
+routes.put("/:id", [
 
  check("academicLoad").isMongoId().withMessage("ID de Carga Académica no válido"),
     check("period").isMongoId().withMessage("ID de Período no válido"),
@@ -82,27 +78,25 @@ routes.put("/indicators/:id", [
     check("performanceIndicators").isIn(['Alto', 'Medio', 'Bajo', 'Excelente', 'Regular', 'Deficiente']).withMessage("performanceIndicators no válido"),
     check("userWhoDidIt").isMongoId().withMessage("ID de Usuario no válido"),
     validateFields,
-    /* validateAcademicRelations, */
     validateIndicatorData,
 
 ],httpIndicators.updateIndicator);
-routes.put("/indicators/:id/active",[
+routes.put("/:id/active",[
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
     validateFields
 
 ] ,httpIndicators.activeIndicator);
-routes.put("/indicators/:id/deactive", [
+routes.put("/:id/deactive", [
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
     validateFields
 
 ],httpIndicators.deactiveIndicator);
-routes.delete("/indicators/:id", [
+routes.delete("/:id", [
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
     validateFields
-
-],httpIndicators.deleteIndicator);
+], httpIndicators.deleteIndicator);
 
 export default routes;
