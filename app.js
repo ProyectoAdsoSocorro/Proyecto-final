@@ -33,6 +33,9 @@ import colegiosRoutes from './routes/schools.js';
 import tuition from "./routes/tuition.js";
 import headquartersRoutes from './routes/headquarters.js';
 import reportesEstudiantes from './routes/reports2_routes.js'
+import auth from './routes/auth.js'
+import qualifications from './models/qualifications.js';
+import validity from './models/validity.js';
     
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -58,6 +61,9 @@ app.use('/api', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/tuitions", tuition);
 app.use("/api/reports", reportesEstudiantes )
+app.use("/api/auth",auth)
+app.use("/api/qualifications", qualifications);
+app.use("/api/validity", validity)
 
 // 🧱 Middleware de manejo de errores
 app.use((err, req, res, next) => {
