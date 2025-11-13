@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { check } from "express-validator";
 import validateFields from "../middlewares/checksReports.js";
-import httpReportStudents from "../controllers/reports2_routes.js";
+import httpReportStudents from "../controllers/students_by_group.js";
 
 
 const router = Router();
@@ -11,6 +11,7 @@ router.get("/list-students/:schoolyear/:schoolId/:GroupId", [
     check("schoolyear").notEmpty().withMessage("El año escolar es obligatorio").trim(),
     check("schoolId").isMongoId().withMessage("ID de colegio no válido").trim(),
     validateFields
+    
 ], httpReportStudents.getstudent);
 
 export default router;

@@ -11,9 +11,13 @@ import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
+<<<<<<< HEAD
 import groupRoutes from './routes/groups.js';
 import reportesEstudiantes from './routes/reports2_routes.js'
 import auth from './routes/auth.js'
+=======
+import reportesEstudiantes from './routes/students_by_group.js';
+>>>>>>> ed12bd37f247557cb54a0761f07a035cc0b4d6b0
 import qualifications from './models/qualifications.js';
 import validity from './models/validity.js';
     
@@ -42,7 +46,6 @@ app.use('/api', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/tuitions", tuition);
 app.use("/api/reports", reportesEstudiantes )
-app.use("/api/auth",auth)
 app.use("/api/qualifications", qualifications);
 app.use("/api/validity", validity)
 
