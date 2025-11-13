@@ -59,38 +59,38 @@ router.post(
   [
     check('year')
       .isInt({ min: 2000, max: 2100 })
-      .withMessage('El año académico debe ser un número válido'),
+      .withMessage('Rango: Año académico debe estar entre 2000 y 2100'),
     check('school')
       .isMongoId()
-      .withMessage('El ID del colegio no es válido'),
+      .withMessage('Validación: ID del colegio debe ser válido'),
     check('rector')
       .optional()
       .isMongoId()
-      .withMessage('El ID del rector no es válido'),
+      .withMessage('Validación: ID del rector debe ser válido'),
     check('generalSecretary')
       .optional()
       .isMongoId()
-      .withMessage('El ID de la secretaria general no es válido'),
+      .withMessage('Validación: ID de secretaria general debe ser válido'),
     check('headquarterInfo')
       .optional()
       .isArray()
-      .withMessage('headquarterInfo debe ser un arreglo'),
+      .withMessage('Formato: Información de sedes debe ser un array'),
     check('maxGrade')
       .optional()
       .isFloat({ min: 0, max: 10 })
-      .withMessage('La nota máxima debe estar entre 0 y 10'),
+      .withMessage('Rango: Nota máxima debe estar entre 0 y 10'),
     check('minGrade')
       .optional()
       .isFloat({ min: 0, max: 10 })
-      .withMessage('La nota mínima debe estar entre 0 y 10'),
+      .withMessage('Rango: Nota mínima debe estar entre 0 y 10'),
     check('recoveryType')
       .optional()
       .isIn(['PROMEDIO', 'REEMPLAZO'])
-      .withMessage('El tipo de recuperación debe ser PROMEDIO o REEMPLAZO'),
+      .withMessage('Validación: Tipo de recuperación debe ser PROMEDIO o REEMPLAZO'),
     check('recoveryPercentage')
       .optional()
       .isInt({ min: 0, max: 100 })
-      .withMessage('El porcentaje de recuperación debe estar entre 0 y 100'),
+      .withMessage('Rango: Porcentaje de recuperación debe estar entre 0 y 100'),
     // auth,
     // roleCheck(['secretaria']),
   ],
@@ -106,7 +106,7 @@ router.post(
 router.put(
   '/:id/activar',
   [
-    check('id').isMongoId().withMessage('El ID de la vigencia no es válido'),
+    check('id').isMongoId().withMessage('Validación: ID de vigencia debe ser válido'),
     // auth,
     // roleCheck(['secretaria']),
   ],
@@ -122,7 +122,7 @@ router.put(
 router.put(
   '/:id/desactivar',
   [
-    check('id').isMongoId().withMessage('El ID de la vigencia no es válido'),
+    check('id').isMongoId().withMessage('Validación: ID de vigencia debe ser válido'),
     // auth,
     // roleCheck(['secretaria']),
   ],
