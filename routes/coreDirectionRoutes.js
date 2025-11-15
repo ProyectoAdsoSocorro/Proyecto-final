@@ -6,9 +6,9 @@ import { check } from 'express-validator';
 
 const router = express.Router();
 
-router.get('/core-directions', /* verifyToken */ coreDirectionCtrl.getAll);
+router.get('/', /* verifyToken */ coreDirectionCtrl.getAll);
 
-router.post('/core-directions', [
+router.post('/', [
     check('name')
       .not().isEmpty()
       .withMessage('Campo requerido: Nombre'),
@@ -33,7 +33,7 @@ router.post('/core-directions', [
     validateFields
 ], /* verifyToken, */ coreDirectionCtrl.create);
 
-router.post('/core-directions/login', [
+router.post('/login', [
     check('email')
       .isEmail()
       .withMessage('Validación: Correo electrónico debe ser válido'),
@@ -43,7 +43,7 @@ router.post('/core-directions/login', [
     validateFields
 ], coreDirectionCtrl.login);
 
-router.put('/core-directions/:id', [
+router.put('/:id', [
     check('id')
       .isMongoId()
       .not().isEmpty()
@@ -72,26 +72,26 @@ router.put('/core-directions/:id', [
     validateFields
 ], /* verifyToken,  */coreDirectionCtrl.update);
 
-router.put('/core-directions/:id/change-password', [
+router.put('/:id/change-password', [
     check('id')
       .isMongoId()
       .not().isEmpty()
       .withMessage('Validación: ID debe ser válido'),
 ], /* verifyToken,  */coreDirectionCtrl.changePassword);
 
-router.delete('/core-directions/:id', [
+router.delete('/:id', [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
 ], coreDirectionCtrl.remove);
 
-router.put('/core-directions/:id/activate', [
+router.put('/:id/activate', [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
 ], coreDirectionCtrl.activate);
 
-router.put('/core-directions/:id/deactivate', [
+router.put('/:id/deactivate', [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
