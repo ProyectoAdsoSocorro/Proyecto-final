@@ -3,6 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
     
 // Importación de rutas
+import users from './routes/users.js';
 import materiaRoutes from './routes/subjects.js';
 import periodsRoutes from './routes/periods.js';
 import direccionNucleoRoutes from './routes/coreDirectionRoutes.js';
@@ -10,7 +11,15 @@ import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
+
 import reportesEstudiantes from './routes/reports2_routes.js'
+import auth from './routes/auth.js'
+
+import reportesEstudiantes from './routes/students_by_group.js';
+import students_by_group from './routes/students_by_group.js';
+import qualifications from './models/qualifications.js';
+import validity from './models/validity.js';
+import groups from './routes/groups.js';
     
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,14 +37,19 @@ mongoose.connect(MONGO_URL, {
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
 
 // 🌐 Rutas principales
+app.use('/api/users', users);
 app.use('/api/materias', materiaRoutes);
 app.use('/api/periodos', periodsRoutes);
-app.use('/api', direccionNucleoRoutes);
-app.use(Indicators);
-app.use('/api', colegiosRoutes);
+app.use('/api/core-direction', direccionNucleoRoutes);
+app.use('/api/indicators', Indicators);
+app.use('/api/school', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/registration", registration);
-app.use("/api/reports", reportesEstudiantes )
+app.use("/api/reports", students_by_group )
+app.use("/api/qualifications", qualifications);
+app.use("/api/validity", validity)
+app.use("/api/grupos", groups);
+
 
 // 🧱 Middleware de manejo de errores
 app.use((err, req, res, next) => {

@@ -40,7 +40,7 @@ const httpSchools = {
                 address,
                 phone,
                 email,
-                 adminFirstName,
+                adminFirstName,
                 adminLastName,
                 adminDocumentType,
                 adminDocumentNumber,
