@@ -12,7 +12,6 @@ import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
 
-import groupRoutes from './routes/groups.js';
 import reportesEstudiantes from './routes/reports2_routes.js'
 import auth from './routes/auth.js'
 
