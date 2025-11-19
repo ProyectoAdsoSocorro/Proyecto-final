@@ -12,14 +12,15 @@ import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
 
-import reportesEstudiantes from './routes/reports2_routes.js'
-import auth from './routes/auth.js'
+// import reportesEstudiantes from './routes/reports2_routes.js'
 
-import reportesEstudiantes from './routes/students_by_group.js';
+
+// import reportesEstudiantes from './routes/students_by_group.js';
 import students_by_group from './routes/students_by_group.js';
 import qualifications from './models/qualifications.js';
 import validity from './models/validity.js';
 import groups from './routes/groups.js';
+import reports from './routes/reports.js';
     
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,23 +30,29 @@ const MONGO_URL = process.env.MONGO_URL;
 app.use(express.json());
 
 // 🔗 Conexión a MongoDB
-mongoose.connect(MONGO_URL, {
+/* mongoose.connect(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
 .then(() => console.log('✅ MongoDB conectado correctamente'))
+.catch((error) => console.error('❌ Error al conectar con MongoDB:', error)); */
+
+mongoose.connect(MONGO_URL)
+.then(() => console.log('✅ MongoDB conectado correctamente'))
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
+
 
 // 🌐 Rutas principales
 app.use('/api/users', users);
-app.use('/api/materias', materiaRoutes);
-app.use('/api/periodos', periodsRoutes);
+app.use('/api/subjects', materiaRoutes);
+app.use('/api/periods', periodsRoutes);
 app.use('/api/core-direction', direccionNucleoRoutes);
 app.use('/api/indicators', Indicators);
 app.use('/api/school', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/registration", registration);
 app.use("/api/reports", students_by_group )
+app.use("/api/reports1", reports);
 app.use("/api/qualifications", qualifications);
 app.use("/api/validity", validity)
 app.use("/api/grupos", groups);
@@ -63,6 +70,17 @@ app.get('/', (req, res) => {
 });
 
 // 🚀 Iniciar servidor
-app.listen(PORT, () => {
+/* app.listen(PORT, () => {
     console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
 });
+
+export default app */
+
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+    });
+}
+
+// Exportar la app para pruebas
+export default app;
