@@ -32,4 +32,4 @@ const modelUsers = new Schema(
         college: { type: mongoose.Types.ObjectId, ref: "School" }   // referenciado al colegio
     });
 
-export default mongoose.model("users", modelUsers);
+export default mongoose.models.users || mongoose.model("users", modelUsers);

@@ -11,6 +11,11 @@ import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
+
+// import reportesEstudiantes from './routes/reports2_routes.js'
+
+
+// import reportesEstudiantes from './routes/students_by_group.js';
 import students_by_group from './routes/students_by_group.js';
 import qualifications from './models/qualifications.js';
 import validity from './models/validity.js';
@@ -25,12 +30,17 @@ const MONGO_URL = process.env.MONGO_URL;
 app.use(express.json());
 
 // 🔗 Conexión a MongoDB
-mongoose.connect(MONGO_URL, {
+/* mongoose.connect(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
 .then(() => console.log('✅ MongoDB conectado correctamente'))
+.catch((error) => console.error('❌ Error al conectar con MongoDB:', error)); */
+
+mongoose.connect(MONGO_URL)
+.then(() => console.log('✅ MongoDB conectado correctamente'))
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
+
 
 // 🌐 Rutas principales
 app.use('/api/users', users);
@@ -60,6 +70,17 @@ app.get('/', (req, res) => {
 });
 
 // 🚀 Iniciar servidor
-app.listen(PORT, () => {
+/* app.listen(PORT, () => {
     console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
 });
+
+export default app */
+
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+    });
+}
+
+// Exportar la app para pruebas
+export default app;
