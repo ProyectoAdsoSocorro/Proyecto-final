@@ -15,6 +15,7 @@ import students_by_group from './routes/students_by_group.js';
 import qualifications from './models/qualifications.js';
 import validity from './models/validity.js';
 import groups from './routes/groups.js';
+import reports from './routes/reports.js';
     
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,6 +42,7 @@ app.use('/api/school', colegiosRoutes);
 app.use('/api/sedes', headquartersRoutes);
 app.use("/api/registration", registration);
 app.use("/api/reports", students_by_group )
+app.use("/api/reports1", reports);
 app.use("/api/qualifications", qualifications);
 app.use("/api/validity", validity)
 app.use("/api/grupos", groups);

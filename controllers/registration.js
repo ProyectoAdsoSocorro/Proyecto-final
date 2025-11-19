@@ -13,7 +13,7 @@ const httpRegistration = {
         const { year } = req.params;
 
         try {
-            const registrationYear = await registration.findOne({ year: year });
+            const registrationYear = await registration.find({ year: year }).populate('student', 'names lastNames' ).populate('attendant._id', 'names lastNames' ).populate('group', 'level grade' ).populate('school', 'name' );
 
             if (!registrationYear) {
                 return res.status(400).json({ msg: "No se encontró matrícula para este año." });
@@ -155,7 +155,7 @@ const httpRegistration = {
                 registrationNumber, 
                 description, 
                 school
-            });
+            }).populate('student', 'names lastNames' ).populate('attendant._id', 'firstName lastName' ).populate('group', 'level grade' ).populate('school', 'name' );
 
             await Registration.save();
 
@@ -185,7 +185,7 @@ const httpRegistration = {
             const updateRegistration = await registration.findByIdAndUpdate(
                 id,
                 {
-                    student,
+                    student: student._id,
                     attendant,
                     group,
                     year,
@@ -195,7 +195,7 @@ const httpRegistration = {
                     school
                 },
                 { new: true } // Devuelve el documento actualizado
-            );
+            ).populate('student', 'names lastNames' ).populate('attendant._id', 'names lastNames' ).populate('group', 'level grade' ).populate('school', 'name' );
 
             if (!updateRegistration) {
                 return res.status(404).json({ msg: "No se encontró la matrícula para actualizar." });

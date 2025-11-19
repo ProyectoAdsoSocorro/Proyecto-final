@@ -40,13 +40,13 @@ const QualificationSchema = new Schema({
         required: true,
         description: 'Año académico'
     },
-    gradeType: { 
+    noteType: { 
         type: String, 
         enum: ['PERIOD', 'FINAL'], 
         required: true,
         description: 'Tipo de nota: PERIOD (período) o FINAL'
     },
-    grade: { 
+    note: { 
         type: Number, 
         required: true,
         description: 'Calificación numérica'
