@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
     
 // Importación de rutas
 import users from './routes/users.js';
-import materiaRoutes from './routes/subjects.js';
+import subjectsRoutes from './routes/subjects.js';
 import periodsRoutes from './routes/periods.js';
 import direccionNucleoRoutes from './routes/coreDirectionRoutes.js';
 import Indicators from "./routes/indicators.js";
@@ -44,12 +44,12 @@ mongoose.connect(MONGO_URL)
 
 // 🌐 Rutas principales
 app.use('/api/users', users);
-app.use('/api/materias', materiaRoutes);
+app.use('/api/subjects', subjectsRoutes);
 app.use('/api/periodos', periodsRoutes);
 app.use('/api/core-direction', direccionNucleoRoutes);
 app.use('/api/indicators', Indicators);
 app.use('/api/school', colegiosRoutes);
-app.use('/api/sedes', headquartersRoutes);
+app.use('/api/headquarters', headquartersRoutes);
 app.use("/api/registration", registration);
 app.use("/api/reports", students_by_group )
 app.use("/api/reports1", reports);
