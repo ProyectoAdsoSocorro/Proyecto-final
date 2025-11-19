@@ -44,7 +44,7 @@ mongoose.connect(MONGO_URL)
 
 // 🌐 Rutas principales
 app.use('/api/users', users);
-app.use('/api/materias', materiaRoutes);
+app.use('/api/subjects', materiaRoutes);
 app.use('/api/periods', periodsRoutes);
 app.use('/api/core-direction', direccionNucleoRoutes);
 app.use('/api/indicators', Indicators);
