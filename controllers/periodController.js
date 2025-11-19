@@ -147,15 +147,38 @@ export const updatePeriod = async (req, res) => {
 // PUT /api/periods/:id/activate
 export const activatePeriod = async (req, res) => {
     try {
-        const periodo = await Period.findByIdAndUpdate(
-            req.params.id,
-            { active: true },
-            { new: true }
-        );
-        if (!periodo) return res.status(404).json({ message: 'Período no encontrado' });
-        res.json({ message: 'Período activado', periodo });
+        const period = await Period.findById(req.params.id);
+        if (!period) return res.status(404).json({ message: 'Período no encontrado' });
+
+        // Si ya existe otro período activo para el mismo colegio y año
+        const other = await Period.findOne({ school: period.school, year: period.year, active: true, _id: { $ne: period._id } }).lean();
+        const force = String(req.query.force || '').toLowerCase() === 'true';
+
+        if (other && !force) {
+            // Devolver error con detalles del período activo existente
+            return res.status(400).json({
+                message: 'Ya existe otro período activo para este colegio y año',
+                activePeriodId: other._id,
+                activePeriodName: other.name || null,
+                year: other.year
+            });
+        }
+
+        if (other && force) {
+            // Forzar: desactivar el otro período activo
+            await Period.updateOne({ _id: other._id }, { active: false });
+        }
+
+        // Activar este periodo
+        period.active = true;
+        await period.save();
+
+        const resp = { message: force ? 'Período activado (forzado), otro período desactivado' : 'Período activado correctamente', period };
+        if (other && force) resp.deactivatedPeriodId = other._id;
+        res.json(resp);
     } catch (error) {
-        res.status(500).json({ message: 'Error al activar el período', error: error.message });
+        console.error('Error al activar período:', error);
+        res.status(500).json({ message: 'Error al activar el período' });
     }
 };
 
