@@ -51,10 +51,10 @@ app.use('/api/indicators', Indicators);
 app.use('/api/school', colegiosRoutes);
 app.use('/api/headquarters', headquartersRoutes);
 app.use("/api/registration", registration);
-app.use("/api/reports", students_by_group )
+app.use("/api/reports", students_by_group );
 app.use("/api/reports1", reports);
 app.use("/api/calificaciones", qualifications);
-app.use("/api/vigencias", validity)
+app.use("/api/vigencias", validity);
 app.use("/api/grupos", groups);
 
 
