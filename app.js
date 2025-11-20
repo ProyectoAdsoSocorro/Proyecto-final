@@ -16,9 +16,9 @@ import headquartersRoutes from './routes/headquarters.js';
 
 
 // import reportesEstudiantes from './routes/students_by_group.js';
-import students_by_group from './routes/students_by_group.js';
-import qualifications from './routes/qualificationsRoutes.js';
-import validity from './routes/validityRoutes.js';
+
+import qualifications from './models/qualifications.js';
+import validity from './models/validity.js';
 import groups from './routes/groups.js';
 import reports from './routes/reports.js';
     
@@ -48,13 +48,12 @@ app.use('/api/subjects', subjectsRoutes);
 app.use('/api/periodos', periodsRoutes);
 app.use('/api/core-direction', direccionNucleoRoutes);
 app.use('/api/indicators', Indicators);
-app.use('/api/school', colegiosRoutes);
+app.use('/api/schools', colegiosRoutes);
 app.use('/api/headquarters', headquartersRoutes);
 app.use("/api/registration", registration);
-app.use("/api/reports", students_by_group );
-app.use("/api/reports1", reports);
-app.use("/api/calificaciones", qualifications);
-app.use("/api/vigencias", validity);
+app.use("/api/reports", reports);
+app.use("/api/qualifications", qualifications);
+app.use("/api/validity", validity)
 app.use("/api/grupos", groups);
 
 

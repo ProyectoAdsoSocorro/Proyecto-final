@@ -1,7 +1,7 @@
 import Group from '../models/groups.js';
 import groupHelper from '../helpers/helpersGroup.js';
-import ModelUser from  "./models/Users.js"; // modelo usuario
-import ModelUser from  "../models/users.js"; // modelo usuario
+import ModelUser from "../models/users.js"; // modelo usuario
+
 // 1. GET /api/grupos/año/:año - Listar todos por año
 const getGroupsByYear = async (req, res) => {
     try {
@@ -11,7 +11,7 @@ const getGroupsByYear = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            data: groups,
+            data: groups
         });
     } catch (error) {
         console.error('Error retrieving groups:', error);
