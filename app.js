@@ -48,7 +48,7 @@ app.use('/api/subjects', subjectsRoutes);
 app.use('/api/periodos', periodsRoutes);
 app.use('/api/core-direction', direccionNucleoRoutes);
 app.use('/api/indicators', Indicators);
-app.use('/api/school', colegiosRoutes);
+app.use('/api/schools', colegiosRoutes);
 app.use('/api/headquarters', headquartersRoutes);
 app.use("/api/registration", registration);
 app.use("/api/reports", reports);
