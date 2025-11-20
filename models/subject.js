@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import groupController from '../controllers/groupsController';
 const { Schema, model } = mongoose;
 
 // Modelo Subject para materias y áreas
