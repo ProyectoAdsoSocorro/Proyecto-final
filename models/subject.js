@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
+import groupController from '../controllers/groupsController';
 const { Schema, model } = mongoose;
 
 // Modelo Subject para materias y áreas
 const SubjectSchema = new Schema({
-  school: {
+  group: {
     type: Schema.Types.ObjectId,
-    ref: 'School', // referencia al modelo de colegios
+    ref: 'Group', // referencia al modelo de grupos
     required: true
   },
   name: {

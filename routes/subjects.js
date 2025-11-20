@@ -23,10 +23,10 @@ router.get('/:id',[
   validateFields
 ], getSubject);                        // GET /api/subjects/:id
 
-router.get('/tipo/:tipoId',[
-  check('Validación: ID de tipo debe ser válido').isMongoId().isEmpty(),
+router.get('/type/:type',[
+  check('type', 'Validación: ID de tipo debe ser válido').not().isEmpty(),
   validateFields
-], listByType);                 // GET /api/subjects/tipo/:tipoId
+], listByType);                 // GET /api/subjects/type/:type
 
 router.get('/area/:areaCode',[
   check('areaCode', 'Validación: ID de tipo debe ser válido').not().isEmpty(),
@@ -56,15 +56,15 @@ router.put('/:id',[
   validateFields
 ], updateSubject);                     // PUT /api/subjects/:id
 
-router.put('/:id/activar',[
+router.put('/:id/activate',[
   check('id', 'Validación: ID de materia debe ser válido').isMongoId().not().isEmpty(),
   validateFields
-], activateSubject);          // PUT /api/subjects/:id/activar
+], activateSubject);          // PUT /api/subjects/:id/activate
 
-router.put('/:id/deactivar',[
+router.put('/:id/desactivate',[
   check('id', 'Validación: ID de materia debe ser válido').isMongoId().not().isEmpty(),
   validateFields
-], deactivateSubject);      // PUT /api/subjects/:id/deactivar
+], deactivateSubject);      // PUT /api/subjects/:id/desactivate
 
 router.delete('/:id',[
   check('id', 'Validación: ID de materia debe ser válido').isMongoId().not().isEmpty(),

@@ -30,6 +30,11 @@ export const listByType = async (req, res) => {
   try {
     const { type } = req.params;
     const subjects = await Subject.find({ type });
+
+    if (!subjects) {
+      res.status(400).json({ message: 'No se encontraron materias/áreas para el tipo especificado' });
+    }
+
     res.status(200).json(subjects);
   } catch (error) {
     res.status(500).json({ message: 'Error al listar por tipo', error });
@@ -40,8 +45,14 @@ export const listByType = async (req, res) => {
 export const listByArea = async (req, res) => {
   try {
     const { areaCode } = req.params;
-    const subjects = await Subject.find({ areaCode });
-    res.status(200).json(subjects);
+    
+    const subjects = await Subject.find({ code: areaCode });
+
+    if (subjects.length === 0) {
+      res.status(400).json({ message: 'No existen materias para el código de área especificado' });
+    };
+
+    res.status(200).json({ data: subjects });
   } catch (error) {
     res.status(500).json({ message: 'Error al listar por área', error });
   }
