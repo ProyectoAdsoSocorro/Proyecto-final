@@ -10,4 +10,20 @@ router.get('/statistics-group/:groupId', [
     validateFields
 ], httpReports.getStatisticsByGroup);
 
+router.get("/list-students/:schoolyear/:schoolId/:GroupId", [
+    check("GroupId").isMongoId().withMessage("Validación: ID de grupo debe ser válido").trim(),
+    check("schoolyear").notEmpty().withMessage("Campo requerido: Año escolar").trim(),
+    check("schoolId").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
+    validateFields
+
+],httpReports.httpReportStudents);
+
+router.get("/honor-roll/:schoolyear/:schoolId/:periodId",[
+    check("schoolyear").notEmpty().withMessage("Campo requerido: Año escolar").trim(),
+    check("schoolId").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
+    check("periodId").isMongoId().withMessage("Validación: ID del Periodo debe ser válido").trim(),
+    validateFields
+
+],httpReports.honorRollsController);
+
 export default router;

@@ -10,7 +10,7 @@ const getGroupsByYear = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            data: groups,
+            data: groups
         });
     } catch (error) {
         console.error('Error retrieving groups:', error);
