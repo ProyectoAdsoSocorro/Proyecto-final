@@ -1,4 +1,4 @@
-import * as service from '../services/qualificationService.js';
+import * as service from '../services/qualificationsService.js';
 
 /**
  * Obtener una calificación por ID
@@ -134,15 +134,47 @@ export const createBatch = async (req, res) => {
 };
 
 /**
- * Generar calificaciones finales (cuando se activen períodos)
+ * Generar calificaciones finales
+ * Puede generar finales:
+ *  - por año completo
+ *  - por colegio
+ *  - por grupo específico
  */
 export const generateFinals = async (req, res) => {
   try {
     const { schoolId, year, groupId } = req.body;
+
+    // Validación obligatoria
+    if (!year) {
+      return res.status(400).json({
+        message: "El campo 'year' es obligatorio para generar calificaciones finales."
+      });
+    }
+
+    // Llamar al servicio
     const results = await service.generateFinals({ schoolId, year, groupId });
-    res.json({ count: results.length, results });
+
+    // Si no se generó nada
+    if (!results || results.length === 0) {
+      return res.status(200).json({
+        message: "No se generaron calificaciones finales (posiblemente ya existen o no hay datos suficientes).",
+        count: 0,
+        results: []
+      });
+    }
+
+    // Respuesta correcta
+    return res.status(200).json({
+      message: "Calificaciones finales generadas correctamente.",
+      count: results.length,
+      results
+    });
+
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("❌ Error al generar notas finales:", err);
+    return res.status(500).json({
+      error: err.message
+    });
   }
 };
 

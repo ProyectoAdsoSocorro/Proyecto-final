@@ -30,20 +30,20 @@ const ValiditySchema = new Schema({
   // Roles principales
   rector: {
     type: Schema.Types.ObjectId,
-    ref: 'SchoolUsers',
+    ref: 'users',
     description: 'Usuario con rol rector asignado'
   },
   generalSecretary: {
     type: Schema.Types.ObjectId,
-    ref: 'SchoolUsers',
+    ref: 'users',
     description: 'Usuario con rol secretaria general'
   },
 
   // Información por sede
   headquarterInfo: [{
     headquarter: { type: Schema.Types.ObjectId, ref: 'Headquarters', required: true },
-    coordinator: { type: Schema.Types.ObjectId, ref: 'SchoolUsers' },
-    secretary: { type: Schema.Types.ObjectId, ref: 'SchoolUsers' }
+    coordinator: { type: Schema.Types.ObjectId, ref: 'users' },
+    secretary: { type: Schema.Types.ObjectId, ref: 'users' }
   }],
 
   // Parámetros académicos
@@ -85,4 +85,3 @@ const ValiditySchema = new Schema({
 }, { timestamps: true });
 
 export default model('Validities', ValiditySchema);
-

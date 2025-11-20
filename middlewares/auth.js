@@ -10,7 +10,7 @@
  */
 
 import jwt from 'jsonwebtoken';
-import SchoolUsers from '../models/Users.js';
+import SchoolUsers from '../models/users.js';
 
 const auth = async (req, res, next) => {
   // Extraer y validar formato del header Authorization
