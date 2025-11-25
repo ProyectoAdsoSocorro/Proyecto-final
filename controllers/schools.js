@@ -143,6 +143,17 @@ const httpSchools = {
             const {id} = req.params;
             const { core_address } = req.body;
             const school = await Colegio.findByIdAndUpdate(id, req.body, {new: true}) 
+ const {
+                name,
+                code,
+                address,
+                phone,
+                email,
+ } = req.body;
+
+               if(!name || !code || !address || !phone || !email ){
+                return res.status(400).json({message: "Todos los campos son obligatorios"});
+            }
             if(!school){
                 return res.status(404).json({message: "Colegio no encontrado"});
             }
