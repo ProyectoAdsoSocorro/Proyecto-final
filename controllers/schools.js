@@ -1,37 +1,37 @@
 import Colegio from "../models/schools.js";
-import ModelUser from "../models/modelAttendant.js";
+import ModelUser from "../models/users.js";
 import { sendEmail } from "../utils/sendEmail.js";
 
 import axios from 'axios';
 
 const httpSchools = {
-    getSchools: async (req, res)=>{
+    getSchools: async (req, res) => {
         try {
             const schools = await Colegio.find()
             res.json(schools);
         } catch (error) {
-            res.status(500).json({message: "Error al obtener los colegios"});
-        }
-    },  
-
-    getSchoolById : async (req, res)=>{
-        try {
-            const {id} = req.params;
-            console.log(id);
-            const school = await Colegio.findById(id)
-            if(!school){
-                return res.status(404).json({message: "Colegio no encontrado"});
-            }
-            res.json({school});
-        } catch (error) {
-            res.status(500).json({message: "Error al obtener el colegio"});
+            res.status(500).json({ message: "Error al obtener los colegios" });
         }
     },
 
-    createSchool: async (req, res)=>{
+    getSchoolById: async (req, res) => {
+        try {
+            const { id } = req.params;
+            console.log(id);
+            const school = await Colegio.findById(id)
+            if (!school) {
+                return res.status(404).json({ message: "Colegio no encontrado" });
+            }
+            res.json({ school });
+        } catch (error) {
+            res.status(500).json({ message: "Error al obtener el colegio" });
+        }
+    },
+
+    createSchool: async (req, res) => {
         try {
             const { core_address } = req.body;
-            
+
             if (!core_address) {
                 return res.status(400).json({ message: "El core_address es requerido" });
             }
@@ -48,16 +48,16 @@ const httpSchools = {
                 adminEmail,
                 adminPhone,
                 adminAddress,
-               /*  adminDateOfBirth, */
+                /*  adminDateOfBirth, */
                 adminGender
             } = req.body;
 
-            if(!name || !code || !address || !phone || !email || !adminFirstName || !adminLastName || !adminDocumentType || !adminDocumentNumber || !adminEmail || !adminPhone || !adminAddress /* || !adminDateOfBirth */ || !adminGender){
-                return res.status(400).json({message: "Todos los campos son obligatorios"});
+            if (!name || !code || !address || !phone || !email || !adminFirstName || !adminLastName || !adminDocumentType || !adminDocumentNumber || !adminEmail || !adminPhone || !adminAddress /* || !adminDateOfBirth */ || !adminGender) {
+                return res.status(400).json({ message: "Todos los campos son obligatorios" });
             }
 
             const school = new Colegio(req.body);
-            await school.save(); 
+            await school.save();
 
             // Creacion del admin de cada colegio
             const newUser = new ModelUser({
@@ -103,25 +103,25 @@ const httpSchools = {
                     schoolName: name,
                     adminEmail: adminEmail
                 });
-                
+
             } catch (axiosError) {
-             
+
                 console.log('Error en la notificación con axios:', axiosError.message);
-             
+
             }
 
             res.status(201).json({
-            message: "Colegio y secretaria creados correctamente.",
-            school: {
-                id: school._id,
-                name: school.name,
-                address: school.address
-            },
-            secretary: {
-                id: newUser._id,
-                email: newUser.email,
-                full_name: `${newUser.firstName} ${newUser.lastName}`
-            }
+                message: "Colegio y secretaria creados correctamente.",
+                school: {
+                    id: school._id,
+                    name: school.name,
+                    address: school.address
+                },
+                secretary: {
+                    id: newUser._id,
+                    email: newUser.email,
+                    full_name: `${newUser.firstName} ${newUser.lastName}`
+                }
             });
 
         } catch (error) {
@@ -137,50 +137,51 @@ const httpSchools = {
         console.log(`🔔 Admin creado: ${adminEmail} para ${schoolName}`);
         res.json({ message: "Notificación recibida" });
     },
-    
-    updateSchool: async (req, res)=>{
+
+    updateSchool: async (req, res) => {
         try {
-            const {id} = req.params;
-            const { core_address } = req.body;
-            const school = await Colegio.findByIdAndUpdate(id, req.body, {new: true}) 
- const {
+            const { id } = req.params;
+            const {
                 name,
                 code,
                 address,
                 phone,
                 email,
- } = req.body;
+            } = req.body;
 
-               if(!name || !code || !address || !phone || !email ){
-                return res.status(400).json({message: "Todos los campos son obligatorios"});
+            if (!name || !code || !address || !phone || !email) {
+                return res.status(400).json({ message: "Todos los campos son obligatorios" });
             }
-            if(!school){
-                return res.status(404).json({message: "Colegio no encontrado"});
+
+            const school = await Colegio.findByIdAndUpdate(id, req.body, { new: true });
+
+            if (!school) {
+                return res.status(404).json({ message: "Colegio no encontrado" });
             }
-            res.json({ message: "Colegio actualizado correctamente", school});
+            res.json({ message: "Colegio actualizado correctamente", school });
         } catch (error) {
-            res.status(500).json({message:"Error al actualizar el Colegio", error: error.message})
+            res.status(500).json({ message: "Error al actualizar el Colegio", error: error.message })
         }
     },
 
-    activateSchool: async (req, res)=>{
+    activateSchool: async (req, res) => {
         try {
-            const {id} = req.params;
+            const { id } = req.params;
             const school = await Colegio.findByIdAndUpdate(
                 id,
-                {active: true},
-                {new: true}
+                { active: true },
+                { new: true }
             )
-            if(!school){
-                return res.status(404).json({ message: "Colegio no Encontrado"})
+            if (!school) {
+                return res.status(404).json({ message: "Colegio no Encontrado" })
             }
-            res.json({message: "Colegio Activado Correctamente", school})
+            res.json({ message: "Colegio Activado Correctamente", school })
         } catch (error) {
-            res.status(500).json({message:"Error al Activar el Colegio"})
+            res.status(500).json({ message: "Error al Activar el Colegio" })
         }
     },
 
-    deactivateSchool: async(req, res)=>{
+    deactivateSchool: async (req, res) => {
         try {
             const { id } = req.params;
             const school = await Colegio.findByIdAndUpdate(
@@ -197,13 +198,13 @@ const httpSchools = {
         }
     },
 
-    deleteSchool: async (req, res)=>{
+    deleteSchool: async (req, res) => {
         try {
-            const {id} = req.params;
+            const { id } = req.params;
             const school = await Colegio.findByIdAndDelete(id);
-            res.json({ message: "Colegio borrado correctamente", school});
+            res.json({ message: "Colegio borrado correctamente", school });
         } catch (error) {
-            res.status(500).json({message: "Error al borrar el colegio"});
+            res.status(500).json({ message: "Error al borrar el colegio" });
         }
     }
 }
