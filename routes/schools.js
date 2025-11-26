@@ -33,7 +33,7 @@ routes.put("/:id", [
     check("emailSchool").isEmail().withMessage("El email no es válido").trim(),
     validateFields
 ], httpSchools.updateSchool);
-routes.put(":id/activate", [
+routes.put("/:id/activate", [
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
     validateFields
 ], httpSchools.activateSchool);      // Route to activate

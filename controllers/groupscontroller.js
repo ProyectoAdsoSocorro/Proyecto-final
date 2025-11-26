@@ -77,11 +77,11 @@ const getGuardiansByGroup = async (req, res) => {
         }
 
         // La sede referencia al colegio en el campo school
-        const colegioId = sede.school;
+        const collegeId = sede.school;
 
         // Buscar usuarios (ModelUser) que pertenezcan al colegio y tengan el rol 'acudiente'
         const guardians = await ModelUser.find({
-            schoolId: colegioId,
+            college: collegeId,
             roles: 'acudiente',
             isActive: true,
         }).select('-password'); // excluir password por seguridad

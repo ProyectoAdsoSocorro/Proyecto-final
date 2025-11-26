@@ -107,13 +107,15 @@ router.put('/:id', [
 router.put('/:id/activate', [
   check('id')
     .isMongoId()
-    .withMessage("Validación: ID de período debe ser válido")
+    .withMessage("Validación: ID de período debe ser válido"),
+  validateFields
 ], httpPeriods.activatePeriod);
 
 router.put('/:id/deactivate', [
   check('id')
     .isMongoId()
-    .withMessage("Validación: ID de período debe ser válido")
+    .withMessage("Validación: ID de período debe ser válido"),
+  validateFields
 ], httpPeriods.deactivatePeriod);
 
 router.delete('/:id', [

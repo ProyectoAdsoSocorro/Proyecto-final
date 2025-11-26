@@ -1,5 +1,5 @@
 import registration from "../models/registration.js";
-import ModelUsers from "../models/modelAttendant.js";
+import ModelUsers from "../models/users.js";
 import bcrypt from "bcrypt";
 
 const httpRegistration = {
@@ -13,14 +13,14 @@ const httpRegistration = {
         const { year } = req.params;
 
         try {
-            const registrationYear = await registration.find({ year: year }).populate('student', 'names lastNames' ).populate('attendant._id', 'names lastNames' ).populate('group', 'level grade' ).populate('school', 'name' );
+            const registrationYear = await registration.find({ year: year }).populate('student', 'names lastNames').populate('attendant._id', 'names lastNames').populate('group', 'level grade').populate('school', 'name');
 
             if (!registrationYear) {
                 return res.status(400).json({ msg: "No se encontró matrícula para este año." });
             }
 
-            res.status(200).json({ 
-                data: registrationYear 
+            res.status(200).json({
+                data: registrationYear
             });
 
         } catch (error) {
@@ -38,14 +38,14 @@ const httpRegistration = {
         const { id } = req.params;
 
         try {
-            const Registration = await registration.findById(id)/* .populate('student', 'names lastNames' ).populate('attendant._id', 'firstName lastName' ).populate('group', 'level grade' ).populate('school', 'name' )*/ ;
+            const Registration = await registration.findById(id).populate('student', 'names lastNames' ).populate('attendant._id', 'firstName lastName' ).populate('group', 'level grade' ).populate('school', 'name' ) ;
 
             if (!Registration) {
                 return res.status(404).json({ msg: `No se encontró una matrícula con el ID: ${id}` });
             }
 
-            res.status(200).json({ 
-                data: Registration 
+            res.status(200).json({
+                data: Registration
             });
 
         } catch (error) {
@@ -139,31 +139,31 @@ const httpRegistration = {
                 year: year,
                 state: { $ne: "RETIRADA" }
             });
-        
+
             if (existing) {
-                return res.status(400).json({ 
-                    msg: "El estudiante ya tiene una matrícula activa en este año." 
+                return res.status(400).json({
+                    msg: "El estudiante ya tiene una matrícula activa en este año."
                 });
             }
 
             const Registration = new registration({
-                student, 
+                student,
                 attendant,
-                group, 
-                year, 
-                registrationDate: registrationDate ? new Date(registrationDate) : new Date(), 
-                registrationNumber, 
-                description, 
+                group,
+                year,
+                registrationDate: registrationDate ? new Date(registrationDate) : new Date(),
+                registrationNumber,
+                description,
                 school
-            }).populate('student', 'names lastNames' ).populate('attendant._id', 'firstName lastName' ).populate('group', 'level grade' ).populate('school', 'name' );
+            }).populate('student', 'names lastNames').populate('attendant._id', 'firstName lastName').populate('group', 'level grade').populate('school', 'name');
 
             await Registration.save();
 
-            const populateRegistration = await registration.findById(Registration._id).populate('student', 'names lastNames' ).populate('attendant._id', 'firstName lastName' ).populate('group', 'level grade' ).populate('school', 'name' );
+            const populateRegistration = await registration.findById(Registration._id).populate('student', 'names lastNames').populate('attendant._id', 'firstName lastName').populate('group', 'level grade').populate('school', 'name');
 
-            res.status(200).json({ 
-                msg: "Matrícula creada con éxito.", 
-                data: populateRegistration 
+            res.status(200).json({
+                msg: "Matrícula creada con éxito.",
+                data: populateRegistration
             });
 
         } catch (error) {
@@ -195,15 +195,15 @@ const httpRegistration = {
                     school
                 },
                 { new: true } // Devuelve el documento actualizado
-            ).populate('student', 'names lastNames' ).populate('attendant._id', 'names lastNames' ).populate('group', 'level grade' ).populate('school', 'name' );
+            ).populate('student', 'names lastNames').populate('attendant._id', 'names lastNames').populate('group', 'level grade').populate('school', 'name');
 
             if (!updateRegistration) {
                 return res.status(404).json({ msg: "No se encontró la matrícula para actualizar." });
             }
 
-            res.status(200).json({ 
-                msg: "La matrícula se actualizó correctamente.", 
-                data: updateRegistration 
+            res.status(200).json({
+                msg: "La matrícula se actualizó correctamente.",
+                data: updateRegistration
             });
 
         } catch (error) {
@@ -231,9 +231,9 @@ const httpRegistration = {
                 return res.status(404).json({ msg: "No se encontró la matrícula." });
             }
 
-            res.status(200).json({ 
-                msg: "Se cambió el estado a ACTIVO.", 
-                data: Registration 
+            res.status(200).json({
+                msg: "Se cambió el estado a ACTIVO.",
+                data: Registration
             });
 
         } catch (error) {
@@ -261,9 +261,9 @@ const httpRegistration = {
                 return res.status(404).json({ msg: "No se encontró la matrícula." });
             }
 
-            res.status(200).json({ 
-                msg: "Se cambió el estado a RETIRADO.", 
-                data: Registration 
+            res.status(200).json({
+                msg: "Se cambió el estado a RETIRADO.",
+                data: Registration
             });
 
         } catch (error) {
@@ -291,9 +291,9 @@ const httpRegistration = {
                 return res.status(404).json({ msg: "No se encontró la matrícula." });
             }
 
-            res.status(200).json({ 
-                msg: "Se cambió el estado a DESERTADO.", 
-                data: Registration 
+            res.status(200).json({
+                msg: "Se cambió el estado a DESERTADO.",
+                data: Registration
             });
 
         } catch (error) {
@@ -321,9 +321,9 @@ const httpRegistration = {
                 return res.status(404).json({ msg: "No se encontró la matrícula." });
             }
 
-            res.status(200).json({ 
-                msg: "Se cambió el estado a GRADUADO.", 
-                data: Registration 
+            res.status(200).json({
+                msg: "Se cambió el estado a GRADUADO.",
+                data: Registration
             });
 
         } catch (error) {
@@ -348,14 +348,14 @@ const httpRegistration = {
             );
 
             if (!student) {
-                return res.status(404).json({ 
-                    msg: "No se encontró una matrícula asociada a este estudiante." 
+                return res.status(404).json({
+                    msg: "No se encontró una matrícula asociada a este estudiante."
                 });
             }
 
-            res.status(200).json({ 
-                msg: "Estudiante retirado correctamente.", 
-                data: student 
+            res.status(200).json({
+                msg: "Estudiante retirado correctamente.",
+                data: student
             });
 
         } catch (error) {

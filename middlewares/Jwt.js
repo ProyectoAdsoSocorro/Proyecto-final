@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
-import users from "../models/Users.js";
+import users from "../models/users.js";
 
 const generarJWT = (uid) => {
     return new Promise((resolve, reject) => {
         const payload = { uid };
-        jwt.sign(payload, process.env.SECRETORPRIVATEKEY, {
+        jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "4h"
         },
             (err, token) => {
@@ -23,7 +23,7 @@ const validar = async (req, res, next) => {
     try {
         const token = req.header("x-token");
         console.log(token)
-        const uid = jwt.verify(token, process.env.SECRETORPRIVATEKEY)
+        const uid = jwt.verify(token, process.env.JWT_SECRET)
         console.log(uid)
         let user = await users.findById(uid.uid);
         req.uid = uid;

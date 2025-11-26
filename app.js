@@ -45,7 +45,7 @@ mongoose.connect(MONGO_URL)
 // 🌐 Rutas principales
 app.use('/api/users', users);
 app.use('/api/subjects', subjectsRoutes);
-app.use('/api/periodos', periodsRoutes);
+app.use('/api/periods', periodsRoutes);
 app.use('/api/core-direction', direccionNucleoRoutes);
 app.use('/api/indicators', Indicators);
 app.use('/api/schools', colegiosRoutes);
@@ -54,7 +54,7 @@ app.use("/api/registration", registration);
 app.use("/api/reports", reports);
 app.use("/api/qualifications", qualifications);
 app.use("/api/validity", validity)
-app.use("/api/grupos", groups);
+app.use("/api/groups", groups);
 
 
 // 🧱 Middleware de manejo de errores
