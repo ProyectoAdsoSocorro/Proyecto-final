@@ -3,7 +3,7 @@ import Headquarters from "../models/headquarters.js";
 const httpHeadquarters = {
     listAll: async (req, res) => {
         try {
-            const headquarters = await Headquarters.find()
+            const headquarters = await Headquarters.find().populate("school", "name")
             res.status(200).json({ headquarters })
             
         } catch (error) {
@@ -17,7 +17,7 @@ const httpHeadquarters = {
 
         try {
 
-            const sedeId = await Headquarters.findById(id);
+            const sedeId = await Headquarters.findById(id).populate('school', 'name');;
             res.status(200).json({ data: sedeId })
 
         } catch (error) {
@@ -27,11 +27,11 @@ const httpHeadquarters = {
     },
 
     headquartersBySchool: async (req, res) => {
-        const { colegioId } = req.params;
-        console.log(colegioId);
+        const { schoolId } = req.params;
+        console.log(schoolId);
 
         try {
-            const sedes = await Headquarters.find({ school: colegioId });
+            const sedes = await Headquarters.find({ school: schoolId });
 
             if (!sedes || sedes.length === 0) {
                 return res.status(404).json({ msg: "No se encontraron sedes para este colegio" });
@@ -51,7 +51,7 @@ const httpHeadquarters = {
         try {
             const sede = new Headquarters({ school, name, abbreviation, code, address, phone });
             await sede.save();
-            res.json({ msg: "Sede creada con exito", data: sede });
+            res.status(201).json({ msg: "Sede creada con exito", data: sede });
             
         } catch (error) {
             console.error(error);

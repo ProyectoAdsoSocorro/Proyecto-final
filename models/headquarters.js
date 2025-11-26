@@ -1,7 +1,7 @@
 import moongose from "mongoose"
 
 const schemaHeadquarters = new moongose.Schema({
-    school: {type: moongose.Schema.Types.ObjectId, ref: "schools", required: true},
+    school: {type: moongose.Schema.Types.ObjectId, ref: "School", required: true},
     name: {type: String, required: true},
     abbreviation: {type: String, required: true},
     code: {type: String, required: true, unique: true},
