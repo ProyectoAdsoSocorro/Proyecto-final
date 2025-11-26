@@ -11,11 +11,11 @@ routes.get("/:id", [
     validateFields
 ], httpSchools.getSchoolById);
 routes.post("/", [
-    check("name").notEmpty().withMessage("El nombre es obligatorio").trim(),
-    check("code").notEmpty().withMessage("El código es obligatorio").trim(),
-    check("address").notEmpty().withMessage("La dirección es obligatoria").trim(),
-    check("phone").notEmpty().withMessage("El telefono es obligatorio").trim(),
-    check("email").isEmail().withMessage("El email no es válido").trim(),
+    check("nameSchool").notEmpty().withMessage("El nombre es obligatorio").trim(),
+   /*  check("code").notEmpty().withMessage("El código es obligatorio").trim(), */
+    check("addressSchool").notEmpty().withMessage("La dirección es obligatoria").trim(),
+    check("phoneSchool").notEmpty().withMessage("El telefono es obligatorio").trim(),
+    check("emailSchool").isEmail().withMessage("El email no es válido").trim(),
     validateFields
 ], httpSchools.createSchool);
 
@@ -26,11 +26,11 @@ routes.post("/notify-admin-created",[
 ], httpSchools.notifyAdminCreated);
 routes.put("/:id", [
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
-    check("name").notEmpty().withMessage("El nombre es obligatorio").trim(),
+    check("nameSchool").notEmpty().withMessage("El nombre es obligatorio").trim(),
     check("code").notEmpty().withMessage("El código es obligatorio").trim(),
-    check("address").notEmpty().withMessage("La dirección es obligatoria").trim(),
-    check("phone").notEmpty().withMessage("El telefono es obligatorio").trim(),
-    check("email").isEmail().withMessage("El email no es válido").trim(),
+    check("addressSchool").notEmpty().withMessage("La dirección es obligatoria").trim(),
+    check("phoneSchool").notEmpty().withMessage("El telefono es obligatorio").trim(),
+    check("emailSchool").isEmail().withMessage("El email no es válido").trim(),
     validateFields
 ], httpSchools.updateSchool);
 routes.put(":id/activate", [

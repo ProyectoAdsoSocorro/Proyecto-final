@@ -1,5 +1,5 @@
 import Colegio from "../models/schools.js";
-import ModelUser from "../models/modelAttendant.js";
+import ModelUser from "../models/Users.js";
 import { sendEmail } from "../utils/sendEmail.js";
 
 import axios from 'axios';
@@ -36,42 +36,64 @@ const httpSchools = {
                 return res.status(400).json({ message: "El core_address es requerido" });
             }
             const {
-                name,
-                code,
-                address,
-                phone,
+                nameSchool,
+                addressSchool,
+                phoneSchool,
+                emailSchool,
+                names,
+                lastNames,
+                typeDocument,
+                numberDocument,
                 email,
-                adminFirstName,
-                adminLastName,
-                adminDocumentType,
-                adminDocumentNumber,
-                adminEmail,
-                adminPhone,
-                adminAddress,
-               /*  adminDateOfBirth, */
-                adminGender
+                cellphone,
+                direction,
+                dateBorn,
+                gender,
             } = req.body;
 
-            if(!name || !code || !address || !phone || !email || !adminFirstName || !adminLastName || !adminDocumentType || !adminDocumentNumber || !adminEmail || !adminPhone || !adminAddress /* || !adminDateOfBirth */ || !adminGender){
+            if(!nameSchool || !addressSchool || !phoneSchool || !emailSchool || !names || !lastNames || !typeDocument || !numberDocument || !email || !cellphone || !direction || !dateBorn || !gender){
                 return res.status(400).json({message: "Todos los campos son obligatorios"});
             }
+            function obtenerCodigo(campo){
 
-            const school = new Colegio(req.body);
+                if(!campo || typeof campo !== 'string')return '';
+                return campo
+                .trim()
+                .split( /\s+/)// multiples espacios
+                .map(palabra => palabra.charAt(0).toUpperCase())
+                .join('')
+            }
+ 
+            let baseCode = obtenerCodigo(nameSchool);
+            let finalCode = baseCode;
+            let counter = 3;
+            let isCodeTaken = await Colegio.findOne({ code: finalCode });
+
+            while (isCodeTaken) {
+                finalCode = `${baseCode}${counter}`;
+                counter++;
+                isCodeTaken = await Colegio.findOne({ code: finalCode });
+            }
+            
+
+
+            const school = new Colegio({ ...req.body, code: finalCode });
             await school.save(); 
+ 
 
             // Creacion del admin de cada colegio
             const newUser = new ModelUser({
                 schoolId: school._id,
-                firstName: adminFirstName,
-                lastName: adminLastName,
-                documentOfType: adminDocumentType,
-                documentOfNumber: adminDocumentNumber,
-                email: adminEmail,
+                 names,
+                lastNames,
+                documentOfType: typeDocument,
+                documentOfNumber: numberDocument,
+                email: email,
                 password: null,
-                phone: adminPhone,
-                address: adminAddress,
-                /* dateOfBirth: new Date(adminDateOfBirth), */
-                gender: adminGender,
+                phone: cellphone,
+                address: direction,
+               
+                gender: gender,
                 roles: ['secretaria'],
                 isActive: true,
                 needsPasswordChange: true
@@ -80,13 +102,13 @@ const httpSchools = {
             await newUser.save();
 
             // Enviar correo para configurar contraseña
-            const resetLink = `${process.env.FRONTEND_URL}/set-password?email=${encodeURIComponent(adminEmail)}`;
+            const resetLink = `${process.env.FRONTEND_URL}/set-password?email=${encodeURIComponent(email)}`;
 
-            const subject = `✅ Cuenta de Administrador Creada para ${name}`;
+            const subject = `✅ Cuenta de Administrador Creada para ${nameSchool}`;
             const html = `
             <h2>¡Bienvenido al Sistema de Gestión de Colegios!</h2>
-            <p>Se ha creado una cuenta de administrador (rol Secretaria) para el colegio <strong>${name}</strong>.</p>
-            <p>El correo para iniciar sesión es: <strong>${adminEmail}</strong>.</p>
+            <p>Se ha creado una cuenta de administrador (rol Secretaria) para el colegio <strong>${nameSchool}</strong>.</p>
+            <p>El correo para iniciar sesión es: <strong>${email}</strong>.</p>
             <p>Por favor, comparte el siguiente enlace con la persona encargada para que pueda configurar su contraseña de acceso:</p>
             <a href="${resetLink}" style="display:inline-block; padding:12px 24px; background:#027be3; color:white; text-decoration:none; border-radius:6px;">
                 Configurar Contraseña
@@ -95,13 +117,13 @@ const httpSchools = {
             <p>Saludos cordiales,<br><strong>El equipo de Dirección de Núcleo</strong></p>
             `;
 
-            await sendEmail(email, subject, html); // Se envía al correo del colegio
+            await sendEmail(emailSchool, subject, html); // Se envía al correo del colegio
 
             // Notificar creación (endpoint opcional) - Ahora con axios
             try {
-                await axios.post(`${process.env.API_URL || 'http://localhost:3000'}/api/notify-admin-created`, {
-                    schoolName: name,
-                    adminEmail: adminEmail
+                await axios.post(`${process.env.API_URL || 'http://localhost:3000'}/api/schools/notify-admin-created`, {
+                    schoolName: nameSchool,
+                    adminEmail: email
                 });
                 
             } catch (axiosError) {
@@ -114,13 +136,14 @@ const httpSchools = {
             message: "Colegio y secretaria creados correctamente.",
             school: {
                 id: school._id,
-                name: school.name,
-                address: school.address
+                name: school.nameSchool,
+                address: school.addressSchool,
+                code: school.code
             },
             secretary: {
                 id: newUser._id,
                 email: newUser.email,
-                full_name: `${newUser.firstName} ${newUser.lastName}`
+                full_name: `${newUser.names} ${newUser.lastNames}`
             }
             });
 
@@ -141,19 +164,23 @@ const httpSchools = {
     updateSchool: async (req, res)=>{
         try {
             const {id} = req.params;
-            const { core_address } = req.body;
-            const school = await Colegio.findByIdAndUpdate(id, req.body, {new: true}) 
- const {
-                name,
-                code,
-                address,
-                phone,
-                email,
- } = req.body;
+            const {
+                  nameSchool,
+                addressSchool,
+                phoneSchool,
+                emailSchool,
+            } = req.body;
 
-               if(!name || !code || !address || !phone || !email ){
-                return res.status(400).json({message: "Todos los campos son obligatorios"});
+            if (!nameSchool || !addressSchool || !phoneSchool || !emailSchool) {
+                return res.status(400).json({ message: "Todos los campos son obligatorios" });
             }
+            const { core_address } = req.body;
+
+              if (!core_address) {
+                return res.status(400).json({ message: "El core_address es requerido" });
+            }
+
+            const school = await Colegio.findByIdAndUpdate(id, req.body, {new: true}) 
             if(!school){
                 return res.status(404).json({message: "Colegio no encontrado"});
             }
