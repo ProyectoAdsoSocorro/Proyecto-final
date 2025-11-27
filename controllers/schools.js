@@ -1,5 +1,5 @@
 import Colegio from "../models/schools.js";
-import ModelUser from "../models/Users.js";
+import ModelUser from "../models/users.js";
 import { sendEmail } from "../utils/sendEmail.js";
 
 import axios from 'axios';
@@ -51,19 +51,19 @@ const httpSchools = {
                 gender,
             } = req.body;
 
-            if(!nameSchool || !addressSchool || !phoneSchool || !emailSchool || !names || !lastNames || !typeDocument || !numberDocument || !email || !cellphone || !direction || !dateBorn || !gender){
-                return res.status(400).json({message: "Todos los campos son obligatorios"});
+            if (!nameSchool || !addressSchool || !phoneSchool || !emailSchool || !names || !lastNames || !typeDocument || !numberDocument || !email || !cellphone || !direction || !dateBorn || !gender) {
+                return res.status(400).json({ message: "Todos los campos son obligatorios" });
             }
-            function obtenerCodigo(campo){
+            function obtenerCodigo(campo) {
 
-                if(!campo || typeof campo !== 'string')return '';
+                if (!campo || typeof campo !== 'string') return '';
                 return campo
-                .trim()
-                .split( /\s+/)// multiples espacios
-                .map(palabra => palabra.charAt(0).toUpperCase())
-                .join('')
+                    .trim()
+                    .split(/\s+/)// multiples espacios
+                    .map(palabra => palabra.charAt(0).toUpperCase())
+                    .join('')
             }
- 
+
             let baseCode = obtenerCodigo(nameSchool);
             let finalCode = baseCode;
             let counter = 3;
@@ -74,17 +74,17 @@ const httpSchools = {
                 counter++;
                 isCodeTaken = await Colegio.findOne({ code: finalCode });
             }
-            
+
 
 
             const school = new Colegio({ ...req.body, code: finalCode });
-            await school.save(); 
- 
+            await school.save();
+
 
             // Creacion del admin de cada colegio
             const newUser = new ModelUser({
                 schoolId: school._id,
-                 names,
+                names,
                 lastNames,
                 documentOfType: typeDocument,
                 documentOfNumber: numberDocument,
@@ -92,7 +92,7 @@ const httpSchools = {
                 password: null,
                 phone: cellphone,
                 address: direction,
-               
+
                 gender: gender,
                 roles: ['secretaria'],
                 isActive: true,
@@ -133,18 +133,18 @@ const httpSchools = {
             }
 
             res.status(201).json({
-            message: "Colegio y secretaria creados correctamente.",
-            school: {
-                id: school._id,
-                name: school.nameSchool,
-                address: school.addressSchool,
-                code: school.code
-            },
-            secretary: {
-                id: newUser._id,
-                email: newUser.email,
-                full_name: `${newUser.names} ${newUser.lastNames}`
-            }
+                message: "Colegio y secretaria creados correctamente.",
+                school: {
+                    id: school._id,
+                    name: school.nameSchool,
+                    address: school.addressSchool,
+                    code: school.code
+                },
+                secretary: {
+                    id: newUser._id,
+                    email: newUser.email,
+                    full_name: `${newUser.names} ${newUser.lastNames}`
+                }
             });
 
         } catch (error) {
@@ -163,9 +163,9 @@ const httpSchools = {
 
     updateSchool: async (req, res) => {
         try {
-            const {id} = req.params;
+            const { id } = req.params;
             const {
-                  nameSchool,
+                nameSchool,
                 addressSchool,
                 phoneSchool,
                 emailSchool,
@@ -176,13 +176,13 @@ const httpSchools = {
             }
             const { core_address } = req.body;
 
-              if (!core_address) {
+            if (!core_address) {
                 return res.status(400).json({ message: "El core_address es requerido" });
             }
 
-            const school = await Colegio.findByIdAndUpdate(id, req.body, {new: true}) 
-            if(!school){
-                return res.status(404).json({message: "Colegio no encontrado"});
+            const school = await Colegio.findByIdAndUpdate(id, req.body, { new: true })
+            if (!school) {
+                return res.status(404).json({ message: "Colegio no encontrado" });
             }
             res.json({ message: "Colegio actualizado correctamente", school });
         } catch (error) {
