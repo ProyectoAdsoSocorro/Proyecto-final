@@ -38,7 +38,7 @@ const httpRegistration = {
         const { id } = req.params;
 
         try {
-            const Registration = await registration.findById(id)/* .populate('student', 'names lastNames' ).populate('attendant._id', 'firstName lastName' ).populate('group', 'level grade' ).populate('school', 'name' )*/;
+            const Registration = await registration.findById(id).populate('student', 'names lastNames' ).populate('attendant._id', 'firstName lastName' ).populate('group', 'level grade' ).populate('school', 'name' ) ;
 
             if (!Registration) {
                 return res.status(404).json({ msg: `No se encontró una matrícula con el ID: ${id}` });

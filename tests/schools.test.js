@@ -8,6 +8,6 @@ const api = request(app)
 // console.log(Api)
 
 test('school are return as json', async()=>{
- await api.get('/api/school').expect(200).expect('Content-Type', /application\/json/)
+ await api.get('/api/school/').expect(200).expect('Content-Type', /application\/json/)
 })
 

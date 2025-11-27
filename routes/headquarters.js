@@ -17,8 +17,8 @@ routes.get("/:id", [
     validateFields
 ], httpHeadquarters.listById);
 
-routes.get("/colegios/:colegioId/sedes", [
-    check('colegioId')
+routes.get("/school/:schoolId/headquarters", [
+    check('schoolId')
       .isMongoId()
       .withMessage('Validación: ID de colegio debe ser válido'),
     validateFields
@@ -86,14 +86,14 @@ routes.put("/:id", [
     validateFields
 ], httpHeadquarters.updateHeadquarters);
 
-routes.put("/:id/activar", [
+routes.put("/:id/activate", [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
     validateFields
 ], httpHeadquarters.activateHeadquarters);
 
-routes.put("/:id/inactivar", [
+routes.put("/:id/desactivate", [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
