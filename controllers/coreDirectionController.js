@@ -1,6 +1,6 @@
 import CoreDirection from '../models/coreDirection.js';
 import bcrypt from 'bcrypt';
-import { generateToken } from '../middlewares/authJwt.js';
+/* import { generateToken } from '../middlewares/authJwt.js'; */
 
 export const getAll = async (req, res) => {
   try {

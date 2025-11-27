@@ -1,34 +1,32 @@
 import { Router } from "express";
 import httpIndicators from "../controllers/indicators.js";
 import { check } from "express-validator";
-import validateFields from "../middlewares/Checksindicators.js";
+import validateFields from "../middlewares/check.js";
 import validateAcademicRelations from "../middlewares/validateAcademicRelations.js";
 import validateIndicatorData from "../middlewares/validateIndicatorData.js";
 
 const routes = Router();
 
 //obtener todos los indicadores 
-routes.get("/api/indicators", httpIndicators.getIndicators,);
+routes.get("/", httpIndicators.getIndicators,);
 
 
 //obtener todos los indicadores por ID
-routes.get("/api/indicators/:id",[
+routes.get("/:id",[
  check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
     validateFields
-
-] ,httpIndicators.getIndicatorById);
+], httpIndicators.getIndicatorById);
 
 // GET - INDICADORES POR CARGA ACADÉMICA
-routes.get("/api/academicloads/:academicLoadId/indicators", [
+routes.get("/academicloads/:academicLoadId/indicators", [
     check("academicLoadId").isMongoId().withMessage("ID de Carga Académica no válido"),
     validateFields
 ], httpIndicators.getIndicatorsByAcademicLoad);
 
-routes.get("/api/indicators/years/:years", [
+routes.get("/years/:years", [
      check("years").isString().withMessage("Año no válido").trim(),
     validateFields
-
-],httpIndicators.getIndicatorsByYear);
+], httpIndicators.getIndicatorsByYear);
 
 
 /* routes.get("/api/groups/:groupsId/indicators", [
@@ -46,21 +44,20 @@ routes.get("/api/indicators/years/:years", [
 ] ,httpIndicators.getIndicatorsBySubject); */
 
 
-routes.get("/api/periods/:periodsId/indicators",[
+routes.get("/periods/:periodsId/indicators",[
 
     check("periodsId").isMongoId().withMessage("ID de Período no válido").trim(),
     validateFields
+], httpIndicators.getIndicatorsByPeriod);
 
-] ,httpIndicators.getIndicatorsByPeriod);
 
-
-routes.get("/api/modelusers/:usersId/indicators",[
+routes.get("modelusers/:usersId/indicators",[
     check("usersId").isMongoId().withMessage("ID de Usuario no válido").trim(),
     validateFields
 
 
 ] ,httpIndicators.getIndicatorsByUser);
-routes.post("/api/indicators",  [
+routes.post("/",  [
    check("academicLoad").isMongoId().withMessage("ID de Carga Académica no válido"),
     check("period").isMongoId().withMessage("ID de Período no válido"),
     check("type").isArray().withMessage("Type debe ser un array"),
@@ -68,12 +65,11 @@ routes.post("/api/indicators",  [
     check("performanceIndicators").isIn(['Alto', 'Medio', 'Bajo', 'Excelente', 'Regular', 'Deficiente']).withMessage("performanceIndicators no válido"),
     check("userWhoDidIt").isMongoId().withMessage("ID de Usuario no válido"),
      validateFields,
-    /* validateAcademicRelations, */
     validateIndicatorData,
 
 
 ],httpIndicators.createIndicator);
-routes.put("/api/indicators/:id", [
+routes.put("/:id", [
 
  check("academicLoad").isMongoId().withMessage("ID de Carga Académica no válido"),
     check("period").isMongoId().withMessage("ID de Período no válido"),
@@ -82,27 +78,25 @@ routes.put("/api/indicators/:id", [
     check("performanceIndicators").isIn(['Alto', 'Medio', 'Bajo', 'Excelente', 'Regular', 'Deficiente']).withMessage("performanceIndicators no válido"),
     check("userWhoDidIt").isMongoId().withMessage("ID de Usuario no válido"),
     validateFields,
-    /* validateAcademicRelations, */
     validateIndicatorData,
 
 ],httpIndicators.updateIndicator);
-routes.put("/api/indicators/:id/active",[
+routes.put("/:id/active",[
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
     validateFields
 
 ] ,httpIndicators.activeIndicator);
-routes.put("/api/indicators/:id/deactive", [
+routes.put("/:id/deactive", [
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
     validateFields
 
 ],httpIndicators.deactiveIndicator);
-routes.delete("/api/indicators/:id", [
+routes.delete("/:id", [
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
     validateFields
-
-],httpIndicators.deleteIndicator);
+], httpIndicators.deleteIndicator);
 
 export default routes;

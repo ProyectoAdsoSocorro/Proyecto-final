@@ -11,69 +11,59 @@ import {
   deleteSubject
 } from '../controllers/subjectController.js';
 import { check } from 'express-validator';
-import { validateFields } from '../middlewares/checksSubject.js';
+import  validateFields  from '../middlewares/check.js';
+
 
 const router = Router();
 
-// Rutas específicas primero
-// List by type (materia or area) - ruta en inglés
-router.get('/type/:typeId',[
-  check('typeId', 'El tipo debe ser materia o area').trim().isIn(['materia', 'area']),
-  validateFields
-], listByType);                 
-
-router.get('/area/:areaCode',[
-  check('areaCode', 'El código del área es obligatorio').trim().not().isEmpty(),
-  validateFields
-], listByArea);             
-
-// Rutas genéricas después
-router.get('/', listSubjects);  
+router.get('/', listSubjects);                          // GET /api/subjects
 
 router.get('/:id',[
-  check('id', 'El ID de la materia es obligatorio').trim().not().isEmpty().isMongoId(),
+  check('id', 'Validación: ID de materia debe ser válido').isMongoId().isEmpty(),
   validateFields
-], getSubject);           
+], getSubject);                        // GET /api/subjects/:id
+
+router.get('/type/:type',[
+  check('type', 'Validación: ID de tipo debe ser válido').not().isEmpty(),
+  validateFields
+], listByType);                 // GET /api/subjects/type/:type
+
+router.get('/area/:areaCode',[
+  check('areaCode', 'Validación: ID de tipo debe ser válido').not().isEmpty(),
+  validateFields
+], listByArea);             // GET /api/subjects/area/:areaCode
 
 router.post('/',[
-  check('school', 'El ID del colegio es obligatorio').isMongoId().not().isEmpty().trim(),
-  check('name', 'El nombre de la materia es obligatorio').not().isEmpty(),
-  check('code', 'El código de la materia es obligatorio').not().isEmpty(),
-  check('independent', 'El campo independiente es obligatorio').isBoolean().not().isEmpty(),
-  check('includeInStatistics', 'El campo incluir en estadísticas es obligatorio').isBoolean().not().isEmpty(),
-  // En el modelo `Subject` el campo `type` es un string con valores 'materia' o 'area'
-  check('type', 'El tipo de la materia es obligatorio').isIn(['materia', 'area']),
-  // El modelo usa `areaCode` para identificar el código del área
-  check('areaCode', 'El código del área es obligatorio').trim().not().isEmpty(),
+  check('group', 'Validación: ID del grupo debe ser válido').isMongoId().not().isEmpty().trim(),
+  check('name', 'Campo requerido: Nombre de materia').not().isEmpty(),
+  check('code', 'Campo requerido: Código de materia').not().isEmpty(),
+  check('type', 'Campo requerido:  Tipo (materia/area)').not().isEmpty(),
+  check('areaCode', 'Campo requerido: Área de materia').not().isEmpty(),
   validateFields
 ], createSubject);             // POST /api/subjects
 
 router.put('/:id',[
-  check('id', 'El ID de la materia es obligatorio').trim().not().isEmpty().isMongoId(),
-  check('school', 'El ID del colegio es obligatorio').isMongoId().not().isEmpty().trim(),
-  check('name', 'El nombre de la materia es obligatorio').not().isEmpty(),
-  check('code', 'El código de la materia es obligatorio').not().isEmpty(),
-  check('independent', 'El campo independiente es obligatorio').isBoolean().not().isEmpty(),
-  check('includeInStatistics', 'El campo incluir en estadísticas es obligatorio').isBoolean().not().isEmpty(),
-  check('type', 'El tipo de la materia es obligatorio').isIn(['materia', 'area']),
-  // El modelo usa `areaCode` para identificar el código del área
-  check('areaCode', 'El código del área es obligatorio').trim().not().isEmpty(),
+  check('id', 'Validación: ID de materia debe ser válido').isMongoId().not().isEmpty(),
+  check('group', 'Validación: ID del grupo debe ser válido').isMongoId().not().isEmpty().trim(),
+  check('name', 'Campo requerido: Nombre de materia').not().isEmpty(),
+  check('code', 'Campo requerido: Código de materia').not().isEmpty(),
+  check('type', 'Campo requerido:  Tipo (materia/area)').not().isEmpty(),
+  check('areaCode', 'Campo requerido: Área de materia').not().isEmpty(),
   validateFields
 ], updateSubject);                     // PUT /api/subjects/:id
 
-// Activate / deactivate (English routes)
 router.put('/:id/activate',[
-  check('id', 'El ID de la materia es obligatorio').trim().not().isEmpty().isMongoId(),
+  check('id', 'Validación: ID de materia debe ser válido').isMongoId().not().isEmpty(),
   validateFields
 ], activateSubject);          // PUT /api/subjects/:id/activate
 
-router.put('/:id/deactivate',[
-  check('id', 'El ID de la materia es obligatorio').trim().not().isEmpty().isMongoId(),
+router.put('/:id/desactivate',[
+  check('id', 'Validación: ID de materia debe ser válido').isMongoId().not().isEmpty(),
   validateFields
-], deactivateSubject);      // PUT /api/subjects/:id/deactivate
+], deactivateSubject);      // PUT /api/subjects/:id/desactivate
 
 router.delete('/:id',[
-  check('id', 'El ID de la materia es obligatorio').trim().not().isEmpty().isMongoId(),
+  check('id', 'Validación: ID de materia debe ser válido').isMongoId().not().isEmpty(),
   validateFields
 ], deleteSubject);                  // DELETE /api/subjects/:id
 

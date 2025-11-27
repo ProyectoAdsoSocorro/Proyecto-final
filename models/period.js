@@ -62,4 +62,50 @@ periodSchema.pre('validate', function(next){
 //indice unico el colegio no puede tener dos periodos con el mismo numero en un año
 periodSchema.index({ school: 1, year: 1, number: 1 }, { unique: true });
 
+periodSchema.index(
+  { school: 1, year: 1 },
+  { unique: true, partialFilterExpression: { active: true } }
+);
+
+// Protección a nivel de modelo: evitar que se guarde un periodo activo si ya existe otro
+periodSchema.pre('save', async function(next) {
+  try {
+    if (this.active) {
+      const Period = this.constructor;
+      const other = await Period.findOne({ school: this.school, year: this.year, active: true, _id: { $ne: this._id } });
+      if (other) {
+        return next(new Error('Ya existe otro periodo activo para este colegio y año'));
+      }
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Protección al actualizar vía findOneAndUpdate (por ejemplo activate endpoint)
+periodSchema.pre('findOneAndUpdate', async function(next) {
+  try {
+    const update = this.getUpdate();
+    if (!update) return next();
+
+    const willActivate = (update.active === true) || (update.$set && update.$set.active === true);
+    if (!willActivate) return next();
+
+    // Obtener el documento actual para conocer school/year si no vienen en la actualización
+    const doc = await this.model.findOne(this.getQuery()).lean();
+    if (!doc) return next(new Error('Periodo no encontrado'));
+
+    const school = (update.school || (update.$set && update.$set.school)) || doc.school;
+    const year = (update.year || (update.$set && update.$set.year)) || doc.year;
+
+    const other = await this.model.findOne({ school, year, active: true, _id: { $ne: doc._id } });
+    if (other) return next(new Error('Ya existe otro periodo activo para este colegio y año'));
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default mongoose.model('Period', periodSchema);

@@ -6,17 +6,17 @@ const SchoolSchema = new mongoose.Schema({
         ref: 'coredirections',
         required: true
     },
-    name: { type: String, required: true,},
+    nameSchool: { type: String, required: true,},
     code: { type: String, required: true, unique: true},
-    address: { type: String, required: true},
-    phone: { type: String},
-    email: {
+    addressSchool: { type: String, required: true},
+    phoneSchool: { type: String},
+    emailSchool: {
         type: String,
         required: true,
         unique: true,
         lowercase: true
     },
-     active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true }
 }, {
 });
 
