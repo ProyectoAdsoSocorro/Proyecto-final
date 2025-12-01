@@ -2,6 +2,7 @@ import Router from 'express';
 import httpReports from '../controllers/reports.js';
 import { check } from 'express-validator';
 import validateFields from '../middlewares/check.js';
+import roleCheck from "../middlewares/roleCheck.js";
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.get("/list-students/:schoolyear/:schoolId/:GroupId", [
 ],httpReports.httpReportStudents);
 
 router.get("/honor-roll/:schoolyear/:schoolId/:periodId",[
+    roleCheck(["secretaria", "profesor", "rector", "coordinador"]),
     check("schoolyear").notEmpty().withMessage("Campo requerido: Año escolar").trim(),
     check("schoolId").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
     check("periodId").isMongoId().withMessage("Validación: ID del Periodo debe ser válido").trim(),
