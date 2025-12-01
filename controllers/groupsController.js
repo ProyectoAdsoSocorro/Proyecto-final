@@ -1,6 +1,7 @@
 import Group from '../models/groups.js';
 import groupHelper from '../helpers/helpersGroup.js';
-import ModelUser from  "../models/users.js"; //! modelo usuario
+/* import ModelUser from "../models/users.js"; */ // modelo usuario
+
 // 1. GET /api/grupos/año/:año - Listar todos por año
 const getGroupsByYear = async (req, res) => {
     try {
@@ -10,7 +11,7 @@ const getGroupsByYear = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            data: groups,
+            data: groups
         });
     } catch (error) {
         console.error('Error retrieving groups:', error);
@@ -76,11 +77,11 @@ const getGuardiansByGroup = async (req, res) => {
         }
 
         // La sede referencia al colegio en el campo school
-        const colegioId = sede.school;
+        const collegeId = sede.school;
 
         // Buscar usuarios (ModelUser) que pertenezcan al colegio y tengan el rol 'acudiente'
         const guardians = await ModelUser.find({
-            schoolId: colegioId,
+            college: collegeId,
             roles: 'acudiente',
             isActive: true,
         }).select('-password'); // excluir password por seguridad

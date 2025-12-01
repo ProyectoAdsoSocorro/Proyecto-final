@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
-    
+
 // Importación de rutas
 import users from './routes/users.js';
 import subjectsRoutes from './routes/subjects.js';
@@ -11,21 +11,19 @@ import Indicators from "./routes/indicators.js";
 import colegiosRoutes from './routes/schools.js';
 import registration from "./routes/registration.js";
 import headquartersRoutes from './routes/headquarters.js';
-
-// import reportesEstudiantes from './routes/reports2_routes.js'
-
-
-// import reportesEstudiantes from './routes/students_by_group.js';
-
-import qualifications from './models/qualifications.js';
-import validity from './models/validity.js';
+import qualificationsRoutes from './routes/qualificationsRoutes.js';
+import validityRoutes from './routes/validityRoutes.js';
+import bulletinRoutes from './routes/bulletinRoutes.js';
 import groups from './routes/groups.js';
 import reports from './routes/reports.js';
-    
+
+// import reportesEstudiantes from './routes/reports2_routes.js'
+// import reportesEstudiantes from './routes/students_by_group.js';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGO_URL = process.env.MONGO_URL;
-    
+
 // 🧩 Middleware global para parsear JSON
 app.use(express.json());
 
@@ -38,8 +36,8 @@ app.use(express.json());
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error)); */
 
 mongoose.connect(MONGO_URL)
-.then(() => console.log('✅ MongoDB conectado correctamente'))
-.catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
+    .then(() => console.log('✅ MongoDB conectado correctamente'))
+    .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
 
 
 // 🌐 Rutas principales
@@ -52,8 +50,9 @@ app.use('/api/schools', colegiosRoutes);
 app.use('/api/headquarters', headquartersRoutes);
 app.use("/api/registration", registration);
 app.use("/api/reports", reports);
-app.use("/api/qualifications", qualifications);
-app.use("/api/validity", validity)
+app.use("/api/qualifications", qualificationsRoutes);
+app.use("/api/validity", validityRoutes);
+app.use("/api/bulletins", bulletinRoutes);
 app.use("/api/groups", groups);
 
 
