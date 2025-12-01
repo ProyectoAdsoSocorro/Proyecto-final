@@ -37,7 +37,7 @@ const groupSchema = new Schema({
     // Reference to the SchoolUser/Teachers collection
     groupDirector: {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'ModelUser', // Nombre correcto del modelo de usuarios // ! modelusers
+        ref: 'users', // Nombre correcto del modelo de usuarios // ! modelusers
         required: true,
     },
     periodData: [{

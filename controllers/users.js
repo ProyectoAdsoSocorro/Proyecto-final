@@ -1,4 +1,4 @@
-import modelUser from "../models/users.js";
+import modelUser from "../models/Users.js";
 import bcrypt from "bcrypt";
 import { generarJWT } from "../middlewares/Jwt.js";
 
@@ -44,7 +44,7 @@ const functionsUsers = {
                 })
             */
             res.send("usuario registrado")
-            //console.log(user) 
+            //console.log(user)
         } catch (error) {
             res.send("error").status(400)
             console.log(error)
@@ -84,8 +84,8 @@ const functionsUsers = {
     // GET /api/usuarios-colegio/rol/:rol - Buscar en array de roles
     getUsersByRol: async (req, res) => {
         try {
-            const { role } = req.params;
-            const users = await modelUser.find({ roles: { $in: [role] } });
+            const { rol } = req.params;
+            const users = await modelUser.find({ roles: { $in: [rol] } });
             res.json(users);
         }
         catch (e) {

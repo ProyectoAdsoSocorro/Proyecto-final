@@ -9,7 +9,7 @@ const indicatorsSchema = new mongoose.Schema({
     },
     period: {
         type: mongoose.Schema.Types.ObjectId, 
-        // ref: 'periods',
+        ref: 'Period',
         required: true
     },
     type: [{
@@ -29,7 +29,7 @@ const indicatorsSchema = new mongoose.Schema({
     },
     userWhoDidIt: {
         type: mongoose.Schema.Types.ObjectId,
-        // ref: 'modelusers',
+        ref: 'users',
         required: true
     },
     active: { 
