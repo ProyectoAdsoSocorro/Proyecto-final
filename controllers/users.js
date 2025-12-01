@@ -1,4 +1,4 @@
-
+import  modelUser  from "../models/users.js"
 import bcrypt from "bcrypt";
 import { generarJWT } from "../middlewares/Jwt.js";
 
@@ -70,7 +70,7 @@ const functionsUsers = {
                         user: {
                             id: user._id,
                             numeroDocumento: user.numberDocument,
-                            roles: user.rol // incluir los roles
+                            roles: user.roles // incluir los roles
                         }
                     });
                 })
