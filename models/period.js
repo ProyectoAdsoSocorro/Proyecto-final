@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const periodSchema = new Schema({
   school: {
     type: Schema.Types.ObjectId,
-    // ref: 'Colegios', //se activa cuando ya esta integrado para que tome ref a colegios
+    ref: 'School', //se activa cuando ya esta integrado para que tome ref a colegios
     required: true
   },
   year: {

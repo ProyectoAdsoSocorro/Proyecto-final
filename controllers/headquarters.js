@@ -50,6 +50,8 @@ const httpHeadquarters = {
 
         try {
             const sede = new Headquarters({ school, name, abbreviation, code, address, phone });
+
+            
             await sede.save();
             res.status(201).json({ msg: "Sede creada con exito", data: sede });
             

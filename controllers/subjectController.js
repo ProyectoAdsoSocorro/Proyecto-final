@@ -6,7 +6,7 @@ export const listSubjects = async (req, res) => {
     const { type } = req.query;
     const filter = {};
     if (type) filter.type = type;
-    const subjects = await Subject.find(filter);
+    const subjects = await Subject.find(filter).populate('group', 'level grade');
     res.status(200).json(subjects);
   } catch (error) {
     res.status(500).json({ message: 'Error al listar materias/áreas', error });
