@@ -2,19 +2,10 @@ import { Router } from 'express';
 import { check } from 'express-validator';
 import validateFields from '../middlewares/check.js';
 import * as httpPeriods from '../controllers/periodController.js';
+import { authPeriodosFlexible } from '../middlewares/authPeriod.js';
 
 const router = Router();
 
-// Role-based access control temporarily disabled for testing periods routes.
-// If you need to re-enable role checks, uncomment the function below and add it back to routes.
-/*
-const ensureSecretariaRole = (req, res, next) => {
-  if (req.user && req.user.role === 'secretaria') {
-    return next();
-  }
-  return res.status(403).json({ message: 'Access denied. Only secretaria role is allowed.' });
-};
-*/
 
 // Routes
 router.get('/', httpPeriods.getAll);
@@ -23,14 +14,16 @@ router.get('/:id', [
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  validateFields
+  validateFields,
+  authPeriodosFlexible
 ], httpPeriods.getById);
 
 router.get('/year/:year', [
   check('year')
     .isNumeric()
     .withMessage("Validación: Año debe ser un número"),
-  validateFields
+  validateFields,
+  authPeriodosFlexible
 ], httpPeriods.getByYear);
 
 router.post('/', [
@@ -58,7 +51,8 @@ router.post('/', [
   check('percentage')
     .isNumeric()
     .withMessage("Validación: Porcentaje debe ser un número"),
-  validateFields
+  validateFields,
+  authPeriodosFlexible
 ], httpPeriods.createPeriod);
 
 router.put('/:id', [
@@ -101,28 +95,32 @@ router.put('/:id', [
     .optional()
     .isBoolean()
     .withMessage("Validación: Estado debe ser verdadero o falso"),
-  validateFields
+  validateFields,
+  authPeriodosFlexible
 ], httpPeriods.updatePeriod);
 
 router.put('/:id/activate', [
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  validateFields
+  validateFields,
+  authPeriodosFlexible
 ], httpPeriods.activatePeriod);
 
 router.put('/:id/deactivate', [
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  validateFields
+  validateFields,
+  authPeriodosFlexible
 ], httpPeriods.deactivatePeriod);
 
 router.delete('/:id', [
   check("id")
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  validateFields
+  validateFields,
+  authPeriodosFlexible
 ], httpPeriods.deletePeriod);
 
 export default router;
