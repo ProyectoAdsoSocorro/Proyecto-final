@@ -20,6 +20,5 @@ const SchoolSchema = new mongoose.Schema({
 }, {
 });
 
-const School = mongoose.model('School', SchoolSchema);
 
-export default School;
+export default mongoose.model('School', SchoolSchema);

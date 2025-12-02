@@ -1,145 +1,50 @@
 import express from "express";
-import { check ,body, param } from "express-validator";
-import { validar } from "../middlewares/Jwt.js";
-import functionsUsers from "../controllers/users.js";
+import { body, param } from "express-validator";
+import { validar } from "../middlewares/JWT.js";
+import functionsUsers from "../controllers/Users.js";
 import seeValidations from "../middlewares/SeeValidations.js";
 
 const router = express.Router();
 
-
 const validationsLogin = [
-    check("numberDocument")
-        .notEmpty()
-        .withMessage('Campo requerido: Número de documento')
-        .isNumeric()
-        .withMessage('Validación: Número de documento debe ser numérico')
-        .isLength({
-            min: 10,
-            max: 10
-        }).withMessage('Rango: Número de documento debe tener exactamente 10 dígitos')
-        .escape(),
-    check("password")
-        .notEmpty()
-        .withMessage('Campo requerido: Contraseña')
-        .escape()
+    body("numberDocument").notEmpty().escape().isNumeric().isLength({
+        min: 10,
+        max: 10
+    }).escape(),
+    body("password").notEmpty().escape()
 ];
-
 const validationsRegister = [
-    check("names")
-        .notEmpty()
-        .withMessage('Campo requerido: Nombres')
-        .escape(),
-    check("lastNames")
-        .notEmpty()
-        .withMessage('Campo requerido: Apellidos')
-        .escape(),
-    check("typeDocument")
-        .notEmpty()
-        .withMessage('Campo requerido: Tipo de documento')
-        .escape(),
-    check("numberDocument")
-        .notEmpty()
-        .withMessage('Campo requerido: Número de documento')
-        .isNumeric()
-        .withMessage('Validación: Número de documento debe ser numérico')
-        .isLength({
-            min: 10,
-            max: 10
-        }).withMessage('Rango: Número de documento debe tener exactamente 10 dígitos')
-        .escape(),
-    check("email")
-        .notEmpty()
-        .withMessage('Campo requerido: Correo electrónico')
-        .isEmail()
-        .withMessage('Validación: Correo electrónico debe tener formato válido')
-        .escape(),
-    check("password")
-        .notEmpty()
-        .withMessage('Campo requerido: Contraseña')
-        .escape(),
-    check("cellphone")
-        .notEmpty()
-        .withMessage('Campo requerido: Número de celular')
-        .isNumeric()
-        .withMessage('Validación: Número de celular debe ser numérico')
-        .isLength({
-            min: 10,
-            max: 10
-        })
-        .withMessage('Rango: Número de celular debe tener exactamente 10 dígitos')
-        .escape(),
-    check("direction")
-        .notEmpty()
-        .withMessage('Campo requerido: Dirección')
-        .escape(),
-    check('dateBorn')
-        .notEmpty()
-        .withMessage('Campo requerido: Fecha de nacimiento')
-        .isDate({ format: 'DD/MM/YYYY', strictMode: true })
-        .withMessage('Formato: Fecha debe ser DD/MM/YYYY'),
-    check("gender")
-        .notEmpty()
-        .withMessage('Campo requerido: Género')
-        .escape(),
-    check("roles")
-        .notEmpty()
-        .withMessage('Campo requerido: Rol')
-        .escape(),
-    check("stratum")
-        .notEmpty()
-        .withMessage('Campo requerido: Estrato')
-        .escape(),
-    check("sisben")
-        .notEmpty()
-        .withMessage('Campo requerido: Información SISBEN')
-        .escape(),
-    check("eps")
-        .notEmpty()
-        .withMessage('Campo requerido: EPS')
-        .escape(),
-    check("typeBlood")
-        .notEmpty()
-        .withMessage('Campo requerido: Tipo de sangre')
-        .escape(),
-    check("victimPopulation")
-        .notEmpty()
-        .withMessage('Campo requerido: Población víctima')
-        .isBoolean()
-        .withMessage('Validación: Población víctima debe ser verdadero o falso')
-        .escape(),
-    check("disability")
-        .notEmpty()
-        .withMessage('Campo requerido: Información de discapacidad')
-        .escape(),
-    check("ethnic")
-        .notEmpty()
-        .withMessage('Campo requerido: Etnia')
-        .escape(),
-    check("profilePhoto")
-        .notEmpty()
-        .withMessage('Campo requerido: Foto de perfil')
-        .escape(),
-    check("signDigital")
-        .notEmpty()
-        .withMessage('Campo requerido: Firma digital')
-        .escape(),
-    check("college")
-        .notEmpty()
-        .withMessage('Campo requerido: Colegio')
-        .isMongoId()
-        .withMessage('Validación: ID de colegio debe ser válido')
-        .escape(),
+    body("names").notEmpty().escape(),
+    body("lastNames").notEmpty().escape(),
+    body("typeDocument").notEmpty().escape(),
+    body("numberDocument").notEmpty().isNumeric().escape().isLength({
+        min: 10
+    }),
+    body("email").notEmpty().isEmail().escape(),
+    body("password").notEmpty().escape(),
+    body("cellphone").notEmpty().isNumeric().escape().isLength({
+        min: 10,
+        max: 10
+    }),
+    body("direction").notEmpty().escape(),
+    body('dateBorn').notEmpty().isDate({ format: 'DD/MM/YYYY', strictMode: true })
+        .withMessage('La fecha debe tener formato DD/MM/YYYY'),
+    body("gender").notEmpty().escape(),
+    body("roles").notEmpty().escape(),
+    body("stratum").notEmpty().escape(),
+    body("sisben").notEmpty().escape(),
+    body("eps").notEmpty().escape(),
+    body("typeBlood").notEmpty().escape(),
+    body("victimPopulation").notEmpty().isBoolean().escape(),
+    body("disability").notEmpty().escape(),
+    body("ethnic").notEmpty().escape(),
+    body("profilePhoto").notEmpty().escape(),
+    body("signDigital").notEmpty().escape(),
+    body("college").notEmpty().isMongoId().escape(),
 ];
-
 const validationsChangePassword = [
-    check("currentPassword")
-        .notEmpty()
-        .withMessage('Campo requerido: Contraseña actual')
-        .escape(),
-    check("newPassword")
-        .notEmpty()
-        .withMessage('Campo requerido: Nueva contraseña')
-        .escape()
+    body("currentPassword").notEmpty().escape(),
+    body("newPassword").notEmpty().escape()
 ];
 
 /**
@@ -172,7 +77,7 @@ const validationsChangePassword = [
  *       401:
  *         description: Token inválido o ausente
  */
-router.get("/role/:role", /* validar, */ param("role").notEmpty().withMessage ('campo requerido: Rol'), seeValidations, functionsUsers.getUsersByRol);
+router.get("/rol/:rol", validar, param("rol").notEmpty(), seeValidations, functionsUsers.getUsersByRol);
 
 /**
  * @swagger
@@ -195,7 +100,7 @@ router.get("/role/:role", /* validar, */ param("role").notEmpty().withMessage ('
  *       404:
  *         description: Usuario no encontrado
  */
-router.get("/:id", /* validar */ param("id").notEmpty().withMessage('Campo requerido: ID') .isMongoId(), seeValidations, functionsUsers.getUsersById);
+router.get("/:id", validar, param("id").notEmpty().isMongoId(), seeValidations, functionsUsers.getUsersById);
 
 /**
  * @swagger
@@ -330,7 +235,7 @@ router.post("/", validationsLogin, seeValidations, functionsUsers.login);
  *       401:
  *         description: Token inválido
  */
-router.post("/:id/change-password", /* validar, */ validationsChangePassword, seeValidations, functionsUsers.changePassword);
+router.post("/:id/change-password", validar, validationsChangePassword, seeValidations, functionsUsers.changePassword);
 
 /**
  * @swagger
@@ -350,7 +255,7 @@ router.post("/:id/change-password", /* validar, */ validationsChangePassword, se
  *       200:
  *         description: Usuario activado correctamente
  */
-router.post("/:id/activate", /* validar, */ param("id").notEmpty(), seeValidations, functionsUsers.activateUser);
+router.post("/:id/activate", validar, param("id").notEmpty(), seeValidations, functionsUsers.activateUser);
 
 /**
  * @swagger
@@ -370,7 +275,7 @@ router.post("/:id/activate", /* validar, */ param("id").notEmpty(), seeValidatio
  *       200:
  *         description: Usuario desactivado correctamente
  */
-router.post("/:id/desactivate", /* validar, */ param("id").notEmpty(), seeValidations, functionsUsers.desactivateUser);
+router.post("/:id/deactivate", validar, param("id").notEmpty(), seeValidations, functionsUsers.desactivateUser);
 
 /**
  * @swagger
@@ -392,6 +297,6 @@ router.post("/:id/desactivate", /* validar, */ param("id").notEmpty(), seeValida
  *       404:
  *         description: Usuario no encontrado
  */
-router.delete("/:id", /* validar, */ param("id").notEmpty(), seeValidations, functionsUsers.deleteUser);
+router.delete("/:id", validar, param("id").notEmpty(), seeValidations, functionsUsers.deleteUser);
 
 export default router;
