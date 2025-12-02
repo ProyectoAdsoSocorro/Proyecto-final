@@ -18,10 +18,11 @@ export default function roleCheck(allowedRoles) {
   return (req, res, next) => {
     // Verificar que existe un usuario autenticado
     const user = req.user;
+    
     if (!user) return res.status(401).json({ message: 'No autenticado' });
 
     // Verificar que el rol del usuario está en la lista de roles permitidos
-    if (!allowedRoles.includes(user.role))
+    if (!user.roles.some(role => allowedRoles.includes(role)))
       return res.status(403).json({ message: 'Acceso denegado: rol no autorizado' });
 
     // Si el rol es válido, continuar con el siguiente middleware o controlador

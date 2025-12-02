@@ -2,17 +2,19 @@ import Router from "express";
 import httpRegistration from "../controllers/registration.js"
 import { check } from "express-validator";
 import validateFields  from "../middlewares/check.js";
- 
+import roleCheck from "../middlewares/roleCheck.js";
+import { validar } from "../middlewares/Jwt.js";
+
 const routes = Router();
 
-routes.get("/year/:year", [
+routes.get("/year/:year", validar, roleCheck(['secretaria', 'rector', 'coordinador']), [
     check('year')
       .isInt({ min: 1900, max: 2100 })
       .withMessage('Rango: Año debe estar entre 1900 y 2100'),
     validateFields
 ], httpRegistration.listAllByYear);
 
-routes.get("/:id", [
+routes.get("/:id", validar, roleCheck(['secretaria', 'rector', 'coordinador']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
@@ -20,7 +22,7 @@ routes.get("/:id", [
     validateFields
 ], httpRegistration.listById);
 
-routes.get("/groups/:groupId/registrations", [
+routes.get("/groups/:groupId/registrations", validar, roleCheck(['secretaria', 'rector', 'coordinador']), [
     check('groupId')
       .isMongoId()
       .withMessage('Validación: ID de grupo debe ser válido')
@@ -28,7 +30,7 @@ routes.get("/groups/:groupId/registrations", [
     validateFields
 ], httpRegistration.listRegistrationByGroup);
 
-routes.get("/student/:studentId/registrations", [
+routes.get("/student/:studentId/registrations", validar, roleCheck(['secretaria', 'rector', 'coordinador']), [
     check('studentId')
       .isMongoId()
       .withMessage('Validación: ID de estudiante debe ser válido')
@@ -36,7 +38,7 @@ routes.get("/student/:studentId/registrations", [
     validateFields
 ], httpRegistration.listRegistrationByStudent);
 
-routes.post("/", [
+routes.post("/", validar, roleCheck(['secretaria']), [
     check('student')
       .isMongoId()
       .withMessage('Validación: ID de estudiante debe ser válido')
@@ -77,7 +79,7 @@ routes.post("/", [
     validateFields
 ], httpRegistration.createRegistration);
 
-routes.put("/:id", [
+routes.put("/:id", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
@@ -85,7 +87,7 @@ routes.put("/:id", [
     validateFields
 ], httpRegistration.updateRegistration);
 
-routes.put("/:id/activate", [
+routes.put("/:id/activate", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
@@ -93,7 +95,7 @@ routes.put("/:id/activate", [
     validateFields
 ], httpRegistration.activateRegistration);
 
-routes.put("/:id/desactivate", [
+routes.put("/:id/desactivate", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
@@ -101,7 +103,7 @@ routes.put("/:id/desactivate", [
     validateFields
 ], httpRegistration.withdrawnRegistration);
 
-routes.put("/:id/desertion", [
+routes.put("/:id/desertion", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
@@ -109,7 +111,7 @@ routes.put("/:id/desertion", [
     validateFields
 ], httpRegistration.desertionRegistration);
 
-routes.put("/:id/graduated", [
+routes.put("/:id/graduated", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
@@ -117,7 +119,7 @@ routes.put("/:id/graduated", [
     validateFields
 ], httpRegistration.graduatedRegistration);
 
-routes.put("/:id/withdraw", [
+routes.put("/:id/withdraw", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
@@ -126,7 +128,7 @@ routes.put("/:id/withdraw", [
 ], httpRegistration.withdrawStudent);
 
 // Acudientes
-routes.get("/attendant/:attendantId/registration", [
+routes.get("/attendant/:attendantId/registration", validar, roleCheck(['secretaria', 'rector', 'coordinador']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
@@ -134,7 +136,7 @@ routes.get("/attendant/:attendantId/registration", [
     validateFields
 ], httpRegistration.listAttendantById);
 
-routes.post("/attendant/registration", [
+routes.post("/attendant/registration", validar, roleCheck(['secretaria']), [
     check('schoolId')
       .isMongoId()
       .withMessage('Validación: ID de colegio debe ser válido')
@@ -183,7 +185,7 @@ routes.post("/attendant/registration", [
     validateFields
 ], httpRegistration.createdAttendant);
 
-routes.put("/attendant/:attendantId/registration", [
+routes.put("/attendant/:attendantId/registration", validar, roleCheck(['secretaria']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
@@ -191,7 +193,7 @@ routes.put("/attendant/:attendantId/registration", [
     validateFields
 ], httpRegistration.updatedAttendant);
 
-routes.put("/attendant/:attendantId/activate/registration", [
+routes.put("/attendant/:attendantId/activate/registration", validar, roleCheck(['secretaria']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
@@ -199,7 +201,7 @@ routes.put("/attendant/:attendantId/activate/registration", [
     validateFields
 ], httpRegistration.activateAttendant);
 
-routes.put("/attendant/:attendantId/desactivate/registration", [
+routes.put("/attendant/:attendantId/desactivate/registration", validar, roleCheck(['secretaria']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
@@ -207,7 +209,7 @@ routes.put("/attendant/:attendantId/desactivate/registration", [
     validateFields
 ], httpRegistration.desactivateAttendant);
 
-routes.delete("/attendant/:attendantId/registration", [
+routes.delete("/attendant/:attendantId/registration", validar, roleCheck(['secretaria']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')

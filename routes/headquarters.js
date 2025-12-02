@@ -2,7 +2,8 @@ import Router from "express";
 import httpHeadquarters from "../controllers/headquarters.js"
 import { check } from "express-validator"
 import  validateFields from "../middlewares/check.js";
-// import  roleCheck  from "../middlewares/roleCheck.js"
+import  roleCheck  from "../middlewares/roleCheck.js";
+import { validar } from "../middlewares/Jwt.js";
 
 const routes = Router();
 
@@ -10,21 +11,21 @@ routes.get("/",[
     /* roleCheck('admin') */
 ], httpHeadquarters.listAll);
 
-routes.get("/:id", [
+routes.get("/:id",validar, roleCheck(['secretaria', 'rector', 'coordinador']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
     validateFields
 ], httpHeadquarters.listById);
 
-routes.get("/school/:schoolId/headquarters", [
+routes.get("/school/:schoolId/headquarters",validar, roleCheck(['secretaria', 'rector', 'coordinador']), [
     check('schoolId')
       .isMongoId()
       .withMessage('Validación: ID de colegio debe ser válido'),
     validateFields
 ], httpHeadquarters.headquartersBySchool);
 
-routes.post("/", [
+routes.post("/", validar, roleCheck(['secretaria']), [
     check('school')
       .isMongoId()
       .withMessage('Validación: ID de colegio debe ser válido')
@@ -53,7 +54,7 @@ routes.post("/", [
     validateFields
 ], httpHeadquarters.createHeadquarters);
 
-routes.put("/:id", [
+routes.put("/:id", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido')
@@ -86,21 +87,21 @@ routes.put("/:id", [
     validateFields
 ], httpHeadquarters.updateHeadquarters);
 
-routes.put("/:id/activate", [
+routes.put("/:id/activate", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
     validateFields
 ], httpHeadquarters.activateHeadquarters);
 
-routes.put("/:id/desactivate", [
+routes.put("/:id/desactivate", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
     validateFields
 ], httpHeadquarters.deactivateHeadquarters);
 
-routes.delete("/:id", [
+routes.delete("/:id", validar, roleCheck(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),

@@ -23,28 +23,29 @@ const validar = async (req, res, next) => {
     try {
         const token = req.header("x-token");
         console.log(token)
-        const uid = jwt.verify(token, process.env.JWT_SECRET)
-        console.log(uid)
-        let user = await users.findById(uid.uid);
-        req.uid = uid;
-
         if (!token) {
             return res.status(401).json({
                 msg: "No hay token en la peticion"
             })
         };
         console.log("1")
-        /*
-        if (!user.isActive) {
-            return res.status(401).json({
-                msg: "El usuario no esta activo"
-            })
-        };*/
+        
+        const uid = jwt.verify(token, process.env.JWT_SECRET).uid;
+        console.log(uid)
+        let user = await users.findById(uid).select('roles isActive');
+
         if (!user) {
             return res.status(401).json({
                 msg: "usuario no existe"
             })
         };
+        
+        if (!user.isActive) {
+            return res.status(401).json({
+                msg: "El usuario no esta activo"
+            })
+        };
+        req.user = user;
         console.log("2")
         next();
     } catch (error) {
