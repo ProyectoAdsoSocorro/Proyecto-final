@@ -1,16 +1,14 @@
 import Period from '../models/period.js';
 
-// Validar que por porcentajes no pasen del 100%
-const validateTotalPercentage = async (schoolId, year, periodId = null) => {
-    const periods = await Period.find(
-        {
-            school: schoolId,
-            year,
-            ...(periodId ? { _id: { $ne: periodId } } : {})
-        }
-    );
-    const sum = periods.reduce((acc, p) => acc + p.percentage, 0);
-    return sum;
+// Helper para calcular porcentaje automático
+const calculatePercentage = (cycle, number) => {
+    if (cycle === 'normal') return 25;
+    if (cycle === 'semestral') return 50;
+    if (cycle === 'trimestral') {
+        // Trimestres 1 y 2: 33.33%, Trimestre 3: 33.34% para sumar 100%
+        return number === 3 ? 33.34 : 33.33;
+    }
+    return 0;
 };
 
 const validateNumberByCycle = (cycle, number) => {
@@ -61,13 +59,16 @@ export const getByYear = async (req, res) => {
 // POST /api/periods
 export const createPeriod = async (req, res) => {
     try {
-        const { school, year, cycle, number, name, startDate, endDate, percentage } = req.body;
+        let { school, year, cycle, number, name, startDate, endDate } = req.body;
 
         // Validar número según ciclo
         const errorCiclo = validateNumberByCycle(cycle, number);
         if (errorCiclo) {
             return res.status(400).json({ message: errorCiclo });
         }
+
+        // Calcular porcentaje automáticamente
+        const percentage = calculatePercentage(cycle, number);
 
         // Validar solapamiento de fechas en el mismo colegio/año
         const solapamiento = await Period.findOne({
@@ -84,15 +85,17 @@ export const createPeriod = async (req, res) => {
             return res.status(400).json({ message: 'Las fechas se solapan con otro período en este colegio y año' });
         }
 
-        // Validar porcentaje total
-        const sumaActual = await validateTotalPercentage(school, year);
-        if (sumaActual + percentage > 100) {
-            return res.status(400).json({
-                message: `La suma de porcentajes excedería el 100%. Actual: ${sumaActual}%, nuevo: ${percentage}%`
-            });
-        }
+        const nuevoPeriodo = new Period({
+            school,
+            year,
+            cycle,
+            number,
+            name,
+            startDate,
+            endDate,
+            percentage // Asignado automáticamente
+        });
 
-        const nuevoPeriodo = new Period(req.body);
         await nuevoPeriodo.save();
         res.status(201).json(nuevoPeriodo);
     } catch (error) {
@@ -107,27 +110,79 @@ export const createPeriod = async (req, res) => {
 export const updatePeriod = async (req, res) => {
     try {
         const { id } = req.params;
-        const { school, year, cycle, number, percentage } = req.body;
+        const { school, year, cycle, number, startDate, endDate } = req.body;
 
-        // Validar número según ciclo
-        if (cycle && number !== undefined) {
-            const errorCiclo = validateNumberByCycle(cycle, number);
+        // Obtener el período actual
+        const currentPeriod = await Period.findById(id);
+        if (!currentPeriod) {
+            return res.status(404).json({ message: 'Período no encontrado' });
+        }
+
+        let updateData = { ...req.body };
+
+        // Validar número según ciclo si se proporciona
+        if (cycle || number) {
+            const newCycle = cycle || currentPeriod.cycle;
+            const newNumber = number || currentPeriod.number;
+
+            const errorCiclo = validateNumberByCycle(newCycle, newNumber);
             if (errorCiclo) {
                 return res.status(400).json({ message: errorCiclo });
             }
+
+            updateData.percentage = calculatePercentage(newCycle, newNumber);
         }
 
-        // Validar porcentaje total (excluyendo el actual)
-        const sumaActual = await validateTotalPercentage(school, year, id);
-        if (percentage !== undefined && sumaActual + percentage > 100) {
+        // Validar fechas si se proporcionan
+        const newStartDate = startDate ? new Date(startDate) : currentPeriod.startDate;
+        const newEndDate = endDate ? new Date(endDate) : currentPeriod.endDate;
+
+        // Validar que la fecha de fin sea posterior a la de inicio
+        if (newEndDate <= newStartDate) {
             return res.status(400).json({
-                message: `La suma de porcentajes excedería el 100%. Actual (sin este): ${sumaActual}%, nuevo: ${percentage}%`
+                message: 'La fecha de fin debe ser posterior a la fecha de inicio'
             });
+        }
+
+        // Validar solapamiento con otros períodos (excluyendo el actual)
+        if (startDate || endDate) {
+            const schoolToCheck = school || currentPeriod.school;
+            const yearToCheck = year || currentPeriod.year;
+
+            const solapamiento = await Period.findOne({
+                _id: { $ne: id }, // Excluir el período actual
+                school: schoolToCheck,
+                year: yearToCheck,
+                $or: [
+                    // El nuevo período empieza dentro de otro período existente
+                    { startDate: { $lte: newStartDate }, endDate: { $gt: newStartDate } },
+                    // El nuevo período termina dentro de otro período existente
+                    { startDate: { $lt: newEndDate }, endDate: { $gte: newEndDate } },
+                    // El nuevo período contiene completamente a otro período
+                    { startDate: { $gte: newStartDate }, endDate: { $lte: newEndDate } }
+                ]
+            });
+
+            if (solapamiento) {
+                return res.status(400).json({
+                    message: `Las fechas se solapan con el período "${solapamiento.name}" (${solapamiento.startDate.toISOString().split('T')[0]} - ${solapamiento.endDate.toISOString().split('T')[0]})`
+                });
+            }
+        }
+
+        // Evitar que el usuario manipule el porcentaje manualmente
+        let percentageWarning = null;
+        if (req.body.percentage) {
+            percentageWarning = 'No se puede editar el porcentaje manualmente. El porcentaje está predefinido según el ciclo y número del período.';
+            delete updateData.percentage;
+            const finalCycle = cycle || currentPeriod.cycle;
+            const finalNumber = number || currentPeriod.number;
+            updateData.percentage = calculatePercentage(finalCycle, finalNumber);
         }
 
         const periodoActualizado = await Period.findByIdAndUpdate(
             id,
-            req.body,
+            updateData,
             { new: true, runValidators: true }
         );
 
@@ -135,7 +190,16 @@ export const updatePeriod = async (req, res) => {
             return res.status(404).json({ message: 'Período no encontrado' });
         }
 
-        res.json(periodoActualizado);
+        // Incluir advertencia si se intentó cambiar el porcentaje
+        const response = {
+            ...periodoActualizado.toObject()
+        };
+
+        if (percentageWarning) {
+            response.warning = percentageWarning;
+        }
+
+        res.json(response);
     } catch (error) {
         if (error.code === 11000) {
             return res.status(400).json({ message: 'Ya existe un período con ese número en este colegio y año' });
