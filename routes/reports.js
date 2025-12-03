@@ -20,11 +20,7 @@ router.get("/list-students/:schoolyear/:schoolId/:GroupId", [
 
 ],httpReports.httpReportStudents);
 
-<<<<<<< HEAD
-router.get("/honor-roll/:schoolyear/:schoolId/:periodId",  validar, roleCheck(["secretaria", "profesor", "rector", "coordinador"]),[
-=======
 router.get("/honor-roll/:schoolyear/:schoolId/:periodId", validar, roleCheck(["secretaria", "profesor", "rector", "coordinador"]),[
->>>>>>> pruebasB
     check("schoolyear").notEmpty().withMessage("Campo requerido: Año escolar").trim(),
     check("schoolId").isMongoId().withMessage("Validación: ID de colegio debe ser válido").trim(),
     check("periodId").isMongoId().withMessage("Validación: ID del Periodo debe ser válido").trim(),
