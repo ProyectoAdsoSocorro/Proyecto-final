@@ -2,6 +2,7 @@ import Colegio from "../models/schools.js";
 import ModelUser from "../models/users.js";
 import { sendEmail } from "../utils/sendEmail.js";
 
+
 import axios from 'axios';
 
 const httpSchools = {
