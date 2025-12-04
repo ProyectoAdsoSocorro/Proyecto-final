@@ -53,9 +53,10 @@ const periodSchema = new Schema({
 });
 //validacion de fechas
 periodSchema.pre('validate', function(next){
-    if(this.fechaFin<this.fechaInicio){
-        this.invalidate('fechaFin','la fecha de fin no puede ser anterior a la fecha de inicio')
-    }
+  // usar startDate/endDate (no fechaInicio/fechaFin)
+  if (this.endDate && this.startDate && this.endDate < this.startDate) {
+    this.invalidate('endDate', 'La fecha de fin no puede ser anterior a la fecha de inicio');
+  }
     next();
 })
 //indice unico el colegio no puede tener dos periodos con el mismo numero en un año

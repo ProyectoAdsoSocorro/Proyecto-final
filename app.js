@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 
 // Importación de rutas
@@ -26,6 +27,8 @@ const MONGO_URL = process.env.MONGO_URL;
 
 // 🧩 Middleware global para parsear JSON
 app.use(express.json());
+app.use(cors());
+
 
 // 🔗 Conexión a MongoDB
 /* mongoose.connect(MONGO_URL, {

@@ -16,10 +16,7 @@ const modelUsers = new Schema(
         dateBorn: String,
         gender: String,
         isActive: { type: Boolean, default: true },
-        roles: [{
-            type: String, 
-            enum: ["coordinador", "rector", "secretaria", "estudiante", "profesor", "acudiente"]
-        }], //coordinador//rector//secretaria//estudiante//profesor//acudiente,
+        roles: [], //coordinador//rector//secretaria//estudiante//profesor//acudiente,
         stratum: Number,
         sisben: String,
         eps: String,
@@ -28,8 +25,8 @@ const modelUsers = new Schema(
         disability: String,
         ethnic: String,
         profilePhoto: String,
-        signDigital: String,
+        firmaDisignDigitalgital: String,
         college: { type: mongoose.Types.ObjectId, ref: "School" }   // referenciado al colegio
     });
 
-export default mongoose.models.users || mongoose.model("users", modelUsers);
+export default mongoose.model("users", modelUsers);

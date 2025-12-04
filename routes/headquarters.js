@@ -2,13 +2,13 @@ import Router from "express";
 import httpHeadquarters from "../controllers/headquarters.js"
 import { check } from "express-validator"
 import  validateFields from "../middlewares/check.js";
+// import  roleCheck  from "../middlewares/roleCheck.js"
 
 const routes = Router();
 
-routes.get("/",/* [
-    validarol (["R","E"])
-    check
-] */ httpHeadquarters.listAll);
+routes.get("/",[
+    /* roleCheck('admin') */
+], httpHeadquarters.listAll);
 
 routes.get("/:id", [
     check('id')

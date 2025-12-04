@@ -1,25 +1,18 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
 import validateFields from '../middlewares/check.js';
+import { authPeriodos } from '../middlewares/authPeriod.js';
 import * as httpPeriods from '../controllers/periodController.js';
 
 const router = Router();
 
-// Role-based access control temporarily disabled for testing periods routes.
-// If you need to re-enable role checks, uncomment the function below and add it back to routes.
-/*
-const ensureSecretariaRole = (req, res, next) => {
-  if (req.user && req.user.role === 'secretaria') {
-    return next();
-  }
-  return res.status(403).json({ message: 'Access denied. Only secretaria role is allowed.' });
-};
-*/
-
-// Routes
-router.get('/', httpPeriods.getAll);
+// Public GET routes (restricted to administrative roles)
+router.get('/', [
+  authPeriodos
+], httpPeriods.getAll);
 
 router.get('/:id', [
+  authPeriodos,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
@@ -27,13 +20,17 @@ router.get('/:id', [
 ], httpPeriods.getById);
 
 router.get('/year/:year', [
+  authPeriodos,
   check('year')
     .isNumeric()
     .withMessage("Validación: Año debe ser un número"),
   validateFields
 ], httpPeriods.getByYear);
 
+
+// Protected routes – only secretaria role can modify periods
 router.post('/', [
+  authPeriodos,
   check('school')
     .isMongoId()
     .withMessage("Validación: ID de colegio debe ser válido"),
@@ -55,49 +52,45 @@ router.post('/', [
   check('endDate')
     .isDate()
     .withMessage("Validación: Fecha de fin debe ser válida"),
-  check('percentage')
-    .isNumeric()
-    .withMessage("Validación: Porcentaje debe ser un número"),
+
   validateFields
 ], httpPeriods.createPeriod);
 
 router.put('/:id', [
-  check("id")
+  authPeriodos,
+  check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  check("school")
+  check('school')
     .optional()
     .isMongoId()
     .withMessage("Validación: ID de escuela debe ser válido"),
-  check("year")
+  check('year')
     .optional()
     .isInt({ min: 1900, max: 2100 })
     .withMessage("Rango: Año debe estar entre 1900 y 2100"),
-  check("cycle")
+  check('cycle')
     .optional()
     .isIn(["normal", "semestral", "trimestral"])
     .withMessage("Validación: Ciclo debe ser normal, semestral o trimestral"),
-  check("number")
+  check('number')
     .optional()
     .isInt({ min: 1 })
     .withMessage("Rango: Número debe ser entero positivo"),
-  check("name")
+  check('name')
     .optional()
     .notEmpty()
     .withMessage("Campo requerido: Nombre"),
-  check("startDate")
+  check('startDate')
     .optional()
     .isISO8601()
     .withMessage("Validación: Fecha de inicio debe ser válida"),
-  check("endDate")
+  check('endDate')
     .optional()
     .isISO8601()
     .withMessage("Validación: Fecha de finalización debe ser válida"),
-  check("percentage")
-    .optional()
-    .isInt({ min: 0, max: 100 })
-    .withMessage("Rango: Porcentaje debe estar entre 0 y 100"),
-  check("active")
+
+  check('active')
     .optional()
     .isBoolean()
     .withMessage("Validación: Estado debe ser verdadero o falso"),
@@ -105,6 +98,7 @@ router.put('/:id', [
 ], httpPeriods.updatePeriod);
 
 router.put('/:id/activate', [
+  authPeriodos,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
@@ -112,6 +106,7 @@ router.put('/:id/activate', [
 ], httpPeriods.activatePeriod);
 
 router.put('/:id/deactivate', [
+  authPeriodos,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
@@ -119,10 +114,16 @@ router.put('/:id/deactivate', [
 ], httpPeriods.deactivatePeriod);
 
 router.delete('/:id', [
-  check("id")
+  authPeriodos,
+  check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
   validateFields
 ], httpPeriods.deletePeriod);
 
 export default router;
+
+
+
+
+
