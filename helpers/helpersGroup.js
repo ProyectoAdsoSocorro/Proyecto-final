@@ -40,11 +40,11 @@ const validateGroupDirector = async (directorId) => {
     }
 
     const hasInstructorRole = Array.isArray(director.roles)
-        ? director.roles.includes('instructor')
-        : director.roles === 'instructor';
+        ? director.roles.includes('profesor')
+        : director.roles === 'profesor';
 
     if (!hasInstructorRole) {
-        throw new Error(`The Director with ID ${directorId} does not have the required 'instructor' role.'`);
+        throw new Error(`The Director with ID ${directorId} does not have the required 'profesor' role.'`);
     }
 };
 

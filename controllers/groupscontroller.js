@@ -30,7 +30,7 @@ const getGroupById = async (req, res) => {
 
         const group = await Group.findById(id)
             .populate('headquarters')//trae datos de headquarters
-            .populate('groupDirector');
+            .populate('groupDirector','-password'); //trae datos de groupDirector excluyendo password
 
         if (!group) {
             return res.status(404).json({
@@ -124,7 +124,7 @@ const getGroupsByHeadquarters = async (req, res) => {
 };
 
 // 5. GET /api/grupos/:id/estudiantes - Estudiantes por grupo
-const getStudentsByGroup = async (req, res) => {
+const  getStudentsByGroup = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -160,6 +160,7 @@ const getStudentsByGroup = async (req, res) => {
                 success: true,
                 data: students,
             });
+            
     } catch (error) {
         console.error('Error retrieving students:', error);
             res.status(500).json({
