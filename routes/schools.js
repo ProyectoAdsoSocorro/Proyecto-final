@@ -1,61 +1,61 @@
 import Router from "express";
 import httpSchools from "../controllers/schools.js";
 import { check } from "express-validator";
-import validateFields from "../middlewares/check.js";
-import roleCheck from "../middlewares/roleCheck.js";
+import showValidations from "../middlewares/showValidations.js";
+import authRole from "../middlewares/authRole.js";
 
 
 const routes = Router()
 
 routes.get("/", [
-    roleCheck(["admin"]),
-    validateFields
+    authRole(["admin"]),
+    showValidations
 
 ],httpSchools.getSchools);
 routes.get("/:id", [
-    roleCheck(["admin"]),
+    authRole(["admin"]),
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
-    validateFields
+    showValidations
 ], httpSchools.getSchoolById);
 routes.post("/", [
-    roleCheck(["admin"]),
+    authRole(["admin"]),
     check("nameSchool").notEmpty().withMessage("El nombre es obligatorio").trim(),
    /*  check("code").notEmpty().withMessage("El código es obligatorio").trim(), */
     check("addressSchool").notEmpty().withMessage("La dirección es obligatoria").trim(),
     check("phoneSchool").notEmpty().withMessage("El telefono es obligatorio").trim(),
     check("emailSchool").isEmail().withMessage("El email no es válido").trim(),
-    validateFields
+    showValidations
 ], httpSchools.createSchool);
 
 routes.post("/notify-admin-created",[
-    roleCheck(["admin"]),
+    authRole(["admin"]),
     check("schoolName").notEmpty().withMessage("El nombre del colegio es obligatorio").trim(),
     check("adminEmail").isEmail().withMessage("El email del admin no es válido").trim(),
-    validateFields
+    showValidations
 ], httpSchools.notifyAdminCreated);
 routes.put("/:id", [
-    roleCheck(["admin"]),
+    authRole(["admin"]),
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
     check("nameSchool").notEmpty().withMessage("El nombre es obligatorio").trim(),
     check("code").notEmpty().withMessage("El código es obligatorio").trim(),
     check("addressSchool").notEmpty().withMessage("La dirección es obligatoria").trim(),
     check("phoneSchool").notEmpty().withMessage("El telefono es obligatorio").trim(),
     check("emailSchool").isEmail().withMessage("El email no es válido").trim(),
-    validateFields
+    showValidations
 ], httpSchools.updateSchool);
 routes.put("/:id/activate", [
-    roleCheck(["admin"]),
+    authRole(["admin"]),
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
-    validateFields
+    showValidations
 ], httpSchools.activateSchool);      // Route to activate
 routes.put("/:id/desactivate", [
-    roleCheck(["admin"]),
+    authRole(["admin"]),
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
-    validateFields
+    showValidations
 ], httpSchools.deactivateSchool);
 routes.delete("/:id", [
-    roleCheck(["admin"]),
+    authRole(["admin"]),
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
-    validateFields
+    showValidations
 ], httpSchools.deleteSchool);
 export default routes

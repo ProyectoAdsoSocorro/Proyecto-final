@@ -1,7 +1,7 @@
 import express from 'express';
 import * as coreDirectionCtrl from '../controllers/coreDirectionController.js';
 /* import { verifyToken } from '../middlewares/authJwt.js'; */
-import  validateFields  from '../middlewares/check.js';
+import  showValidations  from '../middlewares/showValidations.js';
 import { check } from 'express-validator';
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.post('/', [
     check('responsible')
       .not().isEmpty()
       .withMessage('Campo requerido: Responsable'),
-    validateFields
+    showValidations
 ], /* verifyToken, */ coreDirectionCtrl.create);
 
 router.post('/login', [
@@ -40,7 +40,7 @@ router.post('/login', [
     check('password')
       .isLength({ min: 6 })
       .withMessage('Rango: Contraseña debe tener mínimo 6 caracteres'),
-    validateFields
+    showValidations
 ], coreDirectionCtrl.login);
 
 router.put('/:id', [
@@ -69,7 +69,7 @@ router.put('/:id', [
     check('responsible')
       .not().isEmpty()
       .withMessage('Campo requerido: Responsable'),
-    validateFields
+    showValidations
 ], /* verifyToken,  */coreDirectionCtrl.update);
 
 router.put('/:id/change-password', [
@@ -77,24 +77,28 @@ router.put('/:id/change-password', [
       .isMongoId()
       .not().isEmpty()
       .withMessage('Validación: ID debe ser válido'),
+      showValidations
 ], /* verifyToken,  */coreDirectionCtrl.changePassword);
 
 router.delete('/:id', [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
+      showValidations
 ], coreDirectionCtrl.remove);
 
 router.put('/:id/activate', [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
+      showValidations
 ], coreDirectionCtrl.activate);
 
 router.put('/:id/deactivate', [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
+      showValidations
 ], coreDirectionCtrl.deactivate);
 
 export default router;

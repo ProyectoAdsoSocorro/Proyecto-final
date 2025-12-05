@@ -1,6 +1,7 @@
 import express from 'express';
 import { check, validationResult } from 'express-validator';
 import * as controller from '../controllers/bulletinController.js';
+import showValidations from "../middlewares/showValidations.js"
 // import auth from '../middlewares/auth.js';
 // import roleCheck from '../middlewares/roleCheck.js';
 
@@ -11,15 +12,6 @@ const router = express.Router();
  * - Rector, Coordinador → solo pueden listar (GET)
  * - Secretaria → puede realizar todas las operaciones (GET, POST, PUT)
  */
-
-
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errores: errors.array() });
-  }
-  next();
-};
 
 
 /**
@@ -34,7 +26,7 @@ router.get(
      //auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listShortByStudent
 );
 
@@ -50,7 +42,7 @@ router.get(
     //auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listLongByStudent
 );
 
@@ -66,7 +58,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listShortByGroup
 );
 
@@ -82,7 +74,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listLongByGroup
 );
 
@@ -97,7 +89,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listShortFinalsByStudent
 );
 
@@ -112,7 +104,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listLongFinalsByStudent
 );
 
@@ -127,7 +119,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listShortFinalsByGroup
 );
 
@@ -142,7 +134,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listLongFinalsByGroup
 );
 

@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../app.js';
 import mongoose from 'mongoose';
 import User from '../models/users.js';
-import { generarJWT } from '../middlewares/jwt.js';
+import { generarJWT } from '../middlewares/JWT.js';
 
 const api = request(app);
 

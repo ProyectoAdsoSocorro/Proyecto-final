@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-
+import { transporter } from "./services/emailService.js";
 // Importación de rutas
 import users from './routes/users.js';
 import subjectsRoutes from './routes/subjects.js';
@@ -38,9 +38,6 @@ app.use(cors());
 .then(() => console.log('✅ MongoDB conectado correctamente'))
 .catch((error) => console.error('❌ Error al conectar con MongoDB:', error)); */
 
-mongoose.connect(MONGO_URL)
-    .then(() => console.log('✅ MongoDB conectado correctamente'))
-    .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
 
 
 // 🌐 Rutas principales
@@ -71,17 +68,26 @@ app.get('/', (req, res) => {
 });
 
 // 🚀 Iniciar servidor
-/* app.listen(PORT, () => {
-    console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+app.listen(PORT, async () => {
+    try {
+        await transporter.verify()
+        console.log(`✅ Servidor corriendo en http://localhost:${process.env.PORT}`);
+        mongoose.connect(MONGO_URL)
+            .then(() => console.log('✅ MongoDB conectado correctamente'))
+            .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
+    } catch (error) {
+        console.log(error);
+    }
+
 });
 
-export default app */
-
+//export default app 
+/*
 if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => {
         console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
     });
-}
+}*/
 
 // Exportar la app para pruebas
 export default app;

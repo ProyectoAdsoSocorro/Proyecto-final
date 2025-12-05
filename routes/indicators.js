@@ -1,7 +1,7 @@
 import { Router } from "express";
 import httpIndicators from "../controllers/indicators.js";
 import { check } from "express-validator";
-import validateFields from "../middlewares/check.js";
+import showValidations from "../middlewares/showValidations.js";
 import validateAcademicRelations from "../middlewares/validateAcademicRelations.js";
 import validateIndicatorData from "../middlewares/validateIndicatorData.js";
 
@@ -14,18 +14,18 @@ routes.get("/", httpIndicators.getIndicators,);
 //obtener todos los indicadores por ID
 routes.get("/:id",[
  check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
-    validateFields
+    showValidations
 ], httpIndicators.getIndicatorById);
 
 // GET - INDICADORES POR CARGA ACADÉMICA
 routes.get("/academicloads/:academicLoadId/indicators", [
     check("academicLoadId").isMongoId().withMessage("ID de Carga Académica no válido"),
-    validateFields
+    showValidations
 ], httpIndicators.getIndicatorsByAcademicLoad);
 
 routes.get("/years/:years", [
      check("years").isString().withMessage("Año no válido").trim(),
-    validateFields
+    showValidations
 ], httpIndicators.getIndicatorsByYear);
 
 
@@ -47,13 +47,13 @@ routes.get("/years/:years", [
 routes.get("/periods/:periodsId/indicators",[
 
     check("periodsId").isMongoId().withMessage("ID de Período no válido").trim(),
-    validateFields
+    showValidations
 ], httpIndicators.getIndicatorsByPeriod);
 
 
 routes.get("modelusers/:usersId/indicators",[
     check("usersId").isMongoId().withMessage("ID de Usuario no válido").trim(),
-    validateFields
+    showValidations
 
 
 ] ,httpIndicators.getIndicatorsByUser);
@@ -64,7 +64,7 @@ routes.post("/",  [
     check("description").isString().isLength({ min: 5, max: 500 }).withMessage("Descripción debe tener entre 5 y 500 caracteres"),
     check("performanceIndicators").isIn(['Alto', 'Medio', 'Bajo', 'Excelente', 'Regular', 'Deficiente']).withMessage("performanceIndicators no válido"),
     check("userWhoDidIt").isMongoId().withMessage("ID de Usuario no válido"),
-     validateFields,
+     showValidations,
     validateIndicatorData,
 
 
@@ -77,26 +77,26 @@ routes.put("/:id", [
     check("description").isString().isLength({ min: 5, max: 500 }).withMessage("Descripción debe tener entre 5 y 500 caracteres"),
     check("performanceIndicators").isIn(['Alto', 'Medio', 'Bajo', 'Excelente', 'Regular', 'Deficiente']).withMessage("performanceIndicators no válido"),
     check("userWhoDidIt").isMongoId().withMessage("ID de Usuario no válido"),
-    validateFields,
+    showValidations,
     validateIndicatorData,
 
 ],httpIndicators.updateIndicator);
 routes.put("/:id/active",[
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
-    validateFields
+    showValidations
 
 ] ,httpIndicators.activeIndicator);
 routes.put("/:id/deactive", [
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
-    validateFields
+    showValidations
 
 ],httpIndicators.deactiveIndicator);
 routes.delete("/:id", [
 
     check("id").isMongoId().withMessage("ID de Indicador no válido").trim(),
-    validateFields
+    showValidations
 ], httpIndicators.deleteIndicator);
 
 export default routes;

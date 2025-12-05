@@ -1,6 +1,7 @@
 import express from 'express';
 import { check, validationResult } from 'express-validator';
 import * as controller from '../controllers/validityController.js';
+import showValidations from "../middlewares/showValidations.js"
 // import auth from '../middlewares/auth.js';
 // import roleCheck from '../middlewares/roleCheck.js';
 
@@ -9,13 +10,6 @@ const router = express.Router();
 /**
  * Middleware para manejar errores de validación
  */
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errores: errors.array() });
-  }
-  next();
-};
 
 /**
  * Reglas de acceso:
@@ -94,7 +88,7 @@ router.post(
     // auth,
     // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.create
 );
 
@@ -110,7 +104,7 @@ router.put(
     // auth,
     // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.activate
 );
 
@@ -126,7 +120,7 @@ router.put(
     // auth,
     // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.deactivate
 );
 

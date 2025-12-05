@@ -1,42 +1,44 @@
 import Router from "express";
 import httpRegistration from "../controllers/registration.js"
 import { check } from "express-validator";
-import validateFields  from "../middlewares/check.js";
- 
+import showValidations  from "../middlewares/showValidations.js";
+import authRole from "../middlewares/authRole.js";
+import { validateJWT } from "../middlewares/jwt.js";
+
 const routes = Router();
 
-routes.get("/year/:year", [
+routes.get("/year/:year", validateJWT, authRole(['secretaria', 'rector', 'coordinador']), [
     check('year')
       .isInt({ min: 1900, max: 2100 })
       .withMessage('Rango: Año debe estar entre 1900 y 2100'),
-    validateFields
+    showValidations
 ], httpRegistration.listAllByYear);
 
-routes.get("/:id", [
+routes.get("/:id", validateJWT, authRole(['secretaria', 'rector', 'coordinador']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.listById);
 
-routes.get("/groups/:groupId/registrations", [
+routes.get("/groups/:groupId/registrations", validateJWT, authRole(['secretaria', 'rector', 'coordinador']), [
     check('groupId')
       .isMongoId()
       .withMessage('Validación: ID de grupo debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.listRegistrationByGroup);
 
-routes.get("/student/:studentId/registrations", [
+routes.get("/student/:studentId/registrations", validateJWT, authRole(['secretaria', 'rector', 'coordinador']), [
     check('studentId')
       .isMongoId()
       .withMessage('Validación: ID de estudiante debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.listRegistrationByStudent);
 
-routes.post("/", [
+routes.post("/", validateJWT, authRole(['secretaria']), [
     check('student')
       .isMongoId()
       .withMessage('Validación: ID de estudiante debe ser válido')
@@ -74,67 +76,67 @@ routes.post("/", [
       .isMongoId()
       .withMessage('Validación: ID de colegio debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.createRegistration);
 
-routes.put("/:id", [
+routes.put("/:id", validateJWT, authRole(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.updateRegistration);
 
-routes.put("/:id/activate", [
+routes.put("/:id/activate", validateJWT, authRole(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.activateRegistration);
 
-routes.put("/:id/desactivate", [
+routes.put("/:id/desactivate", validateJWT, authRole(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.withdrawnRegistration);
 
-routes.put("/:id/desertion", [
+routes.put("/:id/desertion", validateJWT, authRole(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.desertionRegistration);
 
-routes.put("/:id/graduated", [
+routes.put("/:id/graduated", validateJWT, authRole(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.graduatedRegistration);
 
-routes.put("/:id/withdraw", [
+routes.put("/:id/withdraw", validateJWT, authRole(['secretaria']), [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID de matrícula debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.withdrawStudent);
 
 // Acudientes
-routes.get("/attendant/:attendantId/registration", [
+routes.get("/attendant/:attendantId/registration", validateJWT, authRole(['secretaria', 'rector', 'coordinador']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.listAttendantById);
 
-routes.post("/attendant/registration", [
+routes.post("/attendant/registration", validateJWT, authRole(['secretaria']), [
     check('schoolId')
       .isMongoId()
       .withMessage('Validación: ID de colegio debe ser válido')
@@ -180,39 +182,39 @@ routes.post("/attendant/registration", [
       .trim()
       .not().isEmpty()
       .withMessage('Campo requerido: Género'),
-    validateFields
+    showValidations
 ], httpRegistration.createdAttendant);
 
-routes.put("/attendant/:attendantId/registration", [
+routes.put("/attendant/:attendantId/registration", validateJWT, authRole(['secretaria']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.updatedAttendant);
 
-routes.put("/attendant/:attendantId/activate/registration", [
+routes.put("/attendant/:attendantId/activate/registration", validateJWT, authRole(['secretaria']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.activateAttendant);
 
-routes.put("/attendant/:attendantId/desactivate/registration", [
+routes.put("/attendant/:attendantId/desactivate/registration", validateJWT, authRole(['secretaria']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.desactivateAttendant);
 
-routes.delete("/attendant/:attendantId/registration", [
+routes.delete("/attendant/:attendantId/registration", validateJWT, authRole(['secretaria']), [
     check('attendantId')
       .isMongoId()
       .withMessage('Validación: ID de acudiente debe ser válido')
       .trim(),
-    validateFields
+    showValidations
 ], httpRegistration.deleteAttendant);
 
 export default routes;

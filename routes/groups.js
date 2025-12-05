@@ -2,7 +2,7 @@ import { Router } from "express";
 import { check, param, body } from "express-validator";
 import groupController from '../controllers/groupsController.js';
 import groupHelper from '../helpers/helpersGroup.js';
-import  validateFields  from '../middlewares/check.js'; 
+import  showValidations  from '../middlewares/showValidations.js'; 
 
 const router = Router();
 
@@ -10,7 +10,7 @@ const router = Router();
 router.get('/year/:year',
     [
         param('year', 'Year is required and must be a number.').isInt(),
-        validateFields
+        showValidations
     ],
     groupController.getGroupsByYear
 );
@@ -21,7 +21,7 @@ router.get('/year/:year',
 router.get('/:id',
     [
         param('id', 'Invalid ID format.').isMongoId(),
-        validateFields
+        showValidations
     ],
     groupController.getGroupById
 );
@@ -30,7 +30,7 @@ router.get('/:id',
 router.get('/:id/acudientes',
     [
         param('id', 'Invalid ID format.').isMongoId(),
-        validateFields
+        showValidations
     ],
     groupController.getGuardiansByGroup
 );
@@ -39,7 +39,7 @@ router.get('/:id/acudientes',
 router.get('/sedes/:sedeId/grupos',
     [
         param('sedeId', 'Invalid ID format.').isMongoId(),
-        validateFields
+        showValidations
     ],
     groupController.getGroupsByHeadquarters
 );
@@ -48,7 +48,7 @@ router.get('/sedes/:sedeId/grupos',
 router.get('/:id/estudiantes',
     [
         param('id', 'Invalid ID format.').isMongoId(),
-        validateFields
+        showValidations
     ],
     groupController.getStudentsByGroup
 );
@@ -64,7 +64,7 @@ router.post('/',
         check('grade', 'Grade is required.').exists().notEmpty().custom(groupHelper.validateGrade),
         check('groupIdentifier', 'Group Identifier is required.').exists().notEmpty(),
         check('session', 'Session is required.').exists().custom(groupHelper.validateSession),
-        validateFields
+        showValidations
     ], 
     groupController.createGroup
 );
@@ -79,7 +79,7 @@ router.put('/:id',
         body('session').optional().custom(groupHelper.validateSession),
         body('isActive').optional().isBoolean(),
         body('periodData').optional().isArray(),
-        validateFields
+        showValidations
     ], 
     groupController.updateGroup
 );
@@ -87,7 +87,7 @@ router.put('/:id',
 router.put('/:id/activar',
     [
         param('id', 'Invalid ID format.').isMongoId(),
-        validateFields
+        showValidations
     ],
     groupController.activateGroup
 );
@@ -96,7 +96,7 @@ router.put('/:id/activar',
 router.put('/:id/desactivar',
     [
         param('id', 'Invalid ID format.').isMongoId(),
-        validateFields
+        showValidations
     ], 
     groupController.deactivateGroup
 );
@@ -105,7 +105,7 @@ router.put('/:id/desactivar',
 router.delete('/:id',
     [
         param('id', 'Invalid ID format.').isMongoId(),
-        validateFields
+        showValidations
     ],
     groupController.deleteGroup
 );

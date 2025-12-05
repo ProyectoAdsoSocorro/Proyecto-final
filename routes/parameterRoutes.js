@@ -10,7 +10,7 @@ import {
   deactivateParameter
 } from '../controllers/parameterController.js';
 
-import { checksParameter } from '../middlewares/checksParameter.js';
+import showValidations from '../middlewares/showValidations.js';
 import { check } from 'express-validator';
 
 const router = Router();
@@ -18,11 +18,11 @@ const router = Router();
 router.get('/', getParameters);
 router.get('/:id', [
   check('id', 'Invalid ID').isMongoId(),
-  checksParameter
+  showValidations
 ], getParameterById);
 router.get('/school/:schoolId', [
   check('schoolId', 'Invalid School ID').isMongoId(),
-  checksParameter
+  showValidations
 ], getParameterBySchool);
 router.post('/', [
   check('school', 'School ID is required').isMongoId(),
@@ -34,7 +34,7 @@ router.post('/', [
   check('linkedToPeriod', 'Linked To Period must be a boolean').isBoolean(),
   check('linkedToGrade', 'Linked To Grade must be a boolean').isBoolean(),
   check('approximateAverage', 'Approximate Average must be a boolean').isBoolean(),
-  checksParameter
+  showValidations
 ], createParameter);
 router.put('/:id', [
   check('id', 'Invalid ID').isMongoId(),
@@ -47,19 +47,19 @@ router.put('/:id', [
   check('linkedToPeriod', 'Linked To Period must be a boolean').isBoolean(),
   check('linkedToGrade', 'Linked To Grade must be a boolean').isBoolean(),
   check('approximateAverage', 'Approximate Average must be a boolean').isBoolean(),
-  checksParameter
+  showValidations
 ], updateParameter);
 router.put('/:id/activate', [
   check('id', 'Invalid ID').isMongoId(),
-  checksParameter
+  showValidations
 ], activateParameter);
 router.put('/:id/deactivate', [
   check('id', 'Invalid ID').isMongoId(),
-  checksParameter
+  showValidations
 ], deactivateParameter);
 router.delete('/:id', [
   check('id', 'Invalid ID').isMongoId(),
-  checksParameter
+  showValidations
 ], deleteParameter);
 
 export default router;

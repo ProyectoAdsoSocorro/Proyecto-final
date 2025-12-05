@@ -1,6 +1,7 @@
 import express from 'express';
 import { check, body, validationResult } from 'express-validator';
 import * as controller from '../controllers/qualificationsController.js';
+import showValidations from "../middlewares/showValidations.js"
 // import auth from '../middlewares/auth.js';
 // import roleCheck from '../middlewares/checksQualifications.js';
 
@@ -9,13 +10,6 @@ const router = express.Router();
 /**
  * Middleware para manejar errores de validación
  */
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errores: errors.array() });
-  }
-  next();
-};
 
 /**
  * Reglas de acceso actualizadas:
@@ -34,7 +28,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.get
 );
 
@@ -49,7 +43,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listByStudent
 );
 
@@ -64,7 +58,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listByGroup
 );
 
@@ -80,7 +74,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listByGroupAndSubject
 );
 
@@ -94,7 +88,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listFinalsByYear
 );
 
@@ -109,7 +103,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listFinalsByStudent
 );
 
@@ -124,7 +118,7 @@ router.get(
     // auth,
     // roleCheck(['rector', 'coordinador', 'secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.listFinalsByGroup
 );
 
@@ -145,7 +139,7 @@ router.post(
     // auth,
     // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.create
 );
 
@@ -167,7 +161,7 @@ router.post(
     body('*.year').isInt({ min: 2000, max: 2100 }).withMessage('Año inválido en el lote'),
     body('*.noteType').isIn(['PERIOD', 'FINAL']).withMessage('Tipo de nota inválido en el lote'),
     body('*.note').isFloat({ min: 0, max: 5 }).withMessage('Nota fuera de rango en el lote'),
-    handleValidationErrors,
+    showValidations,
     // auth,
     // roleCheck(['secretaria']),
   ],
@@ -187,7 +181,7 @@ router.post(
     // auth,
     // roleCheck(['secretaria']), 
   ],
-  handleValidationErrors,
+  showValidations,
   controller.generateFinals
 );
 
@@ -204,7 +198,7 @@ router.put(
     // auth,
     // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.update
 );
 
@@ -220,7 +214,7 @@ router.put(
     // auth,
     // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  showValidations,
   controller.updateFinal
 );
 
