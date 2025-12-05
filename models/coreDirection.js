@@ -8,6 +8,7 @@ const CoreDirectionSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   responsible: { type: String, required: true },
+  role: { type: String, default: 'admin' },
   active: { type: Boolean, default: true }, // to activate/deactivate
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

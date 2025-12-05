@@ -50,5 +50,8 @@
     "url": "https://github.com/ProyectoAdsoSocorro/Proyecto-final/issues"
   },
   "homepage": "https://github.com/ProyectoAdsoSocorro/Proyecto-final#readme",
+  "directories": {
+    "test": "tests"
+  },
   "description": ""
 }
