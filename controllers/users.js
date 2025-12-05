@@ -23,7 +23,7 @@ const functionsUsers = {
             res.send("usuario registrado")
             //console.log(user)
         } catch (error) {
-            res.send("error").status(400)
+            res.status(400).send(error)
             console.log(error)
         }
     },

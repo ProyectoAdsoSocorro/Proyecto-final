@@ -77,7 +77,9 @@ const validationsUpdate = [
 
 
 router.post("/", validationsLogin, showValidations, functionsUsers.login);
+
 router.post("/register", validationsRegister, showValidations, functionsUsers.register);
+
 router.get("/recovery", functionsUsers.recoveryPassword);
 
 router.get("/:id",
@@ -102,7 +104,6 @@ router.post("/:id/change-password",
     showValidations,
     functionsUsers.changePassword
 );
-
 
 router.put("/:id/activate",
     validateJWT,
@@ -131,8 +132,6 @@ router.put("/:id/",
     showValidations,
     functionsUsers.updateUser
 );
-
-
 
 router.delete("/:id",
     validateJWT,
