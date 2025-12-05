@@ -17,6 +17,7 @@ import validityRoutes from './routes/validityRoutes.js';
 import bulletinRoutes from './routes/bulletinRoutes.js';
 import groups from './routes/groups.js';
 import reports from './routes/reports.js';
+import cargaAcademicaRoutes from './routes/AcademicLoad.js';    
 
 // import reportesEstudiantes from './routes/reports2_routes.js'
 // import reportesEstudiantes from './routes/students_by_group.js';
@@ -54,6 +55,8 @@ app.use("/api/qualifications", qualificationsRoutes);
 app.use("/api/validity", validityRoutes);
 app.use("/api/bulletins", bulletinRoutes);
 app.use("/api/groups", groups);
+app.use("/api/AcademicLoad", cargaAcademicaRoutes);
+
 
 
 // 🧱 Middleware de manejo de errores
@@ -67,19 +70,20 @@ app.get('/', (req, res) => {
     res.send('🚀 API funcionando correctamente');
 });
 
-// 🚀 Iniciar servidor
-app.listen(PORT, async () => {
-    try {
-        await transporter.verify()
-        console.log(`✅ Servidor corriendo en http://localhost:${process.env.PORT}`);
-        mongoose.connect(MONGO_URL)
-            .then(() => console.log('✅ MongoDB conectado correctamente'))
-            .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
-    } catch (error) {
-        console.log(error);
-    }
-
-});
+// 🚀 Iniciar servidor (no iniciar durante tests)
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, async () => {
+        try {
+            await transporter.verify()
+            console.log(`✅ Servidor corriendo en http://localhost:${process.env.PORT}`);
+            mongoose.connect(MONGO_URL)
+                .then(() => console.log('✅ MongoDB conectado correctamente'))
+                .catch((error) => console.error('❌ Error al conectar con MongoDB:', error));
+        } catch (error) {
+            console.log(error);
+        }
+    });
+}
 
 //export default app 
 /*
