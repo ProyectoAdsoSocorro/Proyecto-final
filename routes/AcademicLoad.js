@@ -1,7 +1,7 @@
 import express from 'express';
-import { validateJWT } from '../middlewares/Jwt.js';
+import { validateJWT } from '../middlewares/jwt.js';
 import authRole from '../middlewares/authRole.js';
-import { validateFields } from '../middlewares/checkAcademicLoad.js';
+import showValidations from '../middlewares/showValidations.js';
 import { check } from 'express-validator';
 import {
         getLoadsByYear,
@@ -26,28 +26,28 @@ router.get('/year/:year', [
     validateJWT,
     readOnly,
     check('year', 'No es un año válido').isInt({ min: 2000, max: 2030 }).toInt(),
-    validateFields
+    showValidations
 ], getLoadsByYear);
 
 router.get('/:id', [
     validateJWT,
     readOnly,
     check('id', 'No es un ID válido').isMongoId(),
-    validateFields
+    showValidations
 ], getLoadById);
 
 router.get('/professor/:professorId', [
     validateJWT,
     readOnly,
     check('professorId', 'ID de profesor no válido').isMongoId(),
-    validateFields
+    showValidations
 ], getLoadsByProfessor);
 
 router.get('/group/:groupId', [
     validateJWT,
     readOnly,
     check('groupId', 'ID de grupo no válido').isMongoId(),
-    validateFields
+    showValidations
 ], getLoadsByGroup);
 
 
@@ -61,7 +61,7 @@ router.post('/', [
     check('year', 'El año es requerido y debe estar entre 2000 y 2030').isInt({ min: 2000, max: 2030 }).toInt(),
     check('hoursIntensity', 'La intensidad horaria es requerida').notEmpty(),
     check('percentage', 'El porcentaje es requerido y debe estar entre 0 y 100').isFloat({ min: 0, max: 100 }).toFloat(),
-    validateFields
+    showValidations
 ], createAcademicLoad);
 
 router.put('/:id', [
@@ -70,28 +70,28 @@ router.put('/:id', [
     check('id', 'No es un ID válido').isMongoId(),
     check('hoursIntensity').optional().notEmpty().withMessage('La intensidad horaria no puede quedar vacía'),
     check('percentage').optional().isFloat({ min: 0, max: 100 }).withMessage('El porcentaje debe estar entre 0 y 100').toFloat(),
-    validateFields
+    showValidations
 ], updateAcademicLoad);
 
 router.put('/:id/activate', [
     validateJWT,
     onlySecretary,
     check('id', 'No es un ID válido').isMongoId(),
-    validateFields
+    showValidations
 ], activateAcademicLoad);
 
 router.put('/:id/deactivate', [
     validateJWT,
     onlySecretary,
     check('id', 'No es un ID válido').isMongoId(),
-    validateFields
+    showValidations
 ], deactivateAcademicLoad);
 
 router.delete('/:id', [
     validateJWT,
     onlySecretary,
     check('id', 'No es un ID válido').isMongoId(),
-    validateFields
+    showValidations
 ], deleteAcademicLoad);
 
 export default router;

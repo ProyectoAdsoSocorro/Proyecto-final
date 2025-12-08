@@ -11,7 +11,8 @@ const validationsLogin = [
         min: 10,
         max: 10
     }).escape(),
-    body("password").notEmpty().escape()
+    body("password").notEmpty().escape(),
+    body("role").notEmpty().escape()
 ];
 const validationsRegister = [
     body("names").notEmpty().escape(),
@@ -119,7 +120,7 @@ router.put("/:id/desactivate",
     functionsUsers.desactivateUser
 );
 
-router.put("/passwordRecovered/",
+router.put("/passwordRecovered",
     check("password").notEmpty(),
     showValidations,
     functionsUsers.updatePassword

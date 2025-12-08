@@ -1,9 +1,11 @@
 import modelUser from "../models/users.js"
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"
 import { emailService } from "../services/emailService.js";
 import { generateJWT } from '../middlewares/jwt.js';
+import { response } from "express";
 
-let Email = "";
+
 
 const functionsUsers = {
     register: async (req, res) => {
@@ -120,19 +122,31 @@ const functionsUsers = {
         try {
             let { email } = req.body
             if (!email) {
-                return res.status(400).send("no hay nigun email")
+                return res.status(400).send("no hay nigun email en la peticion")
             }
-            Email=email
-            
+            let user = await modelUser.findOne({ email: email })
+            console.log(user)
+            if (!user) {
+                return res.status(404).send("El usuario con ese gmail no existe")
+            }
             const info = {
-                from: `"Boletines" <${process.env.EMAIL_USER}>`, // sender address
-                to: `${email}`, // list of receivers
-                subject: "Hello", // Subject line
-                text: "Hello world?", // plain text body
-                html: "<b>Hello world?</b>", // html body
+                from: `"Boletines" <${process.env.EMAIL_USER}>`,
+                to: `${email}`,
+                subject: "Hello",
+                text: "Hello world?",
+                html: "<b>Hello world?</b>",
             };
             await emailService.sendEmail(info)
-            res.send("success email")
+            return generateJWT(email)
+                .then((token) => {
+                    return res.json({
+                        token,
+                        user: {
+                            email: email
+                        },
+                        response: "email enviado correctamente"
+                    });
+                })
         }
         catch (e) {
             res.status(500).json({ error: e.message });
@@ -141,25 +155,36 @@ const functionsUsers = {
     updatePassword: async (req, res) => {
         try {
             let { password } = req.body
-            console.log(Email)
-            const salt = bcrypt.genSaltSync();
+            let token = req.header("x-token")
+            //console.log(token)
+            if (!token) {
+                return res.send("no hay token para la validacion");
+            }
             if (!password) {
                 return res.send("no hay niguna contraseña")
             }
+            let email = jwt.verify(token, process.env.JWT_SECRET)
+            console.log(email)
+            email = email.uid;
+
+            const salt = bcrypt.genSaltSync();
             password = bcrypt.hashSync(password, salt)
-            const user = await modelUser.findOneAndUpdate({ email: Email }, password)
+            const userUpdate = await modelUser.findOneAndUpdate({ email: email }, { password })
+            const user = await modelUser.findOne({ email: email })
+            console.log(user)
+            console.log(user)
             const info = {
-                from: `"Boletines" <${process.env.EMAIL_USER}>`, // sender address
-                to: `${Email}`, // list of receivers
-                subject: "Hello", // Subject line
-                text: "Hello world?", // plain text body
-                html: "<b>tu contraseña ha sido actualizada correctamente</b>", // html body
+                from: `"Boletines" <${process.env.EMAIL_USER}>`,
+                to: `${email}`,
+                subject: "Hello",
+                text: "Hello world?",
+                html: "<b>tu contraseña ha sido actualizada correctamente</b>",
             };
             await emailService.sendEmail(info)
-            res.send("contraseña actualizada")
+            res.send(`La contraseña actualizada del usuario ${user.names} ${user.lastNames} ha sido actualizada exitosamente`)
         }
         catch (e) {
-            res.status(500).json({ error: e.message });
+            return res.status(500).json({ error: e.message });
         }
     },
 
