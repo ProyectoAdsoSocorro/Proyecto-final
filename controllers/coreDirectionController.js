@@ -100,7 +100,7 @@ export const activate = async (req, res) => {
   try {
     const updated = await CoreDirection.findByIdAndUpdate(
       req.params.id,
-      { active: true, updatedAt: Date.now() },
+      { isActive: true, updatedAt: Date.now() },
       { new: true }
     );
     if (!updated) return res.status(404).json({ message: 'Extraviado' });
@@ -114,7 +114,7 @@ export const deactivate = async (req, res) => {
   try {
     const updated = await CoreDirection.findByIdAndUpdate(
       req.params.id,
-      { active: false, updatedAt: Date.now() },
+      { isActive: false, updatedAt: Date.now() },
       { new: true }
     );
     if (!updated) return res.status(404).json({ message: 'No se encuentra' });

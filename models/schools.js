@@ -16,9 +16,15 @@ const SchoolSchema = new mongoose.Schema({
         unique: true,
         lowercase: true
     },
-    active: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true }
 }, {
+     timestamps: true
 });
-
+/*
+En el archivo de requerimientos  debe estar los campos createAt, y updateAt y segun los lineamientos en
+la convención para variables de tipo booleano se menciona en la sección 
+"6. Uso de prefijos", la cual forma parte de las "3. Convenciones y Estándares de Nombres".
+cuando se trata de variables boleanas se debe usar el prefijo "es" o "is" el cual no estaba
+*/
 
 export default mongoose.model('School', SchoolSchema);

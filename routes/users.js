@@ -81,7 +81,7 @@ router.post("/", validationsLogin, showValidations, functionsUsers.login);
 
 router.post("/register", validationsRegister, showValidations, functionsUsers.register);
 
-router.get("/recovery", functionsUsers.recoveryPassword);
+router.get("/recovery", body("email").notEmpty(), showValidations, functionsUsers.recoveryPassword);
 
 router.get("/:id",
     validateJWT,

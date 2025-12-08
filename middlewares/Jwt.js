@@ -30,12 +30,12 @@ const validateJWT = async (req, res, next) => {
         
         let user = await users.findById(userInfo.uid);
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 msg: "usuario no existe"
             })
         };
         if (!user.isActive) {
-            return res.status(401).json({
+            return res.status(403).json({
                 msg: "El usuario no esta activo"
             })
         };
