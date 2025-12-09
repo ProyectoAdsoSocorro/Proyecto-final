@@ -6,26 +6,29 @@ import { validateJWT } from "../middlewares/jwt.js";
 import authRole from "../middlewares/authRole.js";
 
 const routes = Router();
+const onlyList = authRole(["rector", "coordinador", "secretaria"])
+const onlySecretary = authRole(["secretaria"]);
 
-routes.get("/", validateJWT, [
-  authRole(['secretaria'])
-], httpHeadquarters.listAll);
+routes.get("/", validateJWT,
+  onlyList,
+  httpHeadquarters.listAll);
 
-routes.get("/:id", validateJWT, authRole(['secretaria', 'rector', 'coordinador']), [
+routes.get("/:id", validateJWT,
+  onlyList, [
   check('id')
     .isMongoId()
     .withMessage('Validación: ID debe ser válido'),
   showValidations
 ], httpHeadquarters.listById);
 
-routes.get("/school/:schoolId/headquarters", validateJWT, authRole(['secretaria', 'rector', 'coordinador']), [
+routes.get("/school/:schoolId/headquarters", validateJWT, onlyList, [
   check('schoolId')
     .isMongoId()
     .withMessage('Validación: ID de colegio debe ser válido'),
   showValidations
 ], httpHeadquarters.headquartersBySchool);
 
-routes.post("/", validateJWT, authRole(['secretaria']), [
+routes.post("/", validateJWT, onlySecretary, [
   check('school')
     .isMongoId()
     .withMessage('Validación: ID de colegio debe ser válido')
@@ -54,7 +57,7 @@ routes.post("/", validateJWT, authRole(['secretaria']), [
   showValidations
 ], httpHeadquarters.createHeadquarters);
 
-routes.put("/:id", validateJWT, authRole(['secretaria']), [
+routes.put("/:id", validateJWT, onlySecretary, [
   check('id')
     .isMongoId()
     .withMessage('Validación: ID debe ser válido')
@@ -87,21 +90,21 @@ routes.put("/:id", validateJWT, authRole(['secretaria']), [
   showValidations
 ], httpHeadquarters.updateHeadquarters);
 
-routes.put("/:id/activate", validateJWT, authRole(['secretaria']), [
+routes.put("/:id/activate", validateJWT, onlySecretary, [
   check('id')
     .isMongoId()
     .withMessage('Validación: ID debe ser válido'),
   showValidations
 ], httpHeadquarters.activateHeadquarters);
 
-routes.put("/:id/desactivate", validateJWT, authRole(['secretaria']), [
+routes.put("/:id/desactivate", validateJWT, onlySecretary, [
   check('id')
     .isMongoId()
     .withMessage('Validación: ID debe ser válido'),
   showValidations
 ], httpHeadquarters.deactivateHeadquarters);
 
-routes.delete("/:id", validateJWT, authRole(['secretaria']), [
+routes.delete("/:id", validateJWT, onlySecretary, [
   check('id')
     .isMongoId()
     .withMessage('Validación: ID debe ser válido'),

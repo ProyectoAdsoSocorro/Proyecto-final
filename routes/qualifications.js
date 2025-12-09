@@ -1,11 +1,13 @@
 import express from 'express';
-import { check, body, validationResult } from 'express-validator';
+import { check, body } from 'express-validator';
 import * as controller from '../controllers/qualificationsController.js';
 import showValidations from "../middlewares/showValidations.js"
-// import auth from '../middlewares/auth.js';
-// import roleCheck from '../middlewares/checksQualifications.js';
+import {validateJWT} from '../middlewares/jwt.js';
+import authRole from '../middlewares/authRole.js';
 
 const router = express.Router();
+const onlySecretary = authRole(['secretaria']);
+const onlyList = authRole(['rector', 'coordinador', 'secretaria']); 
 
 /**
  * Middleware para manejar errores de validación
@@ -23,10 +25,10 @@ const router = express.Router();
  */
 router.get(
   '/:id',
+  validateJWT,
+  onlyList,
   [
-    check('id').isMongoId().withMessage('El ID de la calificación no es válido'),
-    // auth,
-    // roleCheck(['rector', 'coordinador', 'secretaria']),
+    check('id').isMongoId().withMessage('El ID de la calificación no es válido')
   ],
   showValidations,
   controller.get
@@ -37,6 +39,8 @@ router.get(
  */
 router.get(
   '/estudiantes/:studentId/calificaciones',
+  validateJWT,
+  onlyList,
   [
     check('studentId').isMongoId().withMessage('El ID del estudiante no es válido'),
     check('year').optional().isInt({ min: 2000, max: 2100 }).withMessage('El año debe ser válido'),
@@ -52,6 +56,8 @@ router.get(
  */
 router.get(
   '/grupos/:groupId/calificaciones',
+  validateJWT,
+  onlyList,
   [
     check('groupId').isMongoId().withMessage('El ID del grupo no es válido'),
     check('year').optional().isInt({ min: 2000, max: 2100 }).withMessage('El año debe ser válido'),
@@ -67,6 +73,8 @@ router.get(
  */
 router.get(
   '/grupos/:groupId/materias/:subjectId/calificaciones',
+  validateJWT,
+  onlyList,
   [
     check('groupId').isMongoId().withMessage('El ID del grupo no es válido'),
     check('subjectId').isMongoId().withMessage('El ID de la materia no es válido'),
@@ -83,6 +91,8 @@ router.get(
  */
 router.get(
   '/finales/:year',
+  validateJWT,
+  onlyList,
   [
     check('year').isInt({ min: 2000, max: 2100 }).withMessage('El año debe ser un número válido'),
     // auth,
@@ -97,6 +107,8 @@ router.get(
  */
 router.get(
   '/estudiantes/:studentId/calificaciones/finales',
+  validateJWT,
+  onlyList,
   [
     check('studentId').isMongoId().withMessage('El ID del estudiante no es válido'),
     check('year').optional().isInt({ min: 2000, max: 2100 }).withMessage('El año debe ser válido'),
@@ -112,6 +124,8 @@ router.get(
  */
 router.get(
   '/grupos/:groupId/calificaciones/finales',
+  validateJWT,
+  onlyList,
   [
     check('groupId').isMongoId().withMessage('El ID del grupo no es válido'),
     check('year').optional().isInt({ min: 2000, max: 2100 }).withMessage('El año debe ser válido'),
@@ -128,6 +142,8 @@ router.get(
  */
 router.post(
   '/',
+  validateJWT,
+  onlySecretary,
   [
     check('school').isMongoId().withMessage('El ID del colegio no es válido'),
     check('student').isMongoId().withMessage('El ID del estudiante no es válido'),
@@ -149,6 +165,8 @@ router.post(
  */
 router.post(
   '/lote',
+  validateJWT,
+  onlySecretary,
   [
     // Validar que el body sea un array no vacío
     // Usamos body() para asegurar que la validación se aplica solo al body
@@ -174,6 +192,8 @@ router.post(
  */
 router.post(
   '/generar-finales',
+  validateJWT,
+  onlySecretary,
   [
     check('year')
       .isInt({ min: 2000, max: 2100 })
@@ -192,6 +212,8 @@ router.post(
  */
 router.put(
   '/:id',
+  validateJWT,
+  onlySecretary,
   [
     check('id').isMongoId().withMessage('El ID de la calificación no es válido'),
     check('note').optional().isFloat({ min: 0, max: 5 }).withMessage('La nota debe estar entre 0 y 5'),
@@ -208,6 +230,8 @@ router.put(
  */
 router.put(
   '/finales/:id',
+  validateJWT,
+  onlySecretary,
   [
     check('id').isMongoId().withMessage('El ID de la calificación final no es válido'),
     check('note').optional().isFloat({ min: 0, max: 5 }).withMessage('La nota debe estar entre 0 y 5'),

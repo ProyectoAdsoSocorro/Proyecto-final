@@ -1,18 +1,23 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
+import authRole from "../middlewares/authRole.js"
 import showValidations from '../middlewares/showValidations.js';
 import { validateJWT } from '../middlewares/jwt.js';
 import * as httpPeriods from '../controllers/periodController.js';
 
 const router = Router();
+const onlyList = authRole(["rector", "coordinador", "secretaria"]);
+const onlySecretary = authRole(["secretaria"]);
 
 // Public GET routes (restricted to administrative roles)
 router.get('/', [
-  validateJWT
+  validateJWT,
+  onlyList
 ], httpPeriods.getAll);
 
 router.get('/:id', [
   validateJWT,
+  onlyList,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
@@ -21,6 +26,7 @@ router.get('/:id', [
 
 router.get('/year/:year', [
   validateJWT,
+  onlyList,
   check('year')
     .isNumeric()
     .withMessage("Validación: Año debe ser un número"),
@@ -31,6 +37,7 @@ router.get('/year/:year', [
 // Protected routes – only secretaria role can modify periods
 router.post('/', [
   validateJWT,
+  onlySecretary,
   check('school')
     .isMongoId()
     .withMessage("Validación: ID de colegio debe ser válido"),
@@ -58,6 +65,7 @@ router.post('/', [
 
 router.put('/:id', [
   validateJWT,
+  onlySecretary,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
@@ -99,6 +107,7 @@ router.put('/:id', [
 
 router.put('/:id/activate', [
   validateJWT,
+  onlySecretary,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
@@ -107,6 +116,7 @@ router.put('/:id/activate', [
 
 router.put('/:id/deactivate', [
   validateJWT,
+  onlySecretary,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
@@ -115,6 +125,7 @@ router.put('/:id/deactivate', [
 
 router.delete('/:id', [
   validateJWT,
+  onlySecretary,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),

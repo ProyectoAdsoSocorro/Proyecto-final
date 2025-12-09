@@ -76,6 +76,9 @@ const validationsUpdate = [
     body("college").notEmpty().isMongoId().escape(),
 ];
 
+const onlySecretary = authRole(['secretaria']);
+const onlyList = authRole(['rector', 'coordinador', 'secretaria']); 
+
 
 router.post("/", validationsLogin, showValidations, functionsUsers.login);
 
@@ -85,7 +88,7 @@ router.get("/recovery", body("email").notEmpty(), showValidations, functionsUser
 
 router.get("/:id",
     validateJWT,
-    authRole(["secretaria"]),
+    onlyList,
     param("id").notEmpty().isMongoId(),
     showValidations,
     functionsUsers.getUsersById
@@ -93,7 +96,7 @@ router.get("/:id",
 
 router.get("/rol/:rol",
     validateJWT,
-    authRole(["secretaria"]),
+    onlyList,
     param("rol").notEmpty(),
     showValidations,
     functionsUsers.getUsersByRol
@@ -101,6 +104,7 @@ router.get("/rol/:rol",
 
 router.post("/:id/change-password",
     validateJWT,
+    onlySecretary,
     validationsChangePassword,
     showValidations,
     functionsUsers.changePassword
@@ -108,6 +112,7 @@ router.post("/:id/change-password",
 
 router.put("/:id/activate",
     validateJWT,
+    onlySecretary,
     param("id").notEmpty(),
     showValidations,
     functionsUsers.activateUser
@@ -115,6 +120,7 @@ router.put("/:id/activate",
 
 router.put("/:id/desactivate",
     validateJWT,
+    onlySecretary,
     param("id").notEmpty(),
     showValidations,
     functionsUsers.desactivateUser
@@ -128,6 +134,7 @@ router.put("/passwordRecovered",
 
 router.put("/:id/",
     validateJWT,
+    onlySecretary,
     validationsUpdate,
     param("id").notEmpty(),
     showValidations,
@@ -136,6 +143,7 @@ router.put("/:id/",
 
 router.delete("/:id",
     validateJWT,
+    onlySecretary,
     param("id").notEmpty(),
     showValidations,
     functionsUsers.deleteUser

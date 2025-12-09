@@ -39,11 +39,11 @@ const functionsUsers = {
             }
             const validPassword = bcrypt.compareSync(password, user.password);
             if (!validPassword) {
-                return res.status(400).send("Contraseña incorrecta");
+                return res.status(401).send("Contraseña incorrecta");
             }
             const validRole = await modelUser.findOne({ numberDocument: numberDocument, roles: { $in: [role] } })
             if (!validRole) {
-                return res.status(400).send("Este usuario no tiene ese rol");
+                return res.status(401).send("Este usuario no tiene ese rol");
             }
             generateJWT(user._id, role)
                 .then((token) => {

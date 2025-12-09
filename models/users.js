@@ -16,7 +16,7 @@ const modelUsers = new Schema(
         dateBorn: String,
         gender: String,
         isActive: { type: Boolean, default: true },
-        roles: [], //coordinador//rector//secretaria//estudiante//profesor//acudiente,
+        roles: [],
         stratum: Number,
         sisben: String,
         eps: String,

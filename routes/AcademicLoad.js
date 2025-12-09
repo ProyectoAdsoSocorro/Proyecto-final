@@ -13,39 +13,39 @@ import {
         activateAcademicLoad,
         deactivateAcademicLoad,
         deleteAcademicLoad
-} from '../controllers/AcademicLoad.js';
+} from '../controllers/academicLoad.js';
 
 const router = express.Router();
 
 // Middleware para verificar roles específicos
- const onlySecretary = authRole(['secretaria']);
-const readOnly = authRole(['rector', 'coordinador', 'secretaria']); 
+const onlySecretary = authRole(['secretaria']);
+const onlyList = authRole(['rector', 'coordinador', 'secretaria']); 
 
 
 router.get('/year/:year', [
     validateJWT,
-    readOnly,
+    onlyList,
     check('year', 'No es un año válido').isInt({ min: 2000, max: 2030 }).toInt(),
     showValidations
 ], getLoadsByYear);
 
 router.get('/:id', [
     validateJWT,
-    readOnly,
+    onlyList,
     check('id', 'No es un ID válido').isMongoId(),
     showValidations
 ], getLoadById);
 
 router.get('/professor/:professorId', [
     validateJWT,
-    readOnly,
+    onlyList,
     check('professorId', 'ID de profesor no válido').isMongoId(),
     showValidations
 ], getLoadsByProfessor);
 
 router.get('/group/:groupId', [
     validateJWT,
-    readOnly,
+    onlyList,
     check('groupId', 'ID de grupo no válido').isMongoId(),
     showValidations
 ], getLoadsByGroup);
