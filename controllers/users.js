@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import { emailService } from "../services/emailService.js";
 import { generateJWT } from '../middlewares/jwt.js';
 import { response } from "express";
+import users from "../models/users.js";
 
 
 
@@ -230,7 +231,37 @@ const functionsUsers = {
             res.status(500).json({ error: e.message });
         }
     },
+ refreshToken : async (req, res) => {
+    try {
+        const expiredToken = req.header("x-token");
+        if (!expiredToken) return res.status(400).json({ msg: "Token requerido" });
 
+        const decoded = jwt.decode(expiredToken);
+        if (!decoded) {
+            return res.status(401).json({ msg: "Token inválido" });
+        }
+        let user;
+        if (decoded.role === "direccionNucleo") {
+            user = await CoreDirection.findById(decoded.uid);
+        } else {
+            user = await users.findById(decoded.uid);
+        }
+
+        if (!user) return res.status(404).json({ msg: "Usuario no encontrado" });
+        if (!user.isActive) return res.status(403).json({ msg: "Usuario inactivo" });
+
+        const newToken = jwt.sign(
+            { uid: decoded.uid, role: decoded.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '4h' }
+        );
+
+        res.json({ token: newToken, msg: "Token renovado" });
+
+    } catch (error) {
+        res.status(500).json({ msg: "Error renovando token" });
+    }
+},
     // PUT /api/users/:id - Actualizar usuario (incluyendo roles)
     updateUser: async (req, res) => {
         try {

@@ -1,14 +1,15 @@
 import express from 'express';
-import * as coreDirectionCtrl from '../controllers/coreDirectionController.js';
-/* import { verifyToken } from '../middlewares/authJwt.js'; */
+import * as coreDirectionCtrl from '../controllers/coreDirections.js';
+ import { validateJWT } from '../middlewares/jwt.js'; 
 import  showValidations  from '../middlewares/showValidations.js';
 import { check } from 'express-validator';
 
 const router = express.Router();
+const onlyCore = authRole(["direccionNucleo"])
 
-router.get('/', /* verifyToken */ coreDirectionCtrl.getAll);
+router.get('/', validateJWT,onlyCore,coreDirectionCtrl.getAll);
 
-router.post('/', [
+router.post('/', validateJWT,onlyCore, [
     check('name')
       .not().isEmpty()
       .withMessage('Campo requerido: Nombre'),
@@ -31,9 +32,9 @@ router.post('/', [
       .not().isEmpty()
       .withMessage('Campo requerido: Responsable'),
     showValidations
-], /* verifyToken, */ coreDirectionCtrl.create);
+], coreDirectionCtrl.create);
 
-router.post('/login', [
+router.post('/login', validateJWT,onlyCore, [
     check('email')
       .isEmail()
       .withMessage('Validación: Correo electrónico debe ser válido'),
@@ -43,7 +44,7 @@ router.post('/login', [
     showValidations
 ], coreDirectionCtrl.login);
 
-router.put('/:id', [
+router.put('/:id', validateJWT,onlyCore, [
     check('id')
       .isMongoId()
       .not().isEmpty()
@@ -70,31 +71,31 @@ router.put('/:id', [
       .not().isEmpty()
       .withMessage('Campo requerido: Responsable'),
     showValidations
-], /* verifyToken,  */coreDirectionCtrl.update);
+],coreDirectionCtrl.update);
 
-router.put('/:id/change-password', [
+router.put('/:id/change-password', validateJWT,onlyCore, [
     check('id')
       .isMongoId()
       .not().isEmpty()
       .withMessage('Validación: ID debe ser válido'),
       showValidations
-], /* verifyToken,  */coreDirectionCtrl.changePassword);
+],coreDirectionCtrl.changePassword);
 
-router.delete('/:id', [
+router.delete('/:id', validateJWT,onlyCore, [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
       showValidations
 ], coreDirectionCtrl.remove);
 
-router.put('/:id/activate', [
+router.put('/:id/activate', validateJWT,onlyCore, [
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),
       showValidations
 ], coreDirectionCtrl.activate);
 
-router.put('/:id/deactivate', [
+router.put('/:id/deactivate', validateJWT,onlyCore,[
     check('id')
       .isMongoId()
       .withMessage('Validación: ID debe ser válido'),

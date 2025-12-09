@@ -3,7 +3,7 @@ import { check } from 'express-validator';
 import authRole from "../middlewares/authRole.js"
 import showValidations from '../middlewares/showValidations.js';
 import { validateJWT } from '../middlewares/jwt.js';
-import * as httpPeriods from '../controllers/periodController.js';
+import * as httpPeriods from '../controllers/periods.js';
 
 const router = Router();
 const onlyList = authRole(["rector", "coordinador", "secretaria"]);
@@ -133,8 +133,4 @@ router.delete('/:id', [
 ], httpPeriods.deletePeriod);
 
 export default router;
-
-
-
-
 

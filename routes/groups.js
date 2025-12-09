@@ -2,7 +2,7 @@ import { Router } from "express";
 import { check, param, body } from "express-validator";
 import authRole from "../middlewares/authRole.js";
 import { validateJWT } from "../middlewares/jwt.js";
-import groupController from '../controllers/groupsController.js';
+import groupController from '../controllers/groups.js';
 import groupHelper from '../helpers/helpersGroup.js';
 import  showValidations  from '../middlewares/showValidations.js'; 
 

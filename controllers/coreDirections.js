@@ -44,10 +44,9 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, direction.password);
     if (!isMatch) return res.status(400).json({ message: 'Credenciales invalidas' });
 
-    const token = generateJWT({ _id: direction._id, email: direction.email });
-    res.json({ token });
-
-    res.json({ message: 'Login Exitoso', coreDirection: direction });
+    const token = generateJWT(direction._id, "direccionNucleo");
+    console.log(direction._id)
+    res.json({ message: 'Login Exitoso', coreDirection: direction, token: token });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

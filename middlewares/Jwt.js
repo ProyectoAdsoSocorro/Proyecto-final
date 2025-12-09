@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import users from "../models/users.js";
+import coreDirection from '../models/coreDirection.js';
 
 const generateJWT = (uid, role) => {
     return new Promise((resolve, reject) => {
@@ -20,6 +21,7 @@ const generateJWT = (uid, role) => {
 
 const validateJWT = async (req, res, next) => {
     try {
+        let user = null;
         const token = req.header("x-token");
         if (!token) {
             return res.status(401).json({
@@ -27,8 +29,13 @@ const validateJWT = async (req, res, next) => {
             })
         };
         const userInfo = jwt.verify(token, process.env.JWT_SECRET)
-        
-        let user = await users.findById(userInfo.uid);
+
+
+        if (userInfo.role == "direccionNucleo") {
+             user = await coreDirection.findById(userInfo.uid)
+        } else {
+             user = await users.findById(userInfo.uid);
+        }
         if (!user) {
             return res.status(404).json({
                 msg: "usuario no existe"

@@ -9,7 +9,7 @@ import {
   activateSubject,
   deactivateSubject,
   deleteSubject
-} from '../controllers/subjectController.js';
+} from '../controllers/subjects.js';
 import authRole from "../middlewares/authRole.js"
 import { check } from 'express-validator';
 import { validateJWT } from '../middlewares/jwt.js';

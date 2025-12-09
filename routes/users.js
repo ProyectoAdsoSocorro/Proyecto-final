@@ -110,6 +110,8 @@ router.post("/:id/change-password",
     functionsUsers.changePassword
 );
 
+router.post("/refreshToken",functionsUsers.refreshToken);
+
 router.put("/:id/activate",
     validateJWT,
     onlySecretary,

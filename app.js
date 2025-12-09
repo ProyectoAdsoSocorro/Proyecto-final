@@ -46,8 +46,6 @@ app.use("/api/bulletins", bulletinRoutes);
 app.use("/api/groups", groupsRoutes);
 app.use("/api/AcademicLoad", cargaAcademicaRoutes);
 
-
-
 app.listen(PORT, async () => {
     try {
         await transporter.verify()

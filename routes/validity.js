@@ -1,6 +1,6 @@
 import express from 'express';
 import { check, validationResult } from 'express-validator';
-import * as controller from '../controllers/validityController.js';
+import * as controller from '../controllers/validitys.js';
 import showValidations from "../middlewares/showValidations.js"
 import { validateJWT } from '../middlewares/jwt.js';
 import authRole from '../middlewares/authRole.js';
