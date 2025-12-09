@@ -1,43 +1,22 @@
-import  modelUser  from "../models/users.js"
+import modelUser from "../models/users.js"
 import bcrypt from "bcrypt";
-import { generarJWT } from "../middlewares/Jwt.js";
+import jwt from "jsonwebtoken"
+import { emailService } from "../services/emailService.js";
+import { generateJWT } from '../middlewares/jwt.js';
+import { response } from "express";
 
-/*
- {
-  "names":"johann",
-  "lastNames":"",
-  "typeDocument":"",
-  "numberDocument":"",
-  "email":"",
-  "password":"",
-  "cellphone":"",
-  "direction":"",
-  "dateBorn":"",
-  "gender":"",
-  "role":"",
-  "estratum":"",
-  "sisben":"",
-  "eps":"",
-  "typeBlood":"",
-  "victimPopulation":true,
-  "disability":"",
-  "ethnic":"",
-  "profilePhoto":"",
-  "signDigital":"",
-  "college":"4edd40c86762e0fb12000003"
-}
-*/
+
 
 const functionsUsers = {
-    register: async (req,res) => {
+    register: async (req, res) => {
         try {
             let { names, lastNames, typeDocument, numberDocument, email, password, cellphone, direction, dateBorn, gender, roles, stratum, sisben, eps, typeBlood, victimPopulation, disability, ethnic, profilePhoto, signDigital, college } = req.body
             const salt = bcrypt.genSaltSync();
-            password = bcrypt.hashSync(password, salt)
+            password = bcrypt.hashSync(password, salt);
             const user = new modelUser({ names, lastNames, typeDocument, numberDocument, email, password, cellphone, direction, dateBorn, gender, roles, stratum, sisben, eps, typeBlood, victimPopulation, disability, ethnic, profilePhoto, signDigital, college });
             await user.save()
             /*
-            generarJWT(user._id)
+            generateJWT(user._id)
                 .then((x) => {
                     console.log(x)
                     res.send(x)
@@ -46,31 +25,34 @@ const functionsUsers = {
             res.send("usuario registrado")
             //console.log(user)
         } catch (error) {
-            res.send("error").status(400)
+            res.status(400).send(error)
             console.log(error)
         }
     },
-    // POST /api/usuarios-colegio/login
+    // POST /api/users/login
     login: async (req, res) => {
         try {
-            const { numberDocument, password } = req.body
+            const { numberDocument, password, role } = req.body
             const user = await modelUser.findOne({ numberDocument })
             if (!user) {
                 return res.status(400).send("Usuario no existe");
             }
             const validPassword = bcrypt.compareSync(password, user.password);
             if (!validPassword) {
-                return res.status(400).send("Contraseña incorrecta");
+                return res.status(401).send("Contraseña incorrecta");
             }
-
-            generarJWT(user._id)
+            const validRole = await modelUser.findOne({ numberDocument: numberDocument, roles: { $in: [role] } })
+            if (!validRole) {
+                return res.status(401).send("Este usuario no tiene ese rol");
+            }
+            generateJWT(user._id, role)
                 .then((token) => {
                     return res.json({
                         token,
                         user: {
                             id: user._id,
                             numeroDocumento: user.numberDocument,
-                            roles: user.roles // incluir los roles
+                            role: role // incluir los roles
                         }
                     });
                 })
@@ -81,7 +63,7 @@ const functionsUsers = {
         }
     },
 
-    // GET /api/usuarios-colegio/rol/:rol - Buscar en array de roles
+    // GET /api/users/rol/:rol - Buscar en array de roles
     getUsersByRol: async (req, res) => {
         try {
             const { rol } = req.params;
@@ -93,7 +75,7 @@ const functionsUsers = {
         }
     },
 
-    // GET /api/usuarios-colegio/:id
+    // GET /api/users/:id
     getUsersById: async (req, res) => {
         try {
             const { id } = req.params;
@@ -108,7 +90,7 @@ const functionsUsers = {
         }
     },
 
-    // PUT /api/usuarios-colegio/:id/change-password
+    // PUT /api/users/:id/change-password
     changePassword: async (req, res) => {
         try {
             let { id } = req.params
@@ -136,23 +118,89 @@ const functionsUsers = {
             res.status(500).json({ error: e.message });
         }
     },
+    recoveryPassword: async (req, res) => {
+        try {
+            let { email } = req.body
+            if (!email) {
+                return res.status(400).send("no hay nigun email en la peticion")
+            }
+            let user = await modelUser.findOne({ email: email })
+            console.log(user)
+            if (!user) {
+                return res.status(404).send("El usuario con ese gmail no existe")
+            }
+            const info = {
+                from: `"Boletines" <${process.env.EMAIL_USER}>`,
+                to: `${email}`,
+                subject: "Hello",
+                text: "Hello world?",
+                html: "<b>Hello world?</b>",
+            };
+            await emailService.sendEmail(info)
+            return generateJWT(email)
+                .then((token) => {
+                    return res.json({
+                        token,
+                        user: {
+                            email: email
+                        },
+                        response: "email enviado correctamente"
+                    });
+                })
+        }
+        catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    },
+    updatePassword: async (req, res) => {
+        try {
+            let { password } = req.body
+            let token = req.header("x-token")
+            //console.log(token)
+            if (!token) {
+                return res.send("no hay token para la validacion");
+            }
+            if (!password) {
+                return res.send("no hay niguna contraseña")
+            }
+            let email = jwt.verify(token, process.env.JWT_SECRET)
+            console.log(email)
+            email = email.uid;
 
-    // PUT /api/usuarios-colegio/:id/activar
+            const salt = bcrypt.genSaltSync();
+            password = bcrypt.hashSync(password, salt)
+            const userUpdate = await modelUser.findOneAndUpdate({ email: email }, { password })
+            const user = await modelUser.findOne({ email: email })
+            console.log(user)
+            console.log(user)
+            const info = {
+                from: `"Boletines" <${process.env.EMAIL_USER}>`,
+                to: `${email}`,
+                subject: "Hello",
+                text: "Hello world?",
+                html: "<b>tu contraseña ha sido actualizada correctamente</b>",
+            };
+            await emailService.sendEmail(info)
+            res.send(`La contraseña actualizada del usuario ${user.names} ${user.lastNames} ha sido actualizada exitosamente`)
+        }
+        catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    },
+
+    // PUT /api/users/:id/activar
     activateUser: async (req, res) => {
         try {
             const { id } = req.params;
             //const updateAt = new Date();
-
             const user = await modelUser.findByIdAndUpdate(
                 id,
                 { isActive: true },
                 { new: true }
             );
-
             if (!user) {
                 return res.status(404).json({ error: "Usuario no encontrado" });
             }
-
             res.json({ message: "Usuario activado", user });
         }
         catch (e) {
@@ -160,7 +208,7 @@ const functionsUsers = {
         }
     },
 
-    // PUT /api/usuarios-colegio/:id/desactivar
+    // PUT /api/users/:id/desactivar
     desactivateUser: async (req, res) => {
         try {
             const { id } = req.params;
@@ -183,15 +231,11 @@ const functionsUsers = {
         }
     },
 
-    // PUT /api/usuarios-colegio/:id - Actualizar usuario (incluyendo roles)
+    // PUT /api/users/:id - Actualizar usuario (incluyendo roles)
     updateUser: async (req, res) => {
         try {
             const { id } = req.params;
-            const updateData = {
-                ...req.body
-                /* updateAt: new Date()*/
-            };
-
+            const { names, lastNames, typeDocument, numberDocument, email, cellphone, direction, dateBorn, gender, roles, stratum, sisben, eps, typeBlood, victimPopulation, disability, ethnic, profilePhoto, signDigital, college } = req.body;
             // Si se envían roles, asegurarse de que sea un array
             /*
             if (updateData.roles && !Array.isArray(updateData.roles)) {
@@ -199,8 +243,7 @@ const functionsUsers = {
             }
             */
             const user = await modelUser.findByIdAndUpdate(
-                id,
-                updateData,
+                id, { names, lastNames, typeDocument, numberDocument, email, cellphone, direction, dateBorn, gender, roles, stratum, sisben, eps, typeBlood, victimPopulation, disability, ethnic, profilePhoto, signDigital, college, },
                 { new: true }
             );
 

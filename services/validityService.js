@@ -38,7 +38,7 @@ export const list = async () => {
  * @returns {Promise<Object|null>} Vigencia activa o null si no hay
  */
 export const getActive = async () => {
-  return Validity.findOne({ active: true })
+  return Validity.findOne({ isActive: true })
     .populate('school rector generalSecretary headquarterInfo.headquarter');
 };
 
@@ -49,8 +49,8 @@ export const getActive = async () => {
  * @returns {Promise<Object>} Vigencia actualizada
  */
 export const activate = async (id) => {
-  await Validity.updateMany({}, { active: false }); // Desactiva todas
-  return Validity.findByIdAndUpdate(id, { active: true }, { new: true });
+  await Validity.updateMany({}, { isActive: false }); // Desactiva todas
+  return Validity.findByIdAndUpdate(id, { isActive: true }, { new: true });
 };
 
 /**
@@ -59,5 +59,5 @@ export const activate = async (id) => {
  * @returns {Promise<Object>} Vigencia actualizada
  */
 export const deactivate = async (id) => {
-  return Validity.findByIdAndUpdate(id, { active: false }, { new: true });
+  return Validity.findByIdAndUpdate(id, { isActive: false }, { new: true });
 };

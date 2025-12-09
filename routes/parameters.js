@@ -8,23 +8,25 @@ import {
   deleteParameter,
   activateParameter,
   deactivateParameter
-} from '../controllers/parameterController.js';
-
-import { checksParameter } from '../middlewares/checksParameter.js';
+} from '../controllers/parameters.js';
+import authRole from '../middlewares/authRole.js';
+import { validateJWT } from '../middlewares/jwt.js';
+import showValidations from '../middlewares/showValidations.js';
 import { check } from 'express-validator';
 
 const router = Router();
+const allActions = authRole(["rector", "coordinador", "secretaria"]);
 
-router.get('/', getParameters);
-router.get('/:id', [
+router.get('/',validateJWT,allActions, getParameters);
+router.get('/:id', validateJWT,allActions, [
   check('id', 'Invalid ID').isMongoId(),
-  checksParameter
+  showValidations
 ], getParameterById);
-router.get('/school/:schoolId', [
+router.get('/school/:schoolId',validateJWT,allActions, [
   check('schoolId', 'Invalid School ID').isMongoId(),
-  checksParameter
+  showValidations
 ], getParameterBySchool);
-router.post('/', [
+router.post('/',validateJWT,allActions, [
   check('school', 'School ID is required').isMongoId(),
   check('shield', 'Shield is required').not().isEmpty(),
   check('certificateHeader', 'Certificate Header is required').not().isEmpty(),
@@ -34,9 +36,9 @@ router.post('/', [
   check('linkedToPeriod', 'Linked To Period must be a boolean').isBoolean(),
   check('linkedToGrade', 'Linked To Grade must be a boolean').isBoolean(),
   check('approximateAverage', 'Approximate Average must be a boolean').isBoolean(),
-  checksParameter
+  showValidations
 ], createParameter);
-router.put('/:id', [
+router.put('/:id',validateJWT,allActions, [
   check('id', 'Invalid ID').isMongoId(),
   check('school', 'School ID is required').isMongoId(),
   check('shield', 'Shield is required').not().isEmpty(),
@@ -47,19 +49,19 @@ router.put('/:id', [
   check('linkedToPeriod', 'Linked To Period must be a boolean').isBoolean(),
   check('linkedToGrade', 'Linked To Grade must be a boolean').isBoolean(),
   check('approximateAverage', 'Approximate Average must be a boolean').isBoolean(),
-  checksParameter
+  showValidations
 ], updateParameter);
-router.put('/:id/activate', [
+router.put('/:id/activate', validateJWT,allActions, [
   check('id', 'Invalid ID').isMongoId(),
-  checksParameter
+  showValidations
 ], activateParameter);
-router.put('/:id/deactivate', [
+router.put('/:id/deactivate', validateJWT,allActions, [
   check('id', 'Invalid ID').isMongoId(),
-  checksParameter
+  showValidations
 ], deactivateParameter);
-router.delete('/:id', [
+router.delete('/:id', validateJWT,allActions,[
   check('id', 'Invalid ID').isMongoId(),
-  checksParameter
+  showValidations
 ], deleteParameter);
 
 export default router;

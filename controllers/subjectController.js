@@ -90,7 +90,7 @@ export const activateSubject = async (req, res) => {
   try {
     const subject = await Subject.findByIdAndUpdate(
       req.params.id,
-      { active: true },
+      { isActive: true },
       { new: true }
     );
     if (!subject)
@@ -106,7 +106,7 @@ export const deactivateSubject = async (req, res) => {
   try {
     const subject = await Subject.findByIdAndUpdate(
       req.params.id,
-      { active: false },
+      { isActive: false },
       { new: true }
     );
     if (!subject)

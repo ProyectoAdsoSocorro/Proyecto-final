@@ -21,7 +21,7 @@ const ValiditySchema = new Schema({
     required: true,
     description: 'Referencia al colegio'
   },
-  active: {
+  isActive: {
     type: Boolean,
     default: false,
     description: 'Indica si esta vigencia está activa'

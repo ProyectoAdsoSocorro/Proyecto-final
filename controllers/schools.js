@@ -196,7 +196,7 @@ const httpSchools = {
             const { id } = req.params;
             const school = await Colegio.findByIdAndUpdate(
                 id,
-                { active: true },
+                { isActive: true },
                 { new: true }
             )
             if (!school) {
@@ -213,7 +213,7 @@ const httpSchools = {
             const { id } = req.params;
             const school = await Colegio.findByIdAndUpdate(
                 id,
-                { active: false },
+                { isActive: false },
                 { new: true }
             );
             if (!school) {

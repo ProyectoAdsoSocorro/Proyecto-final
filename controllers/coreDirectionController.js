@@ -1,6 +1,6 @@
 import CoreDirection from '../models/coreDirection.js';
 import bcrypt from 'bcrypt';
-/* import { generateToken } from '../middlewares/authJwt.js'; */
+import { generateJWT } from '../middlewares/jwt.js';
 
 export const getAll = async (req, res) => {
   try {
@@ -38,13 +38,13 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const direction = await CoreDirection.findOne({ email });
-    
+
     if (!direction) return res.status(400).json({ message: 'Credenciales invalidas' });
 
     const isMatch = await bcrypt.compare(password, direction.password);
     if (!isMatch) return res.status(400).json({ message: 'Credenciales invalidas' });
 
-    const token = generateToken({ _id: direction._id, email: direction.email });
+    const token = generateJWT({ _id: direction._id, email: direction.email });
     res.json({ token });
 
     res.json({ message: 'Login Exitoso', coreDirection: direction });
@@ -100,7 +100,7 @@ export const activate = async (req, res) => {
   try {
     const updated = await CoreDirection.findByIdAndUpdate(
       req.params.id,
-      { active: true, updatedAt: Date.now() },
+      { isActive: true, updatedAt: Date.now() },
       { new: true }
     );
     if (!updated) return res.status(404).json({ message: 'Extraviado' });
@@ -114,7 +114,7 @@ export const deactivate = async (req, res) => {
   try {
     const updated = await CoreDirection.findByIdAndUpdate(
       req.params.id,
-      { active: false, updatedAt: Date.now() },
+      { isActive: false, updatedAt: Date.now() },
       { new: true }
     );
     if (!updated) return res.status(404).json({ message: 'No se encuentra' });

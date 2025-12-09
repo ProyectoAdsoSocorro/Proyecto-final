@@ -1,3 +1,5 @@
+//import pkg from 'jsonwebtoken';
+//const { verify } = pkg;
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
@@ -27,3 +29,4 @@ const sendEmail = async (emailOptions) => {
     }
 };
 export const emailService = { sendEmail };
+export {transporter};

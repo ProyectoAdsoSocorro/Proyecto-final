@@ -1,36 +1,43 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import validateFields from '../middlewares/check.js';
-import { authPeriodos } from '../middlewares/authPeriod.js';
+import authRole from "../middlewares/authRole.js"
+import showValidations from '../middlewares/showValidations.js';
+import { validateJWT } from '../middlewares/jwt.js';
 import * as httpPeriods from '../controllers/periodController.js';
 
 const router = Router();
+const onlyList = authRole(["rector", "coordinador", "secretaria"]);
+const onlySecretary = authRole(["secretaria"]);
 
 // Public GET routes (restricted to administrative roles)
 router.get('/', [
-  authPeriodos
+  validateJWT,
+  onlyList
 ], httpPeriods.getAll);
 
 router.get('/:id', [
-  authPeriodos,
+  validateJWT,
+  onlyList,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  validateFields
+  showValidations
 ], httpPeriods.getById);
 
 router.get('/year/:year', [
-  authPeriodos,
+  validateJWT,
+  onlyList,
   check('year')
     .isNumeric()
     .withMessage("Validación: Año debe ser un número"),
-  validateFields
+  showValidations
 ], httpPeriods.getByYear);
 
 
 // Protected routes – only secretaria role can modify periods
 router.post('/', [
-  authPeriodos,
+  validateJWT,
+  onlySecretary,
   check('school')
     .isMongoId()
     .withMessage("Validación: ID de colegio debe ser válido"),
@@ -53,11 +60,12 @@ router.post('/', [
     .isDate()
     .withMessage("Validación: Fecha de fin debe ser válida"),
 
-  validateFields
+  showValidations
 ], httpPeriods.createPeriod);
 
 router.put('/:id', [
-  authPeriodos,
+  validateJWT,
+  onlySecretary,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
@@ -94,31 +102,34 @@ router.put('/:id', [
     .optional()
     .isBoolean()
     .withMessage("Validación: Estado debe ser verdadero o falso"),
-  validateFields
+  showValidations
 ], httpPeriods.updatePeriod);
 
 router.put('/:id/activate', [
-  authPeriodos,
+  validateJWT,
+  onlySecretary,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  validateFields
+  showValidations
 ], httpPeriods.activatePeriod);
 
 router.put('/:id/deactivate', [
-  authPeriodos,
+  validateJWT,
+  onlySecretary,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  validateFields
+  showValidations
 ], httpPeriods.deactivatePeriod);
 
 router.delete('/:id', [
-  authPeriodos,
+  validateJWT,
+  onlySecretary,
   check('id')
     .isMongoId()
     .withMessage("Validación: ID de período debe ser válido"),
-  validateFields
+  showValidations
 ], httpPeriods.deletePeriod);
 
 export default router;

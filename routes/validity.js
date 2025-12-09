@@ -1,21 +1,17 @@
 import express from 'express';
 import { check, validationResult } from 'express-validator';
 import * as controller from '../controllers/validityController.js';
-// import auth from '../middlewares/auth.js';
-// import roleCheck from '../middlewares/roleCheck.js';
+import showValidations from "../middlewares/showValidations.js"
+import { validateJWT } from '../middlewares/jwt.js';
+import authRole from '../middlewares/authRole.js';
 
 const router = express.Router();
+const onlyList = authRole(["rector", "coordinador", "secretaria"]);
+const onlySecretary = authRole(["secretaria"]);
 
 /**
  * Middleware para manejar errores de validación
  */
-const handleValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errores: errors.array() });
-  }
-  next();
-};
 
 /**
  * Reglas de acceso:
@@ -29,10 +25,8 @@ const handleValidationErrors = (req, res, next) => {
  */
 router.get(
   '/year',
-  [
-    // auth,
-    // roleCheck(['rector', 'coordinador', 'secretaria']),
-  ],
+  validateJWT,
+  onlyList,
   controller.list
 );
 
@@ -42,10 +36,8 @@ router.get(
  */
 router.get(
   '/activa',
-  [
-    // auth,
-    // roleCheck(['rector', 'coordinador', 'secretaria']),
-  ],
+  validateJWT,
+  onlyList,
   controller.getActive
 );
 
@@ -91,10 +83,10 @@ router.post(
       .optional()
       .isInt({ min: 0, max: 100 })
       .withMessage('Rango: Porcentaje de recuperación debe estar entre 0 y 100'),
-    // auth,
-    // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  validateJWT,
+  onlySecretary,
+  showValidations,
   controller.create
 );
 
@@ -107,10 +99,10 @@ router.put(
   '/:id/activar',
   [
     check('id').isMongoId().withMessage('Validación: ID de vigencia debe ser válido'),
-    // auth,
-    // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  validateJWT,
+  onlySecretary,
+  showValidations,
   controller.activate
 );
 
@@ -123,10 +115,10 @@ router.put(
   '/:id/desactivar',
   [
     check('id').isMongoId().withMessage('Validación: ID de vigencia debe ser válido'),
-    // auth,
-    // roleCheck(['secretaria']),
   ],
-  handleValidationErrors,
+  validateJWT,
+  onlySecretary,
+  showValidations,
   controller.deactivate
 );
 

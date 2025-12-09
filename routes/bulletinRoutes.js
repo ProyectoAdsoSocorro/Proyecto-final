@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { check, validationResult } from 'express-validator';
 import * as controller from '../controllers/bulletinController.js';
+import showValidations from "../middlewares/showValidations.js"
 // import auth from '../middlewares/auth.js';
 // import roleCheck from '../middlewares/roleCheck.js';
 
