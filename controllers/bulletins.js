@@ -13,7 +13,7 @@ export const getStudentShortBulletin = async (req, res) => {
         /* const studentId = estudianteId;
         const periodId = periodoId; */
         const yearNum = Number(año);
-        console.log(estudianteId, periodoId, yearNum);
+        /* console.log(estudianteId, periodoId, yearNum); */
         // El resto del código ahora es correcto porque llama a la función que acabamos de importar
        const result = await generateShortBulletins({
             students: [estudianteId], 

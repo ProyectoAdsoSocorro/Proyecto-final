@@ -4,7 +4,6 @@ import * as coreDirectionCtrl from '../controllers/coreDirections.js';
 import  showValidations  from '../middlewares/showValidations.js';
 import authRole from '../middlewares/authRole.js';
 import { check } from 'express-validator';
-import  authRole  from '../middlewares/authRole.js'
 const router = express.Router();
 const onlyCore = authRole(["direccionNucleo"])
 

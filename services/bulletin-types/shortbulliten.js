@@ -20,14 +20,14 @@ function getLevel(note) {
 }
 
 const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
-        console.log(studentId , periodId, yearNum);
+       /*  console.log(studentId , periodId, yearNum); */
     const [student, currentPeriod, enrollment] = await Promise.all([
         User.findById(studentId).lean(),
         Period.findById(periodId).lean(),
         // Assuming fields are 'student' and 'year' in registration model//!
         Registration.findOne({ student: studentId, year: yearNum }).lean()
     ]);
-        console.log(student, currentPeriod, enrollment);
+       /*  console.log(student, currentPeriod, enrollment); */
     if (!enrollment || !student || !currentPeriod) {
         return null;
     }
@@ -38,7 +38,7 @@ const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
 
     const headquarters = await Headquarters.findById(group.headquarters).lean();
     const school = await School.findById(headquarters.school).lean();
-    console.log(school)
+   /*  console.log(school) */
     const validity = await Validity.findOne({ school: school._id, year: yearNum })
         .populate('rector', 'firstName lastName')
         .lean();
@@ -175,7 +175,7 @@ export const fetchStudentData = async ({ students, periodId, year }) => { // Ren
 
 export const generateShortBulletins = async ({ students, periodId, year }) => {
     const studentDataList = await fetchStudentData({ students, periodId, year });
-    console.log(studentDataList)
+    /* console.log(studentDataList) */
     if (studentDataList.length === 0) {
         return { pdfBuffer: null, fileName: 'No_Students.pdf' };
     }
