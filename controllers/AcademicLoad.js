@@ -1,4 +1,4 @@
-import AcademicLoad from '../models/AcademicLoad.js';
+import AcademicLoad from '../models/academicLoad.js';
 
 // @desc    Obtener todas las cargas académicas por año
 // @route   GET /api/carga-academica/año/:año
