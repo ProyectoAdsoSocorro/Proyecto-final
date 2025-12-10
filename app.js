@@ -36,7 +36,7 @@ app.use('/api/subjects', subjectsRoutes);
 app.use('/api/periods', periodsRoutes);
 app.use('/api/core-direction', direccionNucleoRoutes);
 app.use('/api/indicators', IndicatorsRoutes);
-app.use('/api/schools', colegiosRoutes);
+app.use('/api/schools', colegiosRoutes); 
 app.use('/api/headquarters', headquartersRoutes);
 app.use("/api/registration", registrationRoutes);
 app.use("/api/reports", reportsRoutes);
