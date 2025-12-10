@@ -63,7 +63,7 @@ const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
         roles: 'rector',
         college: school._id
     }).lean(); 
-    console.log("rector", rector)
+    
     const qualificationsTable = await Qualification.aggregate([
         {
             $match: {
@@ -192,7 +192,7 @@ export const fetchStudentData = async ({ students, periodId, year }) => {
 export const generateShortBulletins = async ({ students, periodId, year }) => {
 
     const studentDataList = await fetchStudentData({ students, periodId, year });
-    console.log(studentDataList) 
+    
     if (studentDataList.length === 0) {
         return { pdfBuffer: null, fileName: 'No_Students.pdf' };
     }
