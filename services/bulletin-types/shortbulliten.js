@@ -7,9 +7,10 @@ import Headquarters from '../../models/headquarters.js';
 import School from '../../models/schools.js'; 
 import Validity from '../../models/validity.js'; 
 import Qualification from '../../models/qualifications.js';
-import Indicators from '../../models/indicators.js';
+// IMPORTANTE: Ya no necesitamos Indicators ni Subject si no los vamos a usar en el pipeline
+// import Indicators from '../../models/indicators.js'; 
 import FinalQualification from '../../models/finalQualifications.js';
-import Subject from '../../models/subject.js';
+import Subject from '../../models/subject.js'; // Lo dejamos porque lo usamos en populate
 
 import { generatePDF } from '../../utils/pdfGenerator.js'
 
@@ -21,19 +22,18 @@ function getLevel(note) {
 }
 
 const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
-    /* console.log(studentId , periodId, yearNum); */
+    
     const [student, currentPeriod, enrollment] = await Promise.all([
         User.findById(studentId).lean(),
         Period.findById(periodId).lean(),
         Registration.findOne({ student: studentId, year: yearNum }).lean()
     ]);
-    /* console.log(student, currentPeriod, enrollment); */
+    
     if (!enrollment || !student || !currentPeriod) {
         return null;
     }
-
+    
     const group = await Group.findById(enrollment.group)
-        // Se asegura que se soliciten 'names' y 'lastNames' para el director de grupo
         .populate('groupDirector', 'names lastNames') 
         .lean();
     
@@ -49,54 +49,54 @@ const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
     }
 
     const school = await School.findById(headquarters.school).lean();
-    /* console.log(school); */
     if (!school) {
         console.warn(`No se encontró Colegio para la sede ${headquarters._id}.`);
         return null;
     }
 
-    // CORRECCIÓN: Se agrega el filtro por ID del colegio y se vuelve a poblar el rector
-    const validity = await Validity.findOne({ school: school._id, year: yearNum })
-        .populate('rector', 'names lastNames')
+    const validity = await Validity.findOne({ school: school._id, year: yearNum }) // Volví a incluir el filtro por school para que sea más robusto
         .lean();
 
     const currentPeriodNumber = currentPeriod.number;
 
-
+    const rector = await User.findOne({
+        roles: 'rector',
+        college: school._id
+    }).lean(); 
+    console.log("rector", rector)
     const qualificationsTable = await Qualification.aggregate([
         {
             $match: {
                 student: new mongoose.Types.ObjectId(studentId),
                 year: yearNum,
                 noteType: 'PERIOD',
-                group: new mongoose.Types.ObjectId(enrollment.group)
             }
         },
         { $lookup: { from: 'subjects', localField: 'subject', foreignField: '_id', as: 'subjectInfo' } },
         { $unwind: '$subjectInfo' },
         { $lookup: { from: 'periods', localField: 'period', foreignField: '_id', as: 'periodInfo' } },
         { $unwind: '$periodInfo' },
-        // Se asume que el 'teacher' es un usuario y se traen todos sus campos
-        { $lookup: { from: 'users', localField: 'teacher', foreignField: '_id', as: 'teacherInfo' } }, 
-        { $unwind: { path: '$teacherInfo', preserveNullAndEmptyArrays: true } },
+        // ELIMINAMOS EL LOOKUP A USERS (TEACHER)
+        // ELIMINAMOS EL LOOKUP A INDICATORS
+        
         {
             $group: {
-                _id: '$subjectInfo._id',
+                _id: '$subjectInfo._id', // Este es el ID de la Materia
                 areaName: { $first: '$subjectInfo.name' }, 
                 notes: {
                     $push: {
                         note: '$note', 
                         absences: '$absences', 
                         periodNum: '$periodInfo.number',
-                        // CORRECCIÓN: Se utiliza 'names' y 'lastNames' para el docente (consistencia)
-                        teacher: { names: '$teacherInfo.names', lastNames: '$teacherInfo.lastNames' },
-                        indicators: ['Example Indicator 1...', 'Example Indicator 2...'] // Placeholders
+                        // ELIMINAMOS TEACHER INFO
+                        // ELIMINAMOS INDICATORS INFO
                     }
                 }
             }
         },
         {
             $project: {
+                subjectId: '$_id', 
                 _id: 0,
                 areaName: 1,
                 noteP1: { $first: { $filter: { input: '$notes', as: 'n', cond: { $eq: ['$$n.periodNum', 1] } } } },
@@ -106,11 +106,15 @@ const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
             }
         }
     ]);
-
+    
+    const subjectIds = qualificationsTable.map(q => q.subjectId).filter(id => id); 
+ 
     const finalNotes = await FinalQualification.find({
         student: studentId,
-        year: yearNum
+        year: yearNum,
+        subject: { $in: subjectIds } 
     }).populate('subject', 'name').lean();
+
 
     const fnMap = finalNotes.reduce((acc, fn) => {
         if (fn.subject && fn.subject.name) {
@@ -145,11 +149,6 @@ const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
             const final = fnMap[area.areaName] || { fn: 0, level: 'BAJO' };
             const currentNoteData = area[`noteP${currentPeriodNumber}`];
             
-            // CORRECCIÓN: Se utiliza 'names' y 'lastNames' para el docente
-            const teacherInfo = (currentNoteData && currentNoteData.teacher) 
-                ? `${currentNoteData.teacher.names || ''} ${currentNoteData.teacher.lastNames || ''}` 
-                : 'Docente No Asignado';
-
             return {
                 area: area.areaName,
                 p1: area.noteP1 ? area.noteP1.note.toFixed(2) : '',
@@ -159,8 +158,6 @@ const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
                 f: currentNoteData ? currentNoteData.absences : 0,
                 fn: final.fn.toFixed(2),
                 level: final.level,
-                teacher: teacherInfo, 
-                indicators: currentNoteData ? currentNoteData.indicators : ['No indicators found for this period.']
             }
         }),
 
@@ -172,11 +169,9 @@ const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
         },
 
         context: { 
-            institution: { name: school.nameSchool, title: 'REPORT CARD AND PROMOTION REPORT' },
-            signatures: {
-                // CORRECCIÓN: Se utiliza 'names' y 'lastNames' para el rector
-                rector: `${validity?.rector?.names || 'Rector(a) No Asignado'} ${validity?.rector?.lastNames || ''}`,
-                // CORRECCIÓN: Se utiliza 'names' y 'lastNames' para el director de grupo
+            institution: { name: school.name || school.name, title: 'REPORT CARD AND PROMOTION REPORT' }, 
+            signatures: { 
+                rector: `${rector?.names || 'Rector(a) No Asignado'} ${rector?.lastNames || ''}`,
                 groupDirector: `${group.groupDirector?.names || ''} ${group.groupDirector?.lastNames || ''}`
             },
             noteConventions: validity?.noteConventions || 'LEGEND: Superior (4.5-5.0), High (4.0-4.4), Basic (3.0-3.9), Low (1.0-2.9)'
@@ -186,7 +181,6 @@ const fetchStudentDataEntry = async (studentId, periodId, yearNum) => {
 
 
 export const fetchStudentData = async ({ students, periodId, year }) => { 
-
     const dataPromises = students.map(studentId => fetchStudentDataEntry(studentId, periodId, year));
 
     const readyData = (await Promise.all(dataPromises)).filter(data => data !== null);
@@ -196,6 +190,7 @@ export const fetchStudentData = async ({ students, periodId, year }) => {
 
 
 export const generateShortBulletins = async ({ students, periodId, year }) => {
+
     const studentDataList = await fetchStudentData({ students, periodId, year });
     console.log(studentDataList) 
     if (studentDataList.length === 0) {

@@ -1,18 +1,21 @@
-// La función recibe la instancia del documento (doc) y los datos (bulletinData)
-// Las variables internas están en inglés para consistencia de código,
-// pero el texto que se dibuja en el PDF se mantiene en español.
 export function drawShortBulletin(doc, bulletinData) {
     
-    // Desestructuración de los datos utilizando los nuevos nombres en inglés
     const { header, detailedTable, summary, context } = bulletinData;
 
-    // --- 1. DESIGN CONSTANTS (pdfkit coordinates) ---
     const MARGIN_LEFT = 50;
     const MARGIN_RIGHT = 550;
     const DOC_WIDTH = MARGIN_RIGHT - MARGIN_LEFT;
     
-    // X coordinates for table columns (adjusted for 'pdfkit')
-    const COL_WIDTHS = [0.35, 0.05, 0.08, 0.08, 0.08, 0.08, 0.15, 0.13]; // Percentages
+    // COL_WIDTHS ajustado: eliminamos las columnas de Profesor e Indicadores
+    // COL_WIDTHS ORIGINAL: [0.35, 0.05, 0.08, 0.08, 0.08, 0.08, 0.15, 0.13]; (8 columnas)
+    // ELIMINAMOS 2 COLUMNAS de la sección "detailedTable" (teacher, indicators)
+    
+    // Nueva distribución (7 Columnas: Area, F, P1, P2, P3, P4, FN, Nivel)
+    // Vamos a redistribuir el espacio para que la tabla ocupe todo el ancho
+    // Area (35%) | F (5%) | P1-P4 (4 * 8%) | NF (15%) | NIVEL (13%)
+    // 0.35 + 0.05 + (4 * 0.08) + 0.15 + 0.13 = 0.35 + 0.05 + 0.32 + 0.15 + 0.13 = 1.00 (OK)
+
+    const COL_WIDTHS = [0.35, 0.05, 0.08, 0.08, 0.08, 0.08, 0.15, 0.13]; 
     let xArea = MARGIN_LEFT;
     let xAbsences = xArea + (DOC_WIDTH * COL_WIDTHS[0]);
     let xP1 = xAbsences + (DOC_WIDTH * COL_WIDTHS[1]);
@@ -20,9 +23,10 @@ export function drawShortBulletin(doc, bulletinData) {
     let xP3 = xP2 + (DOC_WIDTH * COL_WIDTHS[3]);
     let xP4 = xP3 + (DOC_WIDTH * COL_WIDTHS[4]);
     let xFN = xP4 + (DOC_WIDTH * COL_WIDTHS[5]);
-    let xLEVEL = xFN + (DOC_WIDTH * COL_WIDTHS[6]);
-    
-    const X_POSITIONS = [xArea, xAbsences, xP1, xP2, xP3, xP4, xFN, xLEVEL]; // Unused, but for reference
+    let xLEVEL = xFN + (DOC_WIDTH * COL_WIDTHS[6]); // Esta es la posición X del inicio de la columna Nivel
+    // xFN es la posición X del inicio de la columna Nota Final
+
+    // El último valor de COL_SPACING ya no se usa para el docente
     const COL_SPACING = [
         (DOC_WIDTH * COL_WIDTHS[0]), 
         (DOC_WIDTH * COL_WIDTHS[1]), 
@@ -30,8 +34,8 @@ export function drawShortBulletin(doc, bulletinData) {
         (DOC_WIDTH * COL_WIDTHS[3]), 
         (DOC_WIDTH * COL_WIDTHS[4]), 
         (DOC_WIDTH * COL_WIDTHS[5]), 
-        (DOC_WIDTH * COL_WIDTHS[6]), 
-        (DOC_WIDTH * COL_WIDTHS[7])
+        (DOC_WIDTH * COL_WIDTHS[6]), // Ancho de NF
+        (DOC_WIDTH * COL_WIDTHS[7])  // Ancho de Nivel
     ];
 
     const H_PADDING = 5; // Internal cell padding height
@@ -44,9 +48,6 @@ export function drawShortBulletin(doc, bulletinData) {
         }
     };
     
-    // --- 2. HEADER AND TITLES ---
-    
-    // Institution Titles
     doc.font('Helvetica-Bold').fontSize(13)
         .text(context.institution.name, MARGIN_LEFT, doc.y, { align: 'center', width: DOC_WIDTH });
     
@@ -54,55 +55,45 @@ export function drawShortBulletin(doc, bulletinData) {
         .text(context.institution.title, { align: 'center', width: DOC_WIDTH });
     doc.moveDown(0.2);
 
-    // Separator line
     doc.lineWidth(1).lineCap('butt')
         .moveTo(MARGIN_LEFT, doc.y)
         .lineTo(MARGIN_RIGHT, doc.y)
         .stroke();
     doc.moveDown(0.5);
 
-    // Student Info (using translated 'header' properties)
     doc.font('Helvetica');
     const yInfo = doc.y;
     doc.fontSize(9)
         .text(`Estudiante: ${header.studentName}`, MARGIN_LEFT, yInfo, { continued: true, width: DOC_WIDTH / 2 })
         .text(`Grado: ${header.groupName}`, MARGIN_LEFT + DOC_WIDTH / 2, yInfo, { width: DOC_WIDTH / 2, align: 'right' });
     
-    doc.y = doc.y + doc.currentLineHeight() + 2; // Ensure the next line
+    doc.y = doc.y + doc.currentLineHeight() + 2; 
     
     doc.fontSize(9)
         .text(`Documento: ${header.studentDocument}`, MARGIN_LEFT, doc.y, { continued: true, width: DOC_WIDTH / 2 })
         .text(`Periodo: ${header.currentPeriodName}`, MARGIN_LEFT + DOC_WIDTH / 2, doc.y, { width: DOC_WIDTH / 2, align: 'right' });
     doc.moveDown(1);
     
-    // Table Title
     doc.font('Helvetica-Bold').fontSize(10)
-        .text('CUADRO DE CALIFICACIONES POR PERIODOS', { align: 'center' }); // Text in Spanish
+        .text('CUADRO DE CALIFICACIONES POR PERIODOS', { align: 'center' }); 
     doc.moveDown(0.5);
 
-    // --- 3. QUALIFICATION TABLE (Manual Drawing) ---
-    // Headers kept in Spanish for the final PDF output
     const tableHeaders = ['AREA', 'F', 'NOTA PERIODO', 'NF', 'NIVEL'];
     const subHeaders = ['', '', '1 Per', '2 Per', '3 Per', '4 Per', '', '']; 
     const yStartTable = doc.y;
     let currentY = yStartTable;
 
-    // A. DRAW TABLE HEADERS (ROW 1)
     doc.lineWidth(1).lineCap('butt');
     
-    // AREA Column
     doc.fillColor('#EEEEEE').rect(xArea, currentY, COL_SPACING[0], H_PADDING * 2 + 10).fill().fillColor('black'); // Grey background
     doc.text(tableHeaders[0], xArea + 2, currentY + H_PADDING, { width: COL_SPACING[0] - 4, align: 'left', height: 10, bold: true });
 
-    // F Column (Absences)
     doc.fillColor('#EEEEEE').rect(xAbsences, currentY, COL_SPACING[1], H_PADDING * 2 + 10).fill().fillColor('black');
     doc.text(tableHeaders[1], xAbsences, currentY + H_PADDING, { width: COL_SPACING[1], align: 'center', height: 10, bold: true });
 
-    // NOTA PERIODO Column (ColSpan: 4)
     doc.fillColor('#EEEEEE').rect(xP1, currentY, COL_SPACING[2] + COL_SPACING[3] + COL_SPACING[4] + COL_SPACING[5], H_PADDING + 5).fill().fillColor('black');
     doc.text(tableHeaders[2], xP1, currentY + 2, { width: COL_SPACING[2] + COL_SPACING[3] + COL_SPACING[4] + COL_SPACING[5], align: 'center', height: 10, bold: true });
     
-    // NF Column (Final Note)
     doc.fillColor('#EEEEEE').rect(xFN, currentY, COL_SPACING[6], H_PADDING * 2 + 10).fill().fillColor('black');
     doc.text(tableHeaders[3], xFN, currentY + H_PADDING, { width: COL_SPACING[6], align: 'center', height: 10, bold: true });
     
@@ -112,7 +103,6 @@ export function drawShortBulletin(doc, bulletinData) {
     
     currentY += H_PADDING + 5; // Next row (Sub-headers)
 
-    // B. DRAW SUB-HEADERS (ROW 2)
     doc.fillColor('#EEEEEE').rect(xP1, currentY, COL_SPACING[2], H_PADDING + 5).fill().fillColor('black');
     doc.text(subHeaders[2], xP1, currentY + 2, { width: COL_SPACING[2], align: 'center', bold: true });
     
@@ -128,6 +118,26 @@ export function drawShortBulletin(doc, bulletinData) {
     currentY += H_PADDING + 5; // Next row (Data start)
     doc.y = currentY;
 
+    // Dibujar todas las líneas divisorias verticales
+    doc.lineWidth(1).lineCap('butt').strokeColor('#000000');
+    // Línea vertical izquierda
+    doc.moveTo(xArea, yStartTable).lineTo(xArea, doc.y).stroke();
+    // Línea vertical después de AREA
+    doc.moveTo(xAbsences, yStartTable).lineTo(xAbsences, doc.y).stroke();
+    // Línea vertical después de F
+    doc.moveTo(xP1, yStartTable).lineTo(xP1, doc.y).stroke();
+    // Líneas verticales internas de NOTA PERIODO
+    doc.moveTo(xP2, yStartTable + H_PADDING + 5).lineTo(xP2, doc.y).stroke(); 
+    doc.moveTo(xP3, yStartTable + H_PADDING + 5).lineTo(xP3, doc.y).stroke(); 
+    doc.moveTo(xP4, yStartTable + H_PADDING + 5).lineTo(xP4, doc.y).stroke(); 
+    // Línea vertical después de P4
+    doc.moveTo(xFN, yStartTable).lineTo(xFN, doc.y).stroke();
+    // Línea vertical después de NF
+    doc.moveTo(xLEVEL, yStartTable).lineTo(xLEVEL, doc.y).stroke();
+    // Línea vertical derecha
+    doc.moveTo(MARGIN_RIGHT, yStartTable).lineTo(MARGIN_RIGHT, doc.y).stroke();
+
+
     // C. DRAW DATA ROWS (using translated 'detailedTable' properties)
     doc.font('Helvetica').fontSize(9);
     let rowHeight = 15;
@@ -138,8 +148,8 @@ export function drawShortBulletin(doc, bulletinData) {
         const level = subject.level || ''; // 'nivel' translated to 'level'
         const isBajo = level === 'BAJO';
         
-        // Draw row border
-        doc.lineWidth(0.5).lineCap('butt')
+        // Draw row border (Horizontal line ABOVE data)
+        doc.lineWidth(0.5).lineCap('butt').strokeColor('#CCCCCC')
             .moveTo(MARGIN_LEFT, doc.y).lineTo(MARGIN_RIGHT, doc.y).stroke();
         
         const textY = doc.y + 2; 
@@ -167,10 +177,15 @@ export function drawShortBulletin(doc, bulletinData) {
         doc.y += rowHeight;
     });
 
+    // Cierre de la tabla (línea inferior)
+    doc.lineWidth(1).lineCap('butt').strokeColor('#000000')
+        .moveTo(MARGIN_LEFT, doc.y).lineTo(MARGIN_RIGHT, doc.y).stroke(); 
+
     // D. DRAW AVERAGE ROW (using translated 'summary' properties)
     checkPageBreak(30);
-    doc.lineWidth(1).lineCap('butt')
-        .moveTo(MARGIN_LEFT, doc.y).lineTo(MARGIN_RIGHT, doc.y).stroke(); 
+    // Ya dibujamos la línea de cierre de la tabla arriba, la omitimos aquí
+    // doc.lineWidth(1).lineCap('butt')
+    //     .moveTo(MARGIN_LEFT, doc.y).lineTo(MARGIN_RIGHT, doc.y).stroke(); 
     
     doc.font('Helvetica-Bold').fontSize(9);
     const yAverage = doc.y + H_PADDING;
@@ -189,7 +204,7 @@ export function drawShortBulletin(doc, bulletinData) {
 
     doc.y = yAverage + 25;
     
-    doc.lineWidth(1).lineCap('butt')
+    doc.lineWidth(1).lineCap('butt').strokeColor('#000000')
         .moveTo(MARGIN_LEFT, doc.y).lineTo(MARGIN_RIGHT, doc.y).stroke(); 
 
     doc.moveDown(1);
@@ -200,49 +215,9 @@ export function drawShortBulletin(doc, bulletinData) {
     doc.moveDown(1);
 
 
-    // --- 4. SUBJECT DETAIL AND INDICATORS BLOCK ---
-    checkPageBreak(50);
-    doc.font('Helvetica-Bold').fontSize(10)
-        .text('OBSERVACIONES E INDICADORES DE DESEMPEÑO POR ASIGNATURA', { align: 'center' }); // Text in Spanish
-    doc.moveDown(1);
+    // --- 4. SUBJECT DETAIL AND INDICATORS BLOCK (ELIMINADA) ---
+    // Eliminamos todo el bloque de indicadores y profesor.
     
-    doc.font('Helvetica').fontSize(9);
-
-    detailedTable.forEach(subject => { // Renamed 'materia' to 'subject' for internal loop
-        checkPageBreak(80); 
-
-        const level = subject.level;
-        const colorLevel = level === 'BAJO' ? 'red' : 'black';
-        
-        // Area Title
-        doc.font('Helvetica-Bold').fontSize(10).text(subject.area.toUpperCase(), { decoration: 'underline' });
-        doc.moveDown(0.2);
-        
-        // Absences, Performance, and Final Note (NF)
-        doc.font('Helvetica-Oblique').fontSize(9).fillColor(colorLevel).text(`Fallas: ${subject.f || 0} | Desempeño: ${level} (${subject.fn})`, { bold: level !== 'SUPERIOR' }); // Text in Spanish
-        doc.fillColor('black'); // Reset color
-        doc.moveDown(0.5);
-
-        // Indicators Title
-        doc.font('Helvetica-Bold').text('INDICADORES:', { margin: [0, 5, 0, 2] }); // Text in Spanish
-        
-        // Indicators List
-        doc.font('Helvetica').fontSize(9);
-        const indicators = subject.indicators || ['• No hay indicadores definidos.']; // Text in Spanish
-        indicators.forEach(ind => {
-            doc.text('• ' + ind, { indent: 10, align: 'left' });
-        });
-        doc.moveDown(0.5);
-
-        // Teacher
-        doc.font('Helvetica-Oblique').fontSize(9).text(`Docente: ${subject.teacher || 'Docente no asignado'}`, { align: 'right' }); // Text in Spanish
-        doc.moveDown(0.5);
-
-        // Separator line
-        doc.lineWidth(0.5).lineCap('butt')
-            .moveTo(MARGIN_LEFT, doc.y).lineTo(MARGIN_RIGHT, doc.y).stroke();
-        doc.moveDown(0.5);
-    });
 
     // --- 5. SIGNATURE BLOCK ---
     checkPageBreak(120); 
@@ -268,4 +243,4 @@ export function drawShortBulletin(doc, bulletinData) {
     doc.text('DIRECTORA DE GRUPO', RIGHT_COL, doc.y + 10, { width: BOX_WIDTH, align: 'center', font: 'Helvetica' }); // Role in Spanish
     
     doc.moveDown(2);
-} 
+}
