@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { check, param, body } from "express-validator";
-import groupController from '../controllers/groupsController.js';
+import groupController from '../controllers/groupscontroller.js';
 import groupHelper from '../helpers/helpersGroup.js';
 import  validateFields  from '../middlewares/check.js'; 
 
