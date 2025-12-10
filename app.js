@@ -17,6 +17,7 @@ import validityRoutes from './routes/validityRoutes.js';
 import bulletinRoutes from './routes/bulletinRoutes.js';
 import groups from './routes/groups.js';
 import reports from './routes/reports.js';
+import parameterRoutes from './routes/parameterRoutes.js';
 
 // import reportesEstudiantes from './routes/reports2_routes.js'
 // import reportesEstudiantes from './routes/students_by_group.js';
@@ -57,6 +58,7 @@ app.use("/api/qualifications", qualificationsRoutes);
 app.use("/api/validity", validityRoutes);
 app.use("/api/bulletins", bulletinRoutes);
 app.use("/api/groups", groups);
+app.use("/api/parameters", parameterRoutes);
 
 
 // 🧱 Middleware de manejo de errores
