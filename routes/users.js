@@ -1,6 +1,6 @@
 import express from "express";
 import { body, param } from "express-validator";
-import { validar } from "../middlewares/JWT.js";
+import { validar } from "../middlewares/Jwt.js";
 import functionsUsers from "../controllers/Users.js";
 import seeValidations from "../middlewares/SeeValidations.js";
 

@@ -3,7 +3,7 @@ import httpReports from '../controllers/reports.js';
 import { check } from 'express-validator';
 import validateFields from '../middlewares/check.js';
 import roleCheck from "../middlewares/roleCheck.js";
-import {validar} from "../middlewares/JWT.js";
+import {validar} from "../middlewares/Jwt.js";
 
 const router = Router();
 
