@@ -17,7 +17,7 @@ import validityRoutes from './routes/validity.js';
 import bulletinRoutes from './routes/bulletins.js';
 import groupsRoutes from './routes/groups.js';
 import reportsRoutes from './routes/reports.js';
-import cargaAcademicaRoutes from './routes/academicLoad.js';
+import academicLoad from './routes/academicLoad.js';
 
 // import reportesEstudiantes from './routes/reports2_routes.js'
 // import reportesEstudiantes from './routes/students_by_group.js';
@@ -44,7 +44,7 @@ app.use("/api/qualifications", qualificationsRoutes);
 app.use("/api/validity", validityRoutes);
 app.use("/api/bulletins", bulletinRoutes);
 app.use("/api/groups", groupsRoutes);
-app.use("/api/AcademicLoad", cargaAcademicaRoutes);
+app.use("/api/academicLoad", academicLoad);
 
 app.listen(PORT, async () => {
     try {

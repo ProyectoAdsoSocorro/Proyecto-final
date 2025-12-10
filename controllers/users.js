@@ -23,11 +23,10 @@ const functionsUsers = {
                     res.send(x)
                 })
             */
-            res.send("usuario registrado")
+            return res.send("usuario registrado")
             //console.log(user)
         } catch (error) {
-            res.status(400).send(error)
-            console.log(error)
+            return res.status(400).send(error)
         }
     },
     // POST /api/users/login
