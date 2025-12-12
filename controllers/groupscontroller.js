@@ -8,6 +8,8 @@ const getGroupsByYear = async (req, res) => {
         const { year } = req.params;
 
         const groups = await Group.find({ year: parseInt(year) })
+            .populate('headquarters')
+            .populate('groupDirector', '-password')
 
         res.status(200).json({
             success: true,
