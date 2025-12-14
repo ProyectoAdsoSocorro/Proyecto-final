@@ -153,7 +153,7 @@ const getStudentsByGroup = async (req, res) => {
 
         // Buscar usuarios (ModelUser) que pertenezcan al colegio y tengan el rol 'estudiante'
         const students = await ModelUser.find({
-            schoolId: colegioId,
+            college: colegioId,
             roles: 'estudiante',
             isActive: true,
         }).select('-password'); // excluir password por seguridad
