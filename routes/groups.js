@@ -69,6 +69,21 @@ router.post('/',
     groupController.createGroup
 );
 
+router.post('/sedes/:sedeId/grupos',
+    [
+        check('sedeId', 'sedeId is required.').exists().custom(groupHelper.validateHeadquarters),
+        check('groupDirector', 'Group Director is required.').exists().custom(groupHelper.validateGroupDirector),
+        check('year', 'Year is required.').exists().isInt().withMessage('Year must be an integer.').toInt().custom(groupHelper.validateYear),
+        check('cycle', 'Cycle is required.').exists().notEmpty().custom(groupHelper.validateCycle),
+        check('level', 'Level is required.').exists().notEmpty().custom(groupHelper.validateLevel),
+        check('grade', 'Grade is required.').exists().notEmpty().custom(groupHelper.validateGrade),
+        check('groupIdentifier', 'Group Identifier is required.').exists().notEmpty(),
+        check('session', 'Session is required.').exists().custom(groupHelper.validateSession),
+        validateFields
+    ], 
+    groupController.createGroupInHeadquarters
+);
+
 // 8. PUT /api/grupos/:id - Actualizar
 router.put('/:id', 
     [
