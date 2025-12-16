@@ -3,12 +3,12 @@ import httpHeadquarters from "../controllers/headquarters.js"
 import { check } from "express-validator"
 import  validateFields from "../middlewares/check.js";
 import  roleCheck  from "../middlewares/roleCheck.js";
-import {verifyTokenAdmin, roleCheckCore} from "../middlewares/authJwt.js";
+// import {verifyTokenAdmin, roleCheckCore} from "../middlewares/authJwt.js";
 import { validar } from "../middlewares/Jwt.js";
 
 const routes = Router();
 
-routes.get("/",verifyTokenAdmin, roleCheckCore('admin'), httpHeadquarters.listAll);
+routes.get("/"/* ,verifyTokenAdmin, roleCheckCore('admin') */, httpHeadquarters.listAll);
 
 routes.get("/:id",validar, roleCheck(['secretaria', 'rector', 'coordinador']), [
     check('id')

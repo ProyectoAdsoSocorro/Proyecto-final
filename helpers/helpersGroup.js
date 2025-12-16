@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import headquarters from '../models/headquarters.js';
 import Users from '../models/users.js';
 
-// These values now match the Mongoose schema enums
+// Estos valores ahora coinciden con los enums del esquema de Mongoose
 const VALID_LEVELS = ['PREESCOLAR', 'PRIMARIA', 'SECUNDARIA', 'ESCUELA_SECUNDARIA'];
 const VALID_CYCLES = ['normal', 'semestral'];
 const VALID_SESSIONS = ['MAÑANA', 'TARDE', 'NOCHE'];
@@ -16,13 +16,13 @@ const validateHeadquarters = async (headquartersId) => {
     if (!headquartersId) return;
     
     if (!mongoose.Types.ObjectId.isValid(headquartersId)) {
-        throw new Error(`The Headquarters ID (${headquartersId}) is not a valid ObjectId format.`);
+        throw new Error(`El ID de Sede (${headquartersId}) no tiene un formato ObjectId válido.`);
     }
     
     const headquartersExists = await headquarters.findById(headquartersId);
     
     if (!headquartersExists) {
-        throw new Error(`The Headquarters with ID ${headquartersId} does not exist.`);
+        throw new Error(`La Sede con ID ${headquartersId} no existe.`);
     }
 };
 
@@ -30,56 +30,56 @@ const validateGroupDirector = async (directorId) => {
     if (!directorId) return;
     
     if (!mongoose.Types.ObjectId.isValid(directorId)) {
-        throw new Error(`The Director ID (${directorId}) is not a valid ObjectId format.`);
+        throw new Error(`El ID del Director (${directorId}) no tiene un formato ObjectId válido.`);
     }
     
-    const director = await Users.findById(directorId);// ! modelusers
+    const director = await Users.findById(directorId);
     
     if (!director) {
-        throw new Error(`The Director with ID ${directorId} does not exist.`);
+        throw new Error(`El Director con ID ${directorId} no existe.`);
     }
 
     const hasInstructorRole = Array.isArray(director.roles)
-        ? director.roles.includes('instructor')
-        : director.roles === 'instructor';
+        ? director.roles.includes('profesor')
+        : director.roles === 'profesor';
 
     if (!hasInstructorRole) {
-        throw new Error(`The Director with ID ${directorId} does not have the required 'instructor' role.'`);
+        throw new Error(`El Director con ID ${directorId} no tiene el rol requerido de 'profesor'.`);
     }
 };
 
 const validateYear = (year) => {
     const y = Number(year);
     if (!Number.isInteger(y) || y < 2000 || y > 2100) {
-        throw new Error('The Year must be a valid integer (e.g., 2025).');
+        throw new Error('El Año debe ser un número entero válido (ej. 2025).');
     }
     return true;
 };
 
 const validateLevel = (level) => {
     if (!VALID_LEVELS.includes(level)) {
-        throw new Error(`The Level '${level}'is not valid. Must be one of: ${VALID_LEVELS.join(', ')}.`);
+        throw new Error(`El Nivel '${level}' no es válido. Debe ser uno de: ${VALID_LEVELS.join(', ')}.`);
     }
     return true;
 };
 
 const validateCycle = (cycle) => {
     if (!VALID_CYCLES.includes(cycle)) {
-        throw new Error(`The Cycle '${cycle}' is not valid. Must be one of: ${VALID_CYCLES.join(', ')}.`);
+        throw new Error(`El Ciclo '${cycle}' no es válido. Debe ser uno de: ${VALID_CYCLES.join(', ')}.`);
     }
     return true;
 };
 
 const validateSession = (session) => {
     if (!VALID_SESSIONS.includes(session)) {
-        throw new Error(`The Session '${session}' is not valid. Must be one of: ${VALID_SESSIONS.join(', ')}.`);
+        throw new Error(`La Sesión '${session}' no es válida. Debe ser una de: ${VALID_SESSIONS.join(', ')}.`);
     }
     return true;
 };
 
 const validateGrade = (grade) => {
     if (typeof grade !== 'string' || grade.trim().length === 0) {
-        throw new Error('The Grade field cannot be empty.');
+        throw new Error('El campo Grado no puede estar vacío.');
     }
     return true;
 };
