@@ -3,15 +3,13 @@ import httpSchools from "../controllers/schools.js";
 import { check } from "express-validator";
 import validateFields from "../middlewares/check.js";
 import roleCheck from "../middlewares/roleCheck.js";
+import {verifyTokenAdmin ,roleCheckCore} from "../middlewares/authJwt.js";
 
 
 const routes = Router()
 
-routes.get("/", [
-    roleCheck(["admin"]),
-    validateFields
+routes.get("/", verifyTokenAdmin ,roleCheckCore('admin'),httpSchools.getSchools);
 
-],httpSchools.getSchools);
 routes.get("/:id", [
     roleCheck(["admin"]),
     check("id").isMongoId().withMessage("ID de colegio no válido").trim(),
